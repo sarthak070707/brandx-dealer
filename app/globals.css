@@ -1,26 +1,74 @@
 @import "tailwindcss";
 
+/* Brand X design tokens. One accent (primary) for calls to action only; status colours are for staff screens only. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f4ee;
+  --foreground: #171512;
+  --card: #ffffff;
+  --card-foreground: #171512;
+  --popover: #ffffff;
+  --popover-foreground: #171512;
+  --muted: #efeae1;
+  --muted-foreground: #6b655c;
+  --border: #e6e0d5;
+  --input: #e6e0d5;
+  --ring: #171512;
+
+  --primary: #c8431d;
+  --primary-hover: #a93516;
+  --primary-foreground: #ffffff;
+
+  --inverse: #171512;
+  --inverse-foreground: #f7f4ee;
+  --inverse-muted: #b9b2a6;
+  --inverse-border: #4a453e;
+
+  --status-on-time: #2f6b4f;
+  --status-due: #9a6a12;
+  --status-overdue: #9f1f3a;
+  --destructive: #9f1f3a;
+
+  --radius: 0.5rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-inverse: var(--inverse);
+  --color-inverse-foreground: var(--inverse-foreground);
+  --color-inverse-muted: var(--inverse-muted);
+  --color-inverse-border: var(--inverse-border);
+  --color-status-on-time: var(--status-on-time);
+  --color-status-due: var(--status-due);
+  --color-status-overdue: var(--status-overdue);
+  --color-destructive: var(--destructive);
+
+  --font-sans: var(--font-anek), ui-sans-serif, system-ui, sans-serif;
+  --radius-lg: var(--radius);
+  --spacing-section: 6rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--color-border);
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
 }
