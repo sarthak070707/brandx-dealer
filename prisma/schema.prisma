@@ -1,0 +1,360 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../generated/prisma"
+  previewFeatures = ["partialIndexes"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  BUYER
+  CONSULTANT
+  ADMIN
+}
+
+enum BodyType {
+  HATCHBACK
+  SEDAN
+  SUV
+  MPV
+}
+
+enum Fuel {
+  PETROL
+  DIESEL
+  CNG
+}
+
+enum Transmission {
+  MANUAL
+  AUTOMATIC
+}
+
+enum UsedCarStatus {
+  AVAILABLE
+  BOOKED
+  SOLD
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+}
+
+enum Language {
+  EN
+  HI
+}
+
+enum LeadSource {
+  ENQUIRY
+  TEST_DRIVE
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  TEST_DRIVE_BOOKED
+  NEGOTIATION
+  WON
+  LOST
+}
+
+enum LeadEventType {
+  ASSIGNED
+  REASSIGNED
+  STATUS
+  NOTE
+  MESSAGE
+}
+
+enum Confidence {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum MessageChannel {
+  WHATSAPP
+  SMS
+}
+
+model User {
+  id             String             @id @default(cuid())
+  name           String
+  email          String             @unique
+  passwordHash   String
+  role           Role               @default(BUYER)
+  active         Boolean            @default(true)
+  // A10 tie-break: the consultant assigned longest ago wins; null means never assigned.
+  lastAssignedAt DateTime?
+  showroomId     String?
+  showroom       Showroom?          @relation(fields: [showroomId], references: [id])
+  models         ConsultantModel[]
+  assignedLeads  Lead[]
+  leadEvents     LeadEvent[]
+  bookings       TestDriveBooking[]
+  createdAt      DateTime           @default(now())
+
+  @@index([showroomId, role, active])
+}
+
+model City {
+  id             String          @id @default(cuid())
+  name           String          @unique
+  showrooms      Showroom[]
+  roadTaxRules   RoadTaxRule[]
+  insuranceRates InsuranceRate[]
+  leads          Lead[]
+}
+
+model Showroom {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  address     String
+  cityId      String
+  city        City      @relation(fields: [cityId], references: [id])
+  // A8: opening hours as minutes after midnight IST; open days are Monday to Saturday.
+  openMinute  Int       @default(600)
+  closeMinute Int       @default(1080)
+  staff       User[]
+  demoCars    DemoCar[]
+  usedCars    UsedCar[]
+  leads       Lead[]
+}
+
+model ConsultantModel {
+  consultantId String
+  consultant   User   @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+  modelId      String
+  model        Model  @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@id([consultantId, modelId])
+  @@index([modelId])
+}
+
+model Model {
+  id                String             @id @default(cuid())
+  slug              String             @unique
+  name              String
+  bodyType          BodyType
+  description       String
+  heroImage         String?
+  variants          Variant[]
+  accessoryPackages AccessoryPackage[]
+  usedCars          UsedCar[]
+  consultants       ConsultantModel[]
+  leads             Lead[]
+}
+
+model Variant {
+  id             String          @id @default(cuid())
+  code           String          @unique
+  modelId        String
+  model          Model           @relation(fields: [modelId], references: [id])
+  name           String
+  fuel           Fuel
+  transmission   Transmission
+  modelYear      Int
+  available      Boolean         @default(true)
+  specs          Json
+  colours        Json
+  prices         VariantPrice[]
+  insuranceRates InsuranceRate[]
+  demoCars       DemoCar[]
+  leads          Lead[]
+}
+
+// Every price table is versioned: a row applies when validFrom <= day <= validTo (A7).
+model VariantPrice {
+  id              String   @id @default(cuid())
+  variantId       String
+  variant         Variant  @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  exShowroomPaise Int
+  validFrom       DateTime @db.Date
+  validTo         DateTime @db.Date
+
+  @@index([variantId, validFrom])
+}
+
+// A4: half-open slab, slabMinPaise <= ex-showroom < slabMaxPaise; a null max is unbounded.
+// The rate is in basis points (1000 = 10%) so tax is computed with integers only.
+model RoadTaxRule {
+  id              String   @id @default(cuid())
+  cityId          String
+  city            City     @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  fuel            Fuel
+  slabMinPaise    Int
+  slabMaxPaise    Int?
+  rateBasisPoints Int
+  validFrom       DateTime @db.Date
+  validTo         DateTime @db.Date
+
+  @@index([cityId, fuel, validFrom])
+}
+
+model InsuranceRate {
+  id           String   @id @default(cuid())
+  variantId    String
+  variant      Variant  @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  cityId       String
+  city         City     @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  premiumPaise Int
+  validFrom    DateTime @db.Date
+  validTo      DateTime @db.Date
+
+  @@index([variantId, cityId, validFrom])
+}
+
+model AccessoryPackage {
+  id         String   @id @default(cuid())
+  modelId    String
+  model      Model    @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  name       String
+  pricePaise Int
+  items      String[]
+  validFrom  DateTime @db.Date
+  validTo    DateTime @db.Date
+
+  @@index([modelId, validFrom])
+}
+
+model UsedCar {
+  id               String        @id @default(cuid())
+  stockId          String        @unique
+  modelId          String
+  model            Model         @relation(fields: [modelId], references: [id])
+  showroomId       String
+  showroom         Showroom      @relation(fields: [showroomId], references: [id])
+  variantName      String
+  fuel             Fuel
+  transmission     Transmission
+  year             Int
+  km               Int
+  owners           Int
+  // Never sent to the browser unmasked.
+  regNumber        String
+  pricePaise       Int
+  status           UsedCarStatus @default(AVAILABLE)
+  inspectionReport Json
+  photos           String[]
+  leads            Lead[]
+  createdAt        DateTime      @default(now())
+
+  @@index([status, modelId])
+}
+
+model DemoCar {
+  id         String             @id @default(cuid())
+  showroomId String
+  showroom   Showroom           @relation(fields: [showroomId], references: [id])
+  variantId  String
+  variant    Variant            @relation(fields: [variantId], references: [id])
+  available  Boolean            @default(true)
+  bookings   TestDriveBooking[]
+}
+
+model TestDriveBooking {
+  id          String        @id @default(cuid())
+  demoCarId   String
+  demoCar     DemoCar       @relation(fields: [demoCarId], references: [id])
+  slotStart   DateTime
+  buyerName   String
+  buyerPhone  String
+  buyerEmail  String?
+  language    Language
+  consentAt   DateTime
+  status      BookingStatus @default(CONFIRMED)
+  cancelToken String        @unique @default(cuid())
+  buyerId     String?
+  buyer       User?         @relation(fields: [buyerId], references: [id])
+  leadId      String        @unique
+  lead        Lead          @relation(fields: [leadId], references: [id])
+  createdAt   DateTime      @default(now())
+
+  // Only confirmed bookings hold a slot, so cancelling frees it for the next buyer.
+  @@unique([demoCarId, slotStart], where: raw("status = 'CONFIRMED'"))
+  @@index([buyerId])
+}
+
+model Lead {
+  id             String            @id @default(cuid())
+  source         LeadSource
+  buyerName      String
+  buyerPhone     String
+  buyerEmail     String?
+  language       Language
+  message        String?
+  modelId        String?
+  model          Model?            @relation(fields: [modelId], references: [id])
+  variantId      String?
+  variant        Variant?          @relation(fields: [variantId], references: [id])
+  usedCarId      String?
+  usedCar        UsedCar?          @relation(fields: [usedCarId], references: [id])
+  cityId         String
+  city           City              @relation(fields: [cityId], references: [id])
+  showroomId     String
+  showroom       Showroom          @relation(fields: [showroomId], references: [id])
+  // Null means the lead sits in the showroom's lead desk queue ("Needs assignment").
+  assignedToId   String?
+  assignedTo     User?             @relation(fields: [assignedToId], references: [id])
+  status         LeadStatus        @default(NEW)
+  lostReason     String?
+  consentAt      DateTime
+  optedOutAt     DateTime?
+  createdAt      DateTime          @default(now())
+  // A13: the 5-minute response target is measured up to this moment.
+  firstContactAt DateTime?
+  booking        TestDriveBooking?
+  events         LeadEvent[]
+  aiDrafts       AiDraft[]
+  outbox         OutboxMessage[]
+
+  @@index([assignedToId, status])
+  @@index([showroomId, assignedToId])
+  @@index([buyerPhone])
+}
+
+model LeadEvent {
+  id        String        @id @default(cuid())
+  leadId    String
+  lead      Lead          @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  type      LeadEventType
+  // Null when the system acted, e.g. auto-assignment.
+  actorId   String?
+  actor     User?         @relation(fields: [actorId], references: [id])
+  details   Json
+  createdAt DateTime      @default(now())
+
+  @@index([leadId, createdAt])
+}
+
+model AiDraft {
+  id            String     @id @default(cuid())
+  leadId        String
+  lead          Lead       @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  summaryJson   Json
+  draftText     String
+  confidence    Confidence
+  guardFlags    String[]
+  usedTemplate  Boolean    @default(false)
+  finalSentText String?
+  sentAt        DateTime?
+  createdAt     DateTime   @default(now())
+
+  @@index([leadId, createdAt])
+}
+
+// Mocked WhatsApp/SMS outbox. The phone number stays on Lead, per the privacy rule.
+model OutboxMessage {
+  id        String         @id @default(cuid())
+  leadId    String
+  lead      Lead           @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  channel   MessageChannel
+  body      String
+  createdAt DateTime       @default(now())
+
+  @@index([leadId])
+}
