@@ -11,3 +11,15 @@ export function formatClock(minutes: number) {
   const hours = String(Math.floor(minutes / 60)).padStart(2, "0");
   return `${hours}:${String(minutes % 60).padStart(2, "0")}`;
 }
+
+const dayMonthYear = new Intl.DateTimeFormat("en-IN", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+// "31 Jan 2027"; UTC because validity dates are stored as midnight UTC.
+export function formatDate(date: Date) {
+  return dayMonthYear.format(date);
+}

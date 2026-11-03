@@ -39,7 +39,7 @@ export type OnRoadPrice =
 const roundToRupee = (paise: number) => Math.round(paise / 100) * 100;
 
 // When two versions overlap on a date, the most recently started one wins (A7).
-function validOn<T extends Validity>(rows: T[], date: Date): T | undefined {
+export function validOn<T extends Validity>(rows: T[], date: Date): T | undefined {
   return rows
     .filter((row) => row.validFrom <= date && date <= row.validTo)
     .sort((a, b) => b.validFrom.getTime() - a.validFrom.getTime())[0];

@@ -1,47 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { BodyType } from "@/generated/prisma/enums";
-import { getAvailableUsedCarCount, getCityNames, getModelLineup, type ModelSummary } from "@/lib/catalogue";
-import { formatRupees } from "@/lib/money";
+import { cardStyle, ModelCard } from "@/components/model-card";
+import { getAvailableUsedCarCount, getModelLineup } from "@/lib/catalogue";
 import { cn } from "@/lib/utils";
-
-const BODY_TYPE_LABEL: Record<BodyType, string> = {
-  HATCHBACK: "Hatchback",
-  SEDAN: "Sedan",
-  SUV: "SUV",
-  MPV: "MPV",
-};
-
-const cardStyle =
-  "group flex h-full flex-col overflow-hidden rounded-2xl border bg-card transition-colors hover:border-foreground/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
-
-function ModelCard({ model, large }: { model: ModelSummary; large: boolean }) {
-  return (
-    <Link href={`/cars/${model.slug}`} className={cardStyle}>
-      <div className={cn("relative shrink-0 overflow-hidden bg-muted", large ? "h-64 sm:h-80" : "h-56")}>
-        {model.photos[0] && (
-          <Image
-            src={model.photos[0]}
-            alt=""
-            fill
-            sizes={large ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 33vw, 100vw"}
-            className="object-cover transition-transform duration-700 group-hover:scale-[1.03] motion-reduce:transition-none"
-          />
-        )}
-      </div>
-      <div className="flex flex-1 flex-col gap-1 p-6">
-        <p className="text-sm text-muted-foreground">{BODY_TYPE_LABEL[model.bodyType]}</p>
-        <h3 className="text-2xl">{model.name}</h3>
-        <p className="text-muted-foreground">{model.description}</p>
-        {model.fromPaise !== null && (
-          <p className="mt-auto pt-4">
-            from {formatRupees(model.fromPaise)} <span className="text-muted-foreground">ex-showroom</span>
-          </p>
-        )}
-      </div>
-    </Link>
-  );
-}
 
 function UsedCarsCard({ count }: { count: number }) {
   return (
@@ -70,11 +31,8 @@ function UsedCarsCard({ count }: { count: number }) {
 }
 
 export async function NewCars() {
-  const [lineup, usedCarCount, cities] = await Promise.all([
-    getModelLineup(),
-    getAvailableUsedCarCount(),
-    getCityNames(),
-  ]);
+  const [lineup, usedCarCount] = await Promise.all([getModelLineup(), getAvailableUsedCarCount()]);
+  const featured = lineup.filter((model) => model.featured);
 
   return (
     <section
@@ -86,10 +44,12 @@ export async function NewCars() {
         <h2 id="new-cars-title" className="text-4xl font-light tracking-tight font-stretch-semi-condensed sm:text-5xl">
           New cars
         </h2>
-        <p className="text-muted-foreground">On-road prices for {new Intl.ListFormat("en-IN").format(cities)}</p>
+        <Link href="/cars" className="underline-offset-4 hover:underline">
+          See all {lineup.length} models
+        </Link>
       </div>
       <ul className="grid gap-4 lg:grid-cols-6">
-        {lineup.map((model, index) => (
+        {featured.map((model, index) => (
           <li key={model.slug} className={index < 2 ? "lg:col-span-3" : "lg:col-span-2"}>
             <ModelCard model={model} large={index < 2} />
           </li>

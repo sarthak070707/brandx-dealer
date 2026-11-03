@@ -36,6 +36,7 @@ type ModelSeed = {
   bodyType: BodyType;
   description: string;
   photos: string[];
+  featured: boolean;
   colours: { name: string; hex: string }[];
   accessories: { name: string; rupees: number; items: string[] };
   variants: VariantSeed[];
@@ -45,7 +46,8 @@ type ModelSeed = {
 export const MODELS: ModelSeed[] = [
   {
     slug: "model-h",
-    photos: ["/cars/model-h-1.webp", "/cars/model-h-2.webp"],
+    photos: ["/cars/model-h-1.webp"],
+    featured: true,
     name: "Model H",
     bodyType: "SUV",
     description: "A mid-size SUV with a quiet cabin, high seating and room for five.",
@@ -91,7 +93,8 @@ export const MODELS: ModelSeed[] = [
   },
   {
     slug: "model-c",
-    photos: ["/cars/model-c-1.webp", "/cars/model-c-2.webp"],
+    photos: ["/cars/model-c-1.webp"],
+    featured: true,
     name: "Model C",
     bodyType: "SEDAN",
     description: "A long-wheelbase sedan built for highway comfort and a large boot.",
@@ -129,7 +132,8 @@ export const MODELS: ModelSeed[] = [
   },
   {
     slug: "model-s",
-    photos: ["/cars/model-s-1.webp", "/cars/model-s-2.webp"],
+    photos: ["/cars/model-s-1.webp"],
+    featured: true,
     name: "Model S",
     bodyType: "HATCHBACK",
     description: "A compact hatchback that is easy to park and cheap to run in the city.",
@@ -175,7 +179,8 @@ export const MODELS: ModelSeed[] = [
   },
   {
     slug: "model-v",
-    photos: ["/cars/model-v-1.webp", "/cars/model-v-2.webp"],
+    photos: ["/cars/model-v-1.webp"],
+    featured: true,
     name: "Model V",
     bodyType: "MPV",
     description: "A seven-seat MPV with three usable rows and sliding second-row seats.",
@@ -209,6 +214,154 @@ export const MODELS: ModelSeed[] = [
       },
     ],
   },
+  {
+    slug: "model-t",
+    name: "Model T",
+    bodyType: "SUV",
+    description: "A full-size off-road SUV with a ladder-tough body and room for seven.",
+    photos: ["/cars/model-t-1.webp"],
+    featured: false,
+    colours: [
+      { name: "Gondwana Stone", hex: "#8A7D6B" },
+      { name: "Santorini Black", hex: "#1B1C1E" },
+    ],
+    accessories: {
+      name: "Expedition pack",
+      rupees: 32_000,
+      items: ["Roof rack", "All-weather mats", "Underbody protection", "Rear ladder"],
+    },
+    variants: [
+      {
+        code: "NEW-T-01",
+        name: "SE",
+        fuel: "PETROL",
+        transmission: "AUTOMATIC",
+        exShowroomRupees: 17_20_000,
+        lucknowInsuranceRupees: 71_000,
+        specs: { engine: "2.0 L turbo petrol", powerBhp: 197, mileageKmpl: 11.8, seats: 7, bootLitres: 297 },
+      },
+      {
+        code: "NEW-T-02",
+        name: "HSE",
+        fuel: "DIESEL",
+        transmission: "AUTOMATIC",
+        exShowroomRupees: 18_50_000,
+        lucknowInsuranceRupees: 76_000,
+        specs: { engine: "2.2 L diesel", powerBhp: 197, mileageKmpl: 14.1, seats: 7, bootLitres: 297 },
+      },
+    ],
+  },
+  {
+    slug: "model-g",
+    name: "Model G",
+    bodyType: "COUPE",
+    description: "A two-door grand tourer with a long bonnet and a cabin built for the open road.",
+    photos: ["/cars/model-g-1.webp"],
+    featured: false,
+    colours: [
+      { name: "Mineral Grey", hex: "#6E7377" },
+      { name: "Alpine White", hex: "#F4F4F2" },
+    ],
+    accessories: {
+      name: "Grand touring pack",
+      rupees: 26_000,
+      items: ["Carbon mirror caps", "Floor mats", "Boot liner"],
+    },
+    variants: [
+      {
+        code: "NEW-G-01",
+        name: "GT",
+        fuel: "PETROL",
+        transmission: "AUTOMATIC",
+        exShowroomRupees: 22_40_000,
+        lucknowInsuranceRupees: 92_000,
+        specs: { engine: "2.0 L turbo petrol", powerBhp: 255, mileageKmpl: 13.4, seats: 4, bootLitres: 440 },
+      },
+      {
+        code: "NEW-G-02",
+        name: "GT Sport",
+        fuel: "PETROL",
+        transmission: "AUTOMATIC",
+        exShowroomRupees: 26_80_000,
+        lucknowInsuranceRupees: 1_08_000,
+        specs: { engine: "3.0 L turbo petrol", powerBhp: 382, mileageKmpl: 10.6, seats: 4, bootLitres: 440 },
+      },
+    ],
+  },
+  {
+    slug: "model-m",
+    name: "Model M",
+    bodyType: "MPV",
+    description: "A boxy, practical people-carrier with sliding rear doors and a tall cabin.",
+    photos: ["/cars/model-m-1.webp"],
+    featured: false,
+    colours: [
+      { name: "Pearl White", hex: "#F2F1EC" },
+      { name: "Lunar Silver", hex: "#B9BBBE" },
+    ],
+    accessories: {
+      name: "Weekender pack",
+      rupees: 12_000,
+      items: ["Roof bars", "Seat covers", "Floor mats"],
+    },
+    variants: [
+      {
+        code: "NEW-M-01",
+        name: "LX",
+        fuel: "PETROL",
+        transmission: "MANUAL",
+        exShowroomRupees: 8_90_000,
+        lucknowInsuranceRupees: 37_000,
+        specs: { engine: "1.5 L petrol", powerBhp: 103, mileageKmpl: 17.8, seats: 7, bootLitres: 250 },
+      },
+      {
+        code: "NEW-M-02",
+        name: "VX",
+        fuel: "DIESEL",
+        transmission: "AUTOMATIC",
+        exShowroomRupees: 11_60_000,
+        lucknowInsuranceRupees: 48_500,
+        specs: { engine: "1.5 L diesel", powerBhp: 114, mileageKmpl: 20.2, seats: 7, bootLitres: 250 },
+      },
+    ],
+  },
+  {
+    slug: "model-r",
+    name: "Model R",
+    bodyType: "HATCHBACK",
+    description: "A performance hatchback with all-wheel drive and a quick-shifting gearbox.",
+    photos: ["/cars/model-r-1.webp"],
+    featured: false,
+    colours: [
+      { name: "Oryx White", hex: "#EEEDEA" },
+      { name: "Lapiz Blue", hex: "#1E4C8F" },
+    ],
+    accessories: {
+      name: "Track pack",
+      rupees: 21_000,
+      items: ["Sports floor mats", "Gear knob", "Boot organiser"],
+    },
+    variants: [
+      {
+        code: "NEW-R-01",
+        name: "R",
+        fuel: "PETROL",
+        transmission: "AUTOMATIC",
+        exShowroomRupees: 14_90_000,
+        lucknowInsuranceRupees: 62_000,
+        specs: { engine: "2.0 L turbo petrol", powerBhp: 241, mileageKmpl: 13.9, seats: 5, bootLitres: 343 },
+      },
+      {
+        code: "NEW-R-02",
+        name: "R Performance",
+        fuel: "PETROL",
+        transmission: "AUTOMATIC",
+        exShowroomRupees: 16_40_000,
+        lucknowInsuranceRupees: 68_000,
+        specs: { engine: "2.0 L turbo petrol", powerBhp: 296, mileageKmpl: 12.7, seats: 5, bootLitres: 343 },
+      },
+    ],
+  },
 ];
 
 // A3 and A4: sample slab rates in basis points, the same in every city (one state).
@@ -238,15 +391,15 @@ export const DEMO_PASSWORD = "BrandX-demo-2026";
 export const ADMIN = { name: "Meera Joshi", email: "admin@brandx.example" };
 export const DEMO_BUYER = { name: "Riya Sharma", email: "buyer@brandx.example", phone: "+919000000109" };
 
-// Two per showroom with different models. Nobody at Hazratganj handles Model V, so
-// those leads land in the lead desk queue.
+// Two per showroom with different models. Nobody at Hazratganj handles Model V, and nobody
+// at Gomti Nagar handles Model G or R, so those leads land in the lead desk queue.
 export const CONSULTANTS: { name: string; email: string; showroom: ShowroomName; modelSlugs: string[] }[] = [
-  { name: "Rohan Verma", email: "rohan@brandx.example", showroom: "Gomti Nagar", modelSlugs: ["model-h", "model-c"] },
-  { name: "Priya Tiwari", email: "priya@brandx.example", showroom: "Gomti Nagar", modelSlugs: ["model-s", "model-v"] },
-  { name: "Kabir Saxena", email: "kabir@brandx.example", showroom: "Alambagh", modelSlugs: ["model-h", "model-s"] },
-  { name: "Ananya Mishra", email: "ananya@brandx.example", showroom: "Alambagh", modelSlugs: ["model-c", "model-v"] },
-  { name: "Vikram Singh", email: "vikram@brandx.example", showroom: "Hazratganj", modelSlugs: ["model-h", "model-c"] },
-  { name: "Ishita Kapoor", email: "ishita@brandx.example", showroom: "Hazratganj", modelSlugs: ["model-h", "model-s"] },
+  { name: "Rohan Verma", email: "rohan@brandx.example", showroom: "Gomti Nagar", modelSlugs: ["model-h", "model-c", "model-t"] },
+  { name: "Priya Tiwari", email: "priya@brandx.example", showroom: "Gomti Nagar", modelSlugs: ["model-s", "model-v", "model-m"] },
+  { name: "Kabir Saxena", email: "kabir@brandx.example", showroom: "Alambagh", modelSlugs: ["model-h", "model-s", "model-r"] },
+  { name: "Ananya Mishra", email: "ananya@brandx.example", showroom: "Alambagh", modelSlugs: ["model-c", "model-v", "model-g"] },
+  { name: "Vikram Singh", email: "vikram@brandx.example", showroom: "Hazratganj", modelSlugs: ["model-h", "model-c", "model-t", "model-g"] },
+  { name: "Ishita Kapoor", email: "ishita@brandx.example", showroom: "Hazratganj", modelSlugs: ["model-h", "model-s", "model-r", "model-m"] },
 ];
 
 // The Hazratganj Model H demo car is in service, so it offers no slots.
@@ -257,6 +410,10 @@ export const DEMO_CARS: { showroom: ShowroomName; variantCode: string; available
   { showroom: "Alambagh", variantCode: "NEW-V-01", available: true },
   { showroom: "Hazratganj", variantCode: "NEW-H-01", available: false },
   { showroom: "Hazratganj", variantCode: "NEW-S-03", available: true },
+  { showroom: "Gomti Nagar", variantCode: "NEW-M-01", available: true },
+  { showroom: "Alambagh", variantCode: "NEW-G-01", available: true },
+  { showroom: "Hazratganj", variantCode: "NEW-T-02", available: true },
+  { showroom: "Hazratganj", variantCode: "NEW-R-01", available: true },
 ];
 
 type UsedCarSeed = {

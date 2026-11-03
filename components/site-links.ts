@@ -1,5 +1,5 @@
 export const NAV_LINKS = [
-  { href: "/#new-cars", label: "New cars" },
+  { href: "/cars", label: "New cars" },
   { href: "/used-cars", label: "Certified used" },
   { href: "/#showrooms", label: "Showrooms" },
 ];

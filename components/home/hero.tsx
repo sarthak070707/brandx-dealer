@@ -18,10 +18,10 @@ function CarTile({ model, photo }: { model: ModelSummary; photo: string }) {
   );
 }
 
-function tilesFor(lineup: ModelSummary[], photoIndex: number) {
-  return lineup
-    .filter((model) => model.photos[photoIndex])
-    .map((model) => <CarTile key={model.slug} model={model} photo={model.photos[photoIndex]} />);
+function tilesFor(models: ModelSummary[]) {
+  return models
+    .filter((model) => model.photos[0])
+    .map((model) => <CarTile key={model.slug} model={model} photo={model.photos[0]} />);
 }
 
 export async function Hero() {
@@ -47,15 +47,15 @@ export async function Hero() {
               <Link href={TEST_DRIVE_HREF}>Book a test drive</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link href="/#new-cars">See on-road prices</Link>
+              <Link href="/cars">See on-road prices</Link>
             </Button>
           </div>
         </div>
 
         <div className="-mx-4 flex flex-col gap-4 mask-x-from-90% sm:-mx-8 lg:mx-0">
-          <Marquee>{tilesFor(lineup, 0)}</Marquee>
+          <Marquee>{tilesFor(lineup.filter((model) => model.featured))}</Marquee>
           <div className="hidden sm:block">
-            <Marquee reverse>{tilesFor(lineup, 1)}</Marquee>
+            <Marquee reverse>{tilesFor(lineup.filter((model) => !model.featured))}</Marquee>
           </div>
         </div>
       </div>

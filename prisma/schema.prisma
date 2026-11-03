@@ -19,6 +19,7 @@ enum BodyType {
   SEDAN
   SUV
   MPV
+  COUPE
 }
 
 enum Fuel {
@@ -142,6 +143,8 @@ model Model {
   bodyType          BodyType
   description       String
   photos            String[]           @default([])
+  // Featured models are the ones the home page shows; the rest are on /cars.
+  featured          Boolean            @default(false)
   variants          Variant[]
   accessoryPackages AccessoryPackage[]
   usedCars          UsedCar[]

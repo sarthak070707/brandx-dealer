@@ -122,6 +122,7 @@ async function seedCatalogue(cityIds: Record<CityName, string>) {
         bodyType: model.bodyType,
         description: model.description,
         photos: model.photos,
+        featured: model.featured,
         accessoryPackages: {
           create: {
             name: model.accessories.name,

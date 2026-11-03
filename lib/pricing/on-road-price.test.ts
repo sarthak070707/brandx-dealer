@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeOnRoadPrice, type PriceRequest, type PriceTables } from "./on-road-price";
+import { computeOnRoadPrice, validOn, type PriceRequest, type PriceTables } from "./on-road-price";
 
 const day = (iso: string) => new Date(`${iso}T00:00:00Z`);
 const current = { validFrom: day("2026-10-01"), validTo: day("2026-12-31") };
@@ -130,5 +130,11 @@ describe("computeOnRoadPrice", () => {
       missing: ["ACCESSORIES"],
     });
     expect(computeOnRoadPrice(tables({ accessoryPackages: [] }), { ...request, includeAccessories: false }).available).toBe(true);
+  });
+});
+
+describe("validOn", () => {
+  it("returns nothing when no row covers the date", () => {
+    expect(validOn([{ ...current, value: 1 }], day("2027-02-01"))).toBeUndefined();
   });
 });
