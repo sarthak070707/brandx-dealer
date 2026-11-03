@@ -57,3 +57,13 @@ export async function getCityNames() {
   const cities = await db.city.findMany({ orderBy: { name: "asc" }, select: { name: true } });
   return cities.map((city) => city.name);
 }
+
+export async function getShowrooms() {
+  "use cache";
+  cacheLife("days");
+
+  return db.showroom.findMany({
+    orderBy: { name: "asc" },
+    select: { name: true, address: true, openMinute: true, closeMinute: true },
+  });
+}
