@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Brand X design tokens. One accent (primary) for calls to action only; status colours are for staff screens only. */
 :root {
@@ -29,6 +32,33 @@
   --destructive: #9f1f3a;
 
   --radius: 0.5rem;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #141210;
+  --foreground: #f2eee6;
+  --card: #1e1b18;
+  --card-foreground: #f2eee6;
+  --popover: #1e1b18;
+  --popover-foreground: #f2eee6;
+  --muted: #2a2621;
+  --muted-foreground: #a39c90;
+  --border: #34302a;
+  --input: #34302a;
+  --ring: #f2eee6;
+
+  --inverse: #0c0b09;
+  --inverse-foreground: #f2eee6;
+  --inverse-muted: #a39c90;
+  --inverse-border: #2a2621;
+
+  --status-on-time: #6fb592;
+  --status-due: #d9a441;
+  --status-overdue: #e0718a;
+  --destructive: #e0718a;
+
+  color-scheme: dark;
 }
 
 @theme inline {
