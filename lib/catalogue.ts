@@ -1,10 +1,13 @@
 import { cacheLife } from "next/cache";
 import { indiaToday } from "@/lib/dates";
+import type { BodyType } from "@/generated/prisma/enums";
 import { db } from "@/lib/db";
 
 export type ModelSummary = {
   slug: string;
   name: string;
+  bodyType: BodyType;
+  description: string;
   photos: string[];
   fromPaise: number | null;
 };
@@ -20,6 +23,8 @@ export async function getModelLineup(): Promise<ModelSummary[]> {
     select: {
       slug: true,
       name: true,
+      bodyType: true,
+      description: true,
       photos: true,
       variants: {
         select: {
@@ -36,4 +41,19 @@ export async function getModelLineup(): Promise<ModelSummary[]> {
     const prices = variants.flatMap((variant) => variant.prices.map((price) => price.exShowroomPaise));
     return { ...model, fromPaise: prices.length ? Math.min(...prices) : null };
   });
+}
+
+export async function getAvailableUsedCarCount() {
+  "use cache";
+  cacheLife("minutes");
+
+  return db.usedCar.count({ where: { status: "AVAILABLE" } });
+}
+
+export async function getCityNames() {
+  "use cache";
+  cacheLife("days");
+
+  const cities = await db.city.findMany({ orderBy: { name: "asc" }, select: { name: true } });
+  return cities.map((city) => city.name);
 }

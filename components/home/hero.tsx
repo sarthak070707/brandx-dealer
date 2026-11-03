@@ -52,7 +52,7 @@ export async function Hero() {
           </div>
         </div>
 
-        <div className="-mx-4 flex flex-col gap-4 sm:-mx-8 lg:mx-0">
+        <div className="-mx-4 flex flex-col gap-4 mask-x-from-90% sm:-mx-8 lg:mx-0">
           <Marquee>{tilesFor(lineup, 0)}</Marquee>
           <div className="hidden sm:block">
             <Marquee reverse>{tilesFor(lineup, 1)}</Marquee>
