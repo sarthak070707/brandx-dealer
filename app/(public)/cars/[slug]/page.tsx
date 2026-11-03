@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CarConfigurator } from "@/components/car/car-configurator";
-import { MorphGallery } from "@/components/car/morph-gallery";
 import { getCarPage, getModelSlugs } from "@/lib/catalogue";
 
 export async function generateStaticParams() {
@@ -33,15 +32,7 @@ export default async function CarPage({ params }: PageProps<"/cars/[slug]">) {
           {car.name}
         </span>
       </nav>
-      <CarConfigurator
-        car={car}
-        gallery={
-          <MorphGallery
-            label={`${car.name} photos`}
-            photos={car.photos.map((src, index) => ({ src, alt: `${car.name}, photo ${index + 1}` }))}
-          />
-        }
-      />
+      <CarConfigurator car={car} />
     </main>
   );
 }

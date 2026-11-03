@@ -121,7 +121,7 @@ async function seedCatalogue(cityIds: Record<CityName, string>) {
         name: model.name,
         bodyType: model.bodyType,
         description: model.description,
-        photos: model.photos,
+        photos: model.colours.map((colour) => colour.photo),
         featured: model.featured,
         accessoryPackages: {
           create: {
@@ -180,6 +180,9 @@ async function seedStock(
 ) {
   const modelNames = new Map(MODELS.map((model) => [model.slug, model.name]));
 
+  // Used cars show their model in its second colour, so they don't repeat the new-car photo.
+  const usedCarPhoto = new Map(MODELS.map((model) => [model.slug, model.colours.at(-1)!.photo]));
+
   const usedCars = await db.usedCar.createManyAndReturn({
     data: USED_CARS.map(({ modelSlug, showroom, rupees, inspectionScore, needsAttention, ...car }) => ({
       ...car,
@@ -187,7 +190,7 @@ async function seedStock(
       showroomId: showroomIds[showroom],
       pricePaise: paise(rupees),
       inspectionReport: inspectionReport(inspectionScore, needsAttention),
-      photos: [],
+      photos: [usedCarPhoto.get(modelSlug)!],
     })),
   });
 

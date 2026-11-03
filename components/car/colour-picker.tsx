@@ -1,5 +1,5 @@
-type Colour = { name: string; hex: string };
-type Props = { colours: Colour[]; selected: Colour; onSelect: (name: string) => void };
+type Colour = { name: string; hex: string; photo: string };
+type Props = { colours: Colour[]; selected: Colour; onSelect: (colour: Colour) => void };
 
 export function ColourPicker({ colours, selected, onSelect }: Props) {
   return (
@@ -15,7 +15,7 @@ export function ColourPicker({ colours, selected, onSelect }: Props) {
               name="colour"
               value={colour.name}
               checked={colour.name === selected.name}
-              onChange={() => onSelect(colour.name)}
+              onChange={() => onSelect(colour)}
               className="peer sr-only"
             />
             <span className="sr-only">{colour.name}</span>
@@ -27,10 +27,6 @@ export function ColourPicker({ colours, selected, onSelect }: Props) {
           </label>
         ))}
       </div>
-      {/* A12: stock photos come in one colour, so say so rather than imply a match. */}
-      <p className="mt-3 text-sm text-muted-foreground">
-        Photos show one colour. See {selected.name} in person at any showroom.
-      </p>
     </fieldset>
   );
 }

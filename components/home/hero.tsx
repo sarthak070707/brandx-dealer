@@ -19,9 +19,9 @@ function CarTile({ model, photo }: { model: ModelSummary; photo: string }) {
 }
 
 function tilesFor(models: ModelSummary[]) {
-  return models
-    .filter((model) => model.photos[0])
-    .map((model) => <CarTile key={model.slug} model={model} photo={model.photos[0]} />);
+  return models.flatMap((model) =>
+    model.photos.map((photo) => <CarTile key={photo} model={model} photo={photo} />),
+  );
 }
 
 export async function Hero() {

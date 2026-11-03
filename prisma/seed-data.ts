@@ -35,26 +35,24 @@ type ModelSeed = {
   name: string;
   bodyType: BodyType;
   description: string;
-  photos: string[];
   featured: boolean;
-  colours: { name: string; hex: string }[];
+  colours: { name: string; hex: string; photo: string }[];
   accessories: { name: string; rupees: number; items: string[] };
   variants: VariantSeed[];
 };
 
 // A3 and A11: fictional Brand X line-up with sample prices. NEW-H-02 is the brief's row.
+// A12: each colour has its own free-licence photo; credits are in the README.
 export const MODELS: ModelSeed[] = [
   {
     slug: "model-h",
-    photos: ["/cars/model-h-1.webp"],
     featured: true,
     name: "Model H",
     bodyType: "SUV",
     description: "A mid-size SUV with a quiet cabin, high seating and room for five.",
     colours: [
-      { name: "Pearl White", hex: "#F2F1EC" },
-      { name: "Graphite Grey", hex: "#4A4D52" },
-      { name: "Deep Blue", hex: "#1F3550" },
+      { name: "Oxford White", hex: "#F2F1EC", photo: "/cars/model-h-1.webp" },
+      { name: "Midnight Black", hex: "#1B1C1E", photo: "/cars/model-h-black.webp" },
     ],
     accessories: {
       name: "Urban pack",
@@ -93,15 +91,13 @@ export const MODELS: ModelSeed[] = [
   },
   {
     slug: "model-c",
-    photos: ["/cars/model-c-1.webp"],
     featured: true,
     name: "Model C",
     bodyType: "SEDAN",
     description: "A long-wheelbase sedan built for highway comfort and a large boot.",
     colours: [
-      { name: "Lunar Silver", hex: "#B9BBBE" },
-      { name: "Midnight Black", hex: "#16171A" },
-      { name: "Pearl White", hex: "#F2F1EC" },
+      { name: "Pearl White", hex: "#F2F1EC", photo: "/cars/model-c-1.webp" },
+      { name: "Deep Teal", hex: "#1F3A3D", photo: "/cars/model-c-teal.webp" },
     ],
     accessories: {
       name: "Comfort pack",
@@ -132,15 +128,13 @@ export const MODELS: ModelSeed[] = [
   },
   {
     slug: "model-s",
-    photos: ["/cars/model-s-1.webp"],
     featured: true,
     name: "Model S",
     bodyType: "HATCHBACK",
     description: "A compact hatchback that is easy to park and cheap to run in the city.",
     colours: [
-      { name: "Fire Red", hex: "#A3262A" },
-      { name: "Pearl White", hex: "#F2F1EC" },
-      { name: "Graphite Grey", hex: "#4A4D52" },
+      { name: "Pure White", hex: "#F2F2EF", photo: "/cars/model-s-1.webp" },
+      { name: "Tornado Red", hex: "#C8102E", photo: "/cars/model-s-red.webp" },
     ],
     accessories: {
       name: "Essentials pack",
@@ -179,14 +173,13 @@ export const MODELS: ModelSeed[] = [
   },
   {
     slug: "model-v",
-    photos: ["/cars/model-v-1.webp"],
     featured: true,
     name: "Model V",
     bodyType: "MPV",
     description: "A seven-seat MPV with three usable rows and sliding second-row seats.",
     colours: [
-      { name: "Lunar Silver", hex: "#B9BBBE" },
-      { name: "Deep Blue", hex: "#1F3550" },
+      { name: "Graphite Grey", hex: "#4A4D52", photo: "/cars/model-v-1.webp" },
+      { name: "Pearl White", hex: "#F2F1EC", photo: "/cars/model-v-white.webp" },
     ],
     accessories: {
       name: "Family pack",
@@ -219,11 +212,10 @@ export const MODELS: ModelSeed[] = [
     name: "Model T",
     bodyType: "SUV",
     description: "A full-size off-road SUV with a ladder-tough body and room for seven.",
-    photos: ["/cars/model-t-1.webp"],
     featured: false,
     colours: [
-      { name: "Gondwana Stone", hex: "#8A7D6B" },
-      { name: "Santorini Black", hex: "#1B1C1E" },
+      { name: "Gondwana Stone", hex: "#8A7D6B", photo: "/cars/model-t-1.webp" },
+      { name: "Slate Blue", hex: "#4F6475", photo: "/cars/model-t-blue.webp" },
     ],
     accessories: {
       name: "Expedition pack",
@@ -256,11 +248,10 @@ export const MODELS: ModelSeed[] = [
     name: "Model G",
     bodyType: "COUPE",
     description: "A two-door grand tourer with a long bonnet and a cabin built for the open road.",
-    photos: ["/cars/model-g-1.webp"],
     featured: false,
     colours: [
-      { name: "Mineral Grey", hex: "#6E7377" },
-      { name: "Alpine White", hex: "#F4F4F2" },
+      { name: "Mineral Grey", hex: "#6E7377", photo: "/cars/model-g-1.webp" },
+      { name: "Marina Blue", hex: "#1F3FA0", photo: "/cars/model-g-blue.webp" },
     ],
     accessories: {
       name: "Grand touring pack",
@@ -293,11 +284,10 @@ export const MODELS: ModelSeed[] = [
     name: "Model M",
     bodyType: "MPV",
     description: "A boxy, practical people-carrier with sliding rear doors and a tall cabin.",
-    photos: ["/cars/model-m-1.webp"],
     featured: false,
     colours: [
-      { name: "Pearl White", hex: "#F2F1EC" },
-      { name: "Lunar Silver", hex: "#B9BBBE" },
+      { name: "Pearl White", hex: "#F2F1EC", photo: "/cars/model-m-1.webp" },
+      { name: "Onyx Black", hex: "#16171A", photo: "/cars/model-m-black.webp" },
     ],
     accessories: {
       name: "Weekender pack",
@@ -330,11 +320,10 @@ export const MODELS: ModelSeed[] = [
     name: "Model R",
     bodyType: "HATCHBACK",
     description: "A performance hatchback with all-wheel drive and a quick-shifting gearbox.",
-    photos: ["/cars/model-r-1.webp"],
     featured: false,
     colours: [
-      { name: "Oryx White", hex: "#EEEDEA" },
-      { name: "Lapiz Blue", hex: "#1E4C8F" },
+      { name: "Oryx White", hex: "#EEEDEA", photo: "/cars/model-r-1.webp" },
+      { name: "Indium Grey", hex: "#4B5563", photo: "/cars/model-r-grey.webp" },
     ],
     accessories: {
       name: "Track pack",

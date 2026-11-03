@@ -126,7 +126,9 @@ function link(gl: WebGLRenderingContext) {
 
 // Returns null when WebGL is unavailable; the gallery then falls back to a cross-fade.
 export function createMorphRenderer(canvas: HTMLCanvasElement, sources: string[]): MorphRenderer | null {
-  const gl = canvas.getContext("webgl", { alpha: false, antialias: false });
+  // preserveDrawingBuffer keeps the first frame drawn while the canvas was still hidden,
+  // so it never shows a cleared (black) frame as it appears.
+  const gl = canvas.getContext("webgl", { alpha: false, antialias: false, preserveDrawingBuffer: true });
   if (!gl) return null;
 
   let program: WebGLProgram;
@@ -213,7 +215,6 @@ export function createMorphRenderer(canvas: HTMLCanvasElement, sources: string[]
     play: (from, to, direction) =>
       new Promise((resolve) => {
         resize();
-        // Drawn before the canvas is shown, so it never flashes a stale or blank frame.
         draw(from, to, 0, direction);
         const startedAt = performance.now();
         const step = (now: number) => {

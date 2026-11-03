@@ -2,18 +2,28 @@
 
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import { useEffect, useImperativeHandle, useRef, useState, type KeyboardEvent, type PointerEvent, type Ref } from "react";
 import { createMorphRenderer, type MorphRenderer } from "@/components/car/morph-renderer";
 import { cn } from "@/lib/utils";
 
 type Photo = { src: string; alt: string };
+export type MorphGalleryHandle = { show: (index: number) => void; prepare: () => void };
+type Props = {
+  photos: Photo[];
+  label: string;
+  onActiveChange: (index: number) => void;
+  ref: Ref<MorphGalleryHandle>;
+};
 
 const SWIPE_THRESHOLD_PX = 48;
 const arrowStyle =
-  "absolute top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-card/90 text-card-foreground shadow-sm transition-colors hover:bg-card focus-visible:outline-2 focus-visible:outline-ring";
+  "absolute top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-card/90 text-card-foreground shadow-sm transition-colors hover:bg-card focus-visible:outline-2 focus-visible:outline-ring";
 
-export function MorphGallery({ photos, label }: { photos: Photo[]; label: string }) {
+// The parent can call show() (e.g. when a colour is picked) and hears back through
+// onActiveChange, so every change of photo goes through the same dissolve.
+export function MorphGallery({ photos, label, onActiveChange, ref }: Props) {
   const [active, setActive] = useState(0);
+  const [previous, setPrevious] = useState<number | null>(null);
   const [morphing, setMorphing] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // undefined: not set up yet; null: WebGL unavailable, so photos cross-fade instead.
@@ -38,8 +48,12 @@ export function MorphGallery({ photos, label }: { photos: Photo[]; label: string
       setMorphing(true);
       renderer.current.play(active, next, requested > active ? 1 : -1).then(() => setMorphing(false));
     }
+    setPrevious(active);
     setActive(next);
+    onActiveChange(next);
   };
+
+  useImperativeHandle(ref, () => ({ show, prepare: prepareMorph }));
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === "ArrowLeft") show(active - 1);
@@ -78,16 +92,20 @@ export function MorphGallery({ photos, label }: { photos: Photo[]; label: string
             fill
             preload={index === 0}
             sizes="(min-width: 1024px) 58vw, 100vw"
+            // The outgoing photo stays opaque underneath while the new one fades in on
+            // top, so the fallback fade never dips through to the background.
             className={cn(
-              "object-cover transition-opacity duration-300 motion-reduce:transition-none",
-              index === active ? "opacity-100" : "opacity-0",
+              "object-cover",
+              index === active && "z-[1] opacity-100 transition-opacity duration-300 motion-reduce:transition-none",
+              index === previous && "opacity-100",
+              index !== active && index !== previous && "opacity-0",
             )}
           />
         ))}
         <canvas
           ref={canvasRef}
           aria-hidden="true"
-          className={cn("pointer-events-none absolute inset-0 size-full", !morphing && "invisible")}
+          className={cn("pointer-events-none absolute inset-0 z-[2] size-full", !morphing && "invisible")}
         />
         {photos.length > 1 && (
           <>
@@ -97,7 +115,7 @@ export function MorphGallery({ photos, label }: { photos: Photo[]; label: string
             <button type="button" aria-label="Next photo" className={cn(arrowStyle, "right-3")} onClick={() => show(active + 1)}>
               <ChevronRightIcon className="size-5" />
             </button>
-            <p className="absolute right-3 bottom-3 rounded-full bg-card/90 px-2.5 py-1 text-sm text-card-foreground tabular-nums">
+            <p className="absolute right-3 bottom-3 z-10 rounded-full bg-card/90 px-2.5 py-1 text-sm text-card-foreground tabular-nums">
               {active + 1} / {photos.length}
             </p>
           </>

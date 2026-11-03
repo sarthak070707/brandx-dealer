@@ -79,7 +79,7 @@ export async function getModelSlugs() {
   return db.model.findMany({ select: { slug: true } });
 }
 
-const coloursSchema = z.array(z.object({ name: z.string(), hex: z.string() }));
+const coloursSchema = z.array(z.object({ name: z.string(), hex: z.string(), photo: z.string() }));
 const specsSchema = z.record(z.string(), z.union([z.string(), z.number()]));
 
 export type CarPageData = NonNullable<Awaited<ReturnType<typeof getCarPage>>>;

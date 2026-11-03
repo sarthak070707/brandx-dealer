@@ -8,7 +8,7 @@ function UsedCarsCard({ count }: { count: number }) {
   return (
     <Link href="/used-cars" className={cn(cardStyle, "relative min-h-96 justify-end border-transparent text-white")}>
       <Image
-        src="/cars/certified-used.webp"
+        src="/cars/model-s-red.webp"
         alt=""
         fill
         sizes="(min-width: 1024px) 33vw, 100vw"
