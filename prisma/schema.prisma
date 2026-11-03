@@ -141,7 +141,7 @@ model Model {
   name              String
   bodyType          BodyType
   description       String
-  heroImage         String?
+  photos            String[]           @default([])
   variants          Variant[]
   accessoryPackages AccessoryPackage[]
   usedCars          UsedCar[]

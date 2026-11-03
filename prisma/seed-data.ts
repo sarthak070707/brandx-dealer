@@ -35,6 +35,7 @@ type ModelSeed = {
   name: string;
   bodyType: BodyType;
   description: string;
+  photos: string[];
   colours: { name: string; hex: string }[];
   accessories: { name: string; rupees: number; items: string[] };
   variants: VariantSeed[];
@@ -44,6 +45,7 @@ type ModelSeed = {
 export const MODELS: ModelSeed[] = [
   {
     slug: "model-h",
+    photos: ["/cars/model-h-1.webp", "/cars/model-h-2.webp"],
     name: "Model H",
     bodyType: "SUV",
     description: "A mid-size SUV with a quiet cabin, high seating and room for five.",
@@ -89,6 +91,7 @@ export const MODELS: ModelSeed[] = [
   },
   {
     slug: "model-c",
+    photos: ["/cars/model-c-1.webp", "/cars/model-c-2.webp"],
     name: "Model C",
     bodyType: "SEDAN",
     description: "A long-wheelbase sedan built for highway comfort and a large boot.",
@@ -126,6 +129,7 @@ export const MODELS: ModelSeed[] = [
   },
   {
     slug: "model-s",
+    photos: ["/cars/model-s-1.webp", "/cars/model-s-2.webp"],
     name: "Model S",
     bodyType: "HATCHBACK",
     description: "A compact hatchback that is easy to park and cheap to run in the city.",
@@ -171,6 +175,7 @@ export const MODELS: ModelSeed[] = [
   },
   {
     slug: "model-v",
+    photos: ["/cars/model-v-1.webp", "/cars/model-v-2.webp"],
     name: "Model V",
     bodyType: "MPV",
     description: "A seven-seat MPV with three usable rows and sliding second-row seats.",

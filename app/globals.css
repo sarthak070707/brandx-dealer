@@ -90,6 +90,16 @@
   --spacing-section: 6rem;
 }
 
+@theme {
+  --animate-marquee: marquee 50s linear infinite;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-100%);
+    }
+  }
+}
+
 @layer base {
   * {
     border-color: var(--color-border);

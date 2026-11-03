@@ -121,6 +121,7 @@ async function seedCatalogue(cityIds: Record<CityName, string>) {
         name: model.name,
         bodyType: model.bodyType,
         description: model.description,
+        photos: model.photos,
         accessoryPackages: {
           create: {
             name: model.accessories.name,

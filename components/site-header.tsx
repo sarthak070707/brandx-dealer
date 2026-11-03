@@ -11,8 +11,8 @@ const linkStyle =
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b bg-card">
-      <div className="mx-auto flex max-w-7xl items-center gap-8 py-2 pr-2 pl-4 sm:px-8 md:py-3.5">
-        <BrandMark />
+   <div className="flex items-center gap-8 py-2 pr-2 pl-4 sm:px-8 md:py-3.5 lg:px-12">       
+     <BrandMark />
 
         <nav aria-label="Main" className="hidden flex-1 md:block">
           <ul className="flex gap-7">
