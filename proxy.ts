@@ -9,7 +9,7 @@ export default auth((request) => {
 
   if (role) return NextResponse.redirect(new URL("/", request.nextUrl));
 
-  const signIn = new URL("/api/auth/signin", request.nextUrl);
+  const signIn = new URL("/sign-in", request.nextUrl);
   signIn.searchParams.set("callbackUrl", request.nextUrl.pathname);
   return NextResponse.redirect(signIn);
 });

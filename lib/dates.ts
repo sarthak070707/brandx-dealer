@@ -23,3 +23,25 @@ const dayMonthYear = new Intl.DateTimeFormat("en-IN", {
 export function formatDate(date: Date) {
   return dayMonthYear.format(date);
 }
+
+const slotTime = new Intl.DateTimeFormat("en-IN", { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" });
+const slotDay = new Intl.DateTimeFormat("en-IN", {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  timeZone: "Asia/Kolkata",
+});
+
+// Test-drive times are stored in UTC and always shown in IST.
+export function formatSlotTime(instant: Date) {
+  return slotTime.format(instant);
+}
+
+export function formatSlot(instant: Date) {
+  return `${slotDay.format(instant)}, ${slotTime.format(instant)}`;
+}
+
+// The instant an IST calendar day began, for "created today" style filters.
+export function startOfIstDay(now: Date) {
+  return new Date(indiaToday(now).getTime() - IST_OFFSET_MS);
+}

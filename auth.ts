@@ -20,8 +20,9 @@ async function verifyCredentials(input: unknown) {
   return passwordMatches ? { id: user.id, name: user.name, email: user.email, role: user.role } : null;
 }
 
-export const { handlers, auth } = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
+  pages: { signIn: "/sign-in" },
   providers: [
     Credentials({
       credentials: { email: { type: "email" }, password: { type: "password" } },

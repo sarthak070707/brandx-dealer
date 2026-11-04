@@ -97,10 +97,10 @@ export async function getCarPage(slug: string) {
   });
   if (!model) return null;
 
-  const [cities, roadTaxRules, showroom] = await Promise.all([
+  const [cities, roadTaxRules, showrooms] = await Promise.all([
     db.city.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
     db.roadTaxRule.findMany(),
-    db.showroom.findFirst({ select: { cityId: true } }),
+    db.showroom.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, cityId: true } }),
   ]);
   const today = indiaToday(new Date());
   const tables: PriceTables = {
@@ -146,7 +146,8 @@ export async function getCarPage(slug: string) {
     photos: model.photos,
     variants,
     cities,
-    defaultCityId: showroom?.cityId ?? cities[0].id,
+    showrooms: showrooms.map(({ id, name }) => ({ id, name })),
+    defaultCityId: showrooms[0]?.cityId ?? cities[0].id,
     accessoryPackage: accessoryPackage
       ? { name: accessoryPackage.name, pricePaise: accessoryPackage.pricePaise, items: accessoryPackage.items }
       : null,

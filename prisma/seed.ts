@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import type { LeadStatus } from "../generated/prisma/enums";
 import { db } from "../lib/db";
+import { acknowledgement } from "../lib/leads/acknowledgement";
 import {
   ADMIN,
   CITIES,
@@ -262,15 +263,6 @@ function statusEvents(lead: LeadSeed, firstContactAt: Date | null, actorId: stri
   }));
 }
 
-function acknowledgement(lead: LeadSeed, carLabel: string, consultantName: string | undefined) {
-  if (lead.language === "HI") {
-    const who = consultantName ?? "हमारी टीम";
-    return `नमस्ते ${lead.buyerName}, ${carLabel} में रुचि के लिए धन्यवाद। Brand X ${lead.showroom} से ${who} जल्द ही आपको कॉल करेंगे।`;
-  }
-  const who = consultantName ?? "Our team";
-  return `Hi ${lead.buyerName}, thanks for your interest in the ${carLabel}. ${who} at Brand X ${lead.showroom} will call you shortly.`;
-}
-
 async function main() {
   await clearDatabase();
   const { cityIds, showroomIds } = await seedPlaces();
@@ -320,7 +312,13 @@ async function main() {
           ],
         },
         outbox: {
-          create: { channel: "WHATSAPP", body: acknowledgement(lead, car.label, consultant?.name), createdAt },
+          create: { channel: "WHATSAPP", body: acknowledgement({
+              language: lead.language,
+              buyerName: lead.buyerName,
+              carLabel: car.label,
+              showroomName: lead.showroom,
+              consultantName: consultant?.name ?? null,
+            }), createdAt },
         },
       },
     });

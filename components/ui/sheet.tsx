@@ -28,7 +28,7 @@ export function SheetContent({
         {children}
         <SheetPrimitive.Close className="absolute top-4 right-4 rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring">
           <XIcon className="size-5" />
-          <span className="sr-only">Close menu</span>
+          <span className="sr-only">Close</span>
         </SheetPrimitive.Close>
       </SheetPrimitive.Content>
     </SheetPrimitive.Portal>

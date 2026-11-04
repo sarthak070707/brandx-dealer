@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { EnquirySheet } from "@/components/enquiry/enquiry-sheet";
 import { TEST_DRIVE_HREF } from "@/components/site-links";
 import { Button } from "@/components/ui/button";
+import { NativeSelect } from "@/components/ui/native-select";
 import type { CarPageData, CarVariant } from "@/lib/catalogue";
 import { formatDate } from "@/lib/dates";
 import { FUEL_LABEL, TRANSMISSION_LABEL } from "@/lib/labels";
@@ -44,17 +46,13 @@ export function PriceCard({ car, variant, cityId, onCityChange, withAccessories,
 
       <label className="flex flex-col gap-2">
         <span className="text-sm text-muted-foreground">City</span>
-        <select
-          value={cityId}
-          onChange={(event) => onCityChange(event.target.value)}
-          className="h-11 rounded-lg border bg-background px-3 focus-visible:outline-2 focus-visible:outline-ring"
-        >
+        <NativeSelect value={cityId} onChange={(event) => onCityChange(event.target.value)}>
           {car.cities.map((city) => (
             <option key={city.id} value={city.id}>
               {city.name}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </label>
 
       {quote.available ? (
@@ -103,9 +101,17 @@ export function PriceCard({ car, variant, cityId, onCityChange, withAccessories,
         </p>
       )}
 
-      <Button asChild size="lg">
-        <Link href={`${TEST_DRIVE_HREF}?model=${car.slug}`}>Book a test drive</Link>
-      </Button>
+      <div className="flex flex-col gap-3">
+        <Button asChild size="lg">
+          <Link href={`${TEST_DRIVE_HREF}?model=${car.slug}`}>Book a test drive</Link>
+        </Button>
+        <EnquirySheet
+          target={{ type: "model", modelSlug: car.slug, variantId: variant.id, cityId, showrooms: car.showrooms }}
+          carLabel={`${car.name} ${variant.name}`}
+          label="Enquire"
+          size="lg"
+        />
+      </div>
     </section>
   );
 }

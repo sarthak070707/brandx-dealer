@@ -4,5 +4,5 @@ export const NAV_LINKS = [
   { href: "/#showrooms", label: "Showrooms" },
 ];
 
-export const SIGN_IN_HREF = "/api/auth/signin";
+export const SIGN_IN_HREF = "/sign-in";
 export const TEST_DRIVE_HREF = "/test-drive";

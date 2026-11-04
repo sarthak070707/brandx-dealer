@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatClock, formatDate, indiaToday } from "./dates";
+import { formatClock, formatDate, formatSlot, formatSlotTime, indiaToday } from "./dates";
 
 describe("indiaToday", () => {
   it("returns the IST calendar date at midnight UTC", () => {
@@ -23,5 +23,13 @@ describe("formatClock", () => {
 describe("formatDate", () => {
   it("formats a validity date as DD MMM YYYY", () => {
     expect(formatDate(new Date("2027-01-31T00:00:00Z"))).toBe("31 Jan 2027");
+  });
+});
+
+describe("formatSlot", () => {
+  it("shows a UTC instant in IST", () => {
+    const slot = new Date("2026-11-04T05:30:00Z");
+    expect(formatSlotTime(slot)).toBe("11:00 am");
+    expect(formatSlot(slot)).toBe("Wed, 4 Nov, 11:00 am");
   });
 });

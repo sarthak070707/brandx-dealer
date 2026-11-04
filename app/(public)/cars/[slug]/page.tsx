@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { DetailSkeleton } from "@/components/detail-skeleton";
 import { CarConfigurator } from "@/components/car/car-configurator";
 import { getCarPage, getModelSlugs } from "@/lib/catalogue";
 
@@ -17,12 +19,12 @@ export async function generateMetadata({ params }: PageProps<"/cars/[slug]">): P
   };
 }
 
-export default async function CarPage({ params }: PageProps<"/cars/[slug]">) {
+async function CarDetail({ params }: { params: PageProps<"/cars/[slug]">["params"] }) {
   const car = await getCarPage((await params).slug);
   if (!car || car.variants.length === 0) notFound();
 
   return (
-    <main className="px-4 pt-6 sm:px-8 lg:px-12 lg:pb-section">
+    <>
       <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
         <Link href="/cars" className="underline-offset-4 hover:underline">
           New cars
@@ -33,6 +35,18 @@ export default async function CarPage({ params }: PageProps<"/cars/[slug]">) {
         </span>
       </nav>
       <CarConfigurator car={car} />
+    </>
+  );
+}
+
+// The model slug comes from the URL, so the page streams in behind a placeholder and
+// navigation to it stays instant.
+export default function CarPage({ params }: PageProps<"/cars/[slug]">) {
+  return (
+    <main className="px-4 pt-6 sm:px-8 lg:px-12 lg:pb-section">
+      <Suspense fallback={<DetailSkeleton />}>
+        <CarDetail params={params} />
+      </Suspense>
     </main>
   );
 }
