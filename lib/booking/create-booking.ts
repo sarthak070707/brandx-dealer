@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { Prisma } from "@/generated/prisma/client";
 import { auth } from "@/auth";
 import { bookingSchema, type BookingInput } from "@/lib/booking/schema";
 import { isBookableSlot, slotsForDay, bookingDays } from "@/lib/booking/slots";
 import { db } from "@/lib/db";
+import { isUniqueViolation } from "@/lib/db-errors";
 import { createLead } from "@/lib/leads/create-lead";
 import { isRateLimited, RATE_LIMITED_MESSAGE } from "@/lib/leads/rate-limit";
 
@@ -12,9 +12,6 @@ const NEXT_FREE_SLOT_COUNT = 3;
 export type BookingResult =
   | { ok: true; cancelToken: string }
   | { ok: false; error: string; fieldErrors?: Record<string, string[]>; nextFreeSlots?: string[] };
-
-const isUniqueViolation = (error: unknown) =>
-  error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002";
 
 async function nextFreeSlots(demoCarId: string, hours: { openMinute: number; closeMinute: number }, after: Date) {
   const now = new Date();
