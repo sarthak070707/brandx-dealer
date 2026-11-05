@@ -16,7 +16,7 @@ export function SidebarContent({ staff }: { staff: CurrentStaff }) {
         <BrandMark />
       </div>
       <div className="flex-1 px-3">
-        <StaffNav />
+        <StaffNav isAdmin={staff.role === "ADMIN"} />
       </div>
       <div className="flex flex-col gap-3 border-t p-4">
         <div>

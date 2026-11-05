@@ -1,19 +1,21 @@
 "use client";
 
-import { InboxIcon } from "lucide-react";
+import { InboxIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-const LINKS = [{ href: "/consultant", label: "Lead inbox", icon: InboxIcon }];
+const INBOX = { href: "/consultant", label: "Lead inbox", icon: InboxIcon };
+const ADMIN = { href: "/admin", label: "Admin", icon: SettingsIcon };
 
-export function StaffNav() {
+export function StaffNav({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
+  const links = isAdmin ? [INBOX, ADMIN] : [INBOX];
 
   return (
     <nav aria-label="Staff">
       <ul className="flex flex-col gap-1">
-        {LINKS.map(({ href, label, icon: Icon }) => {
+        {links.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
             <li key={href}>

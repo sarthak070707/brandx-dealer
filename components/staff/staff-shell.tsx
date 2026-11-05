@@ -2,12 +2,12 @@ import type { ReactNode } from "react";
 import { BrandMark } from "@/components/brand-mark";
 import { SidebarContent } from "@/components/staff/sidebar-content";
 import { StaffMobileMenu } from "@/components/staff/staff-mobile-menu";
-import { requireStaff } from "@/lib/auth/staff";
+import { requireAdmin, requireStaff } from "@/lib/auth/staff";
 
 // Sidebar on desktop, a top bar with a menu on phones. Signing in is checked here and again
 // by every page and query, so no staff screen ever depends on this layout alone.
-export async function StaffShell({ children }: { children: ReactNode }) {
-  const staff = await requireStaff();
+export async function StaffShell({ children, adminOnly = false }: { children: ReactNode; adminOnly?: boolean }) {
+  const staff = adminOnly ? await requireAdmin() : await requireStaff();
 
   return (
     <div className="flex min-h-screen">
