@@ -5,7 +5,7 @@ import { enquirySchema, type EnquiryInput } from "@/lib/leads/enquiry-schema";
 import { isRateLimited, RATE_LIMITED_MESSAGE } from "@/lib/leads/rate-limit";
 
 export type EnquiryResult =
-  | { ok: true; consultantName: string | null; showroomName: string }
+  | { ok: true; consultantName: string | null; showroomName: string; acknowledged: boolean }
   | { ok: false; error: string; fieldErrors?: Record<string, string[]> };
 
 const NOT_FOUND = { ok: false, error: "We couldn't find that car. Please refresh the page and try again." } as const;
@@ -61,8 +61,8 @@ export async function createEnquiry(input: EnquiryInput): Promise<EnquiryResult>
   if (await isRateLimited(buyerPhone)) return { ok: false, error: RATE_LIMITED_MESSAGE };
 
   const { carLabel, ...car } = resolved;
-  const { consultantName, showroomName } = await db.$transaction((tx) =>
+  const { consultantName, showroomName, acknowledged } = await db.$transaction((tx) =>
     createLead(tx, { source: "ENQUIRY", buyerName, buyerPhone, language, message: message ?? undefined, carLabel, ...car }),
   );
-  return { ok: true, consultantName, showroomName };
+  return { ok: true, consultantName, showroomName, acknowledged };
 }

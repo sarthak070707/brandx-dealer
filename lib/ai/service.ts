@@ -5,6 +5,8 @@ import { loadAssistContext } from "@/lib/ai/context";
 import { generateAssist } from "@/lib/ai/generate";
 import { completeWithGroq } from "@/lib/ai/groq";
 import { toDraftView, type AiDraftView } from "@/lib/ai/view";
+import { optOutNotice } from "@/lib/leads/acknowledgement";
+import { optOutLink } from "@/lib/privacy/opt-out-link";
 import { z } from "zod";
 
 export type AssistOutcome = { ok: true; draft: AiDraftView } | { ok: false; error: string };
@@ -50,7 +52,7 @@ export async function sendReply(staff: StaffUser, draftId: string, text: string)
 
   const draft = await db.aiDraft.findFirst({
     where: { id: draftId, lead: { is: leadScope(staff) } },
-    select: { leadId: true, sentAt: true, lead: { select: { optedOutAt: true } } },
+    select: { leadId: true, sentAt: true, lead: { select: { optedOutAt: true, language: true } } },
   });
   if (!draft) return NOT_AVAILABLE;
   if (draft.sentAt) return { ok: false, error: "This reply has already been sent." };
@@ -63,7 +65,9 @@ export async function sendReply(staff: StaffUser, draftId: string, text: string)
       data: { finalSentText: parsedText.data, sentAt: new Date() },
     });
     if (updated.count === 0) return false;
-    await tx.outboxMessage.create({ data: { leadId: draft.leadId, channel: "WHATSAPP", body: parsedText.data } });
+    // The consultant edits the reply; the way to stop messages is added to what goes out.
+    const body = `${parsedText.data}\n\n${optOutNotice(draft.lead.language, optOutLink(draft.leadId))}`;
+    await tx.outboxMessage.create({ data: { leadId: draft.leadId, channel: "WHATSAPP", body } });
     await tx.leadEvent.create({
       data: { leadId: draft.leadId, type: "MESSAGE", actorId: staff.id, details: { channel: "WHATSAPP", simulated: true, kind: "reply" } },
     });

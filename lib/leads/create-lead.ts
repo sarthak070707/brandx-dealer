@@ -2,6 +2,7 @@ import type { Language, LeadSource } from "@/generated/prisma/enums";
 import type { Prisma } from "@/generated/prisma/client";
 import { acknowledgement } from "@/lib/leads/acknowledgement";
 import { pickConsultant } from "@/lib/leads/assign";
+import { optOutLink } from "@/lib/privacy/opt-out-link";
 import { OPEN_STATUSES } from "@/lib/leads/status";
 
 type NewLead = {
@@ -19,10 +20,10 @@ type NewLead = {
 };
 
 // Runs inside the caller's transaction, so a lead is never saved without its assignment,
-// history and acknowledgement.
+// history and acknowledgement. A buyer who opted out earlier stays opted out: no message is sent.
 export async function createLead(tx: Prisma.TransactionClient, lead: NewLead) {
   const now = new Date();
-  const [candidates, showroom] = await Promise.all([
+  const [candidates, showroom, earlierOptOuts] = await Promise.all([
     tx.user.findMany({
       where: {
         role: "CONSULTANT",
@@ -38,7 +39,9 @@ export async function createLead(tx: Prisma.TransactionClient, lead: NewLead) {
       },
     }),
     tx.showroom.findUniqueOrThrow({ where: { id: lead.showroomId }, select: { name: true } }),
+    tx.lead.count({ where: { buyerPhone: lead.buyerPhone, optedOutAt: { not: null } } }),
   ]);
+  const optedOut = earlierOptOuts > 0;
 
   const consultantId = pickConsultant(
     candidates.map((candidate) => ({
@@ -50,37 +53,42 @@ export async function createLead(tx: Prisma.TransactionClient, lead: NewLead) {
   const consultant = candidates.find((candidate) => candidate.id === consultantId) ?? null;
   const { carLabel, ...fields } = lead;
 
+  const assigned = {
+    type: "ASSIGNED" as const,
+    details: consultantId ? { reason: "auto", toUserId: consultantId } : { reason: "no-eligible-consultant", toUserId: null },
+  };
   const created = await tx.lead.create({
     data: {
       ...fields,
       assignedToId: consultantId,
       consentAt: now,
+      optedOutAt: optedOut ? now : null,
       events: {
-        create: [
-          {
-            type: "ASSIGNED",
-            details: consultantId
-              ? { reason: "auto", toUserId: consultantId }
-              : { reason: "no-eligible-consultant", toUserId: null },
-          },
-          { type: "MESSAGE", details: { channel: "WHATSAPP", simulated: true } },
-        ],
-      },
-      outbox: {
-        create: {
-          channel: "WHATSAPP",
-          body: acknowledgement({
-            language: lead.language,
-            buyerName: lead.buyerName,
-            carLabel,
-            showroomName: showroom.name,
-            consultantName: consultant?.name ?? null,
-          }),
-        },
+        create: optedOut
+          ? [assigned, { type: "NOTE", details: { note: "This buyer opted out of messages earlier, so no acknowledgement was sent" } }]
+          : [assigned],
       },
     },
   });
 
+  if (!optedOut) {
+    await tx.outboxMessage.create({
+      data: {
+        leadId: created.id,
+        channel: "WHATSAPP",
+        body: acknowledgement({
+          language: lead.language,
+          buyerName: lead.buyerName,
+          carLabel,
+          showroomName: showroom.name,
+          consultantName: consultant?.name ?? null,
+          optOutUrl: optOutLink(created.id),
+        }),
+      },
+    });
+    await tx.leadEvent.create({ data: { leadId: created.id, type: "MESSAGE", details: { channel: "WHATSAPP", simulated: true } } });
+  }
+
   if (consultantId) await tx.user.update({ where: { id: consultantId }, data: { lastAssignedAt: now } });
-  return { lead: created, consultantName: consultant?.name ?? null, showroomName: showroom.name };
+  return { lead: created, consultantName: consultant?.name ?? null, showroomName: showroom.name, acknowledged: !optedOut };
 }
