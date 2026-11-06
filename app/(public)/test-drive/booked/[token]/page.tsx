@@ -27,7 +27,7 @@ async function Confirmation({ params }: { params: PageProps<"/test-drive/booked/
         <p className="text-lg text-muted-foreground">
           {cancelled
             ? "The slot is free again. You can book another time whenever suits you."
-            : `${consultant ?? `Our team at ${showroom.name}`} will call you to confirm. We've also sent the details on WhatsApp (simulated).`}
+            : `${consultant ?? `Our team at ${showroom.name}`} will call you to confirm.${booking.lead.optedOutAt ? "" : " We've also sent the details on WhatsApp (simulated)."}`}
         </p>
       </div>
 

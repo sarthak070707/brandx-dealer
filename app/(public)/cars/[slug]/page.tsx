@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { DetailSkeleton } from "@/components/detail-skeleton";
 import { CarConfigurator } from "@/components/car/car-configurator";
+import { DetailSkeleton } from "@/components/detail-skeleton";
+import { JsonLd } from "@/components/json-ld";
 import { getCarPage, getModelSlugs } from "@/lib/catalogue";
+import { carJsonLd } from "@/lib/seo";
+import { siteUrl } from "@/lib/site";
 
 export async function generateStaticParams() {
   return getModelSlugs();
@@ -23,8 +26,11 @@ async function CarDetail({ params }: { params: PageProps<"/cars/[slug]">["params
   const car = await getCarPage((await params).slug);
   if (!car || car.variants.length === 0) notFound();
 
+  const lowestPaise = car.variants[0]?.exShowroomPaise ?? null;
+
   return (
     <>
+      <JsonLd data={carJsonLd({ name: car.name, description: car.description, photos: car.photos, lowestPaise, variantCount: car.variants.length }, siteUrl())} />
       <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
         <Link href="/cars" className="underline-offset-4 hover:underline">
           New cars

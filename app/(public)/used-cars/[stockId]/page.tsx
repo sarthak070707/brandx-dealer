@@ -5,11 +5,14 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { DetailSkeleton } from "@/components/detail-skeleton";
 import { EnquirySheet } from "@/components/enquiry/enquiry-sheet";
+import { JsonLd } from "@/components/json-ld";
 import { InspectionReport } from "@/components/used/inspection-report";
 import { ownersLabel } from "@/components/used/used-car-card";
 import { formatClock } from "@/lib/dates";
 import { FUEL_LABEL, TRANSMISSION_LABEL } from "@/lib/labels";
 import { formatRupees } from "@/lib/money";
+import { usedCarJsonLd } from "@/lib/seo";
+import { siteUrl } from "@/lib/site";
 import { getUsedCar, getUsedCarStockIds } from "@/lib/used-cars/queries";
 
 const kmFormat = new Intl.NumberFormat("en-IN");
@@ -46,8 +49,22 @@ async function UsedCarDetail({ params }: { params: PageProps<"/used-cars/[stockI
     { label: "Registration", value: car.registration },
   ];
 
+  const structuredData = usedCarJsonLd(
+    {
+      name: `${car.modelName} ${car.variantName}`,
+      year: car.year,
+      km: car.km,
+      fuel: FUEL_LABEL[car.fuel],
+      pricePaise: car.pricePaise,
+      status: car.status,
+      photo: car.photos[0] ?? null,
+    },
+    siteUrl(),
+  );
+
   return (
     <>
+      <JsonLd data={structuredData} />
       <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
         <Link href="/used-cars" className="underline-offset-4 hover:underline">
           Certified used

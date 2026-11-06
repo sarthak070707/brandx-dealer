@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Anek_Devanagari } from "next/font/google";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
 // One family for both scripts, so Hindi pages look like the same brand. The width axis
@@ -15,6 +16,7 @@ const anek = Anek_Devanagari({
 const THEME_SCRIPT = `try{var t=localStorage.getItem("theme");document.documentElement.classList.toggle("dark",t?t==="dark":matchMedia("(prefers-color-scheme: dark)").matches)}catch(e){}`;
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl()),
   title: "Brand X Lucknow",
   description: "New and certified used Brand X cars in Lucknow, with on-road prices and test drives.",
 };

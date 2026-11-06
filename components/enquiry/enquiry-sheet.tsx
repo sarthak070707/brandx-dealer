@@ -67,8 +67,8 @@ export function EnquirySheet({ target, carLabel, label, variant = "outline", siz
           <div className="flex flex-col gap-4">
             <p className="text-lg">Thank you, {details.buyerName}.</p>
             <p className="text-muted-foreground">
-              {result.consultantName ?? "Our team"} at Brand X {result.showroomName} will call you shortly. We have also sent
-              the details on WhatsApp (simulated).
+              {result.consultantName ?? "Our team"} at Brand X {result.showroomName} will call you shortly.
+              {result.acknowledged && " We have also sent the details on WhatsApp (simulated)."}
             </p>
             <SheetClose asChild>
               <Button className="self-start">Done</Button>

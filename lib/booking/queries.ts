@@ -61,7 +61,7 @@ export async function getBookingByToken(cancelToken: string) {
           variant: { select: { name: true, model: { select: { name: true } } } },
         },
       },
-      lead: { select: { assignedTo: { select: { name: true } } } },
+      lead: { select: { optedOutAt: true, assignedTo: { select: { name: true } } } },
     },
   });
 }
