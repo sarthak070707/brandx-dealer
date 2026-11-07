@@ -393,7 +393,9 @@
       "track-pack": "Track pack",
       "essentials-pack": "Essentials pack",
       "expedition-pack": "Expedition pack",
-      "family-pack": "Family pack"
+      "family-pack": "Family pack",
+      "protection-pack": "Protection pack",
+      "tech-pack": "Tech pack"
     },
     "items": {
       "seat-covers": "Seat covers",
@@ -414,7 +416,12 @@
       "underbody-protection": "Underbody protection",
       "rear-ladder": "Rear ladder",
       "roof-rails": "Roof rails",
-      "rear-sunshades": "Rear sunshades"
+      "rear-sunshades": "Rear sunshades",
+      "paint-protection-film": "Paint protection film",
+      "door-edge-guards": "Door edge guards",
+      "seat-protectors": "Seat protectors",
+      "wireless-charger": "Wireless charger",
+      "parking-sensors": "Parking sensors"
     },
     "inspection": {
       "engine-and-transmission": "Engine and transmission",

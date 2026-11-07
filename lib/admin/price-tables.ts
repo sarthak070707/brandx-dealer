@@ -43,7 +43,7 @@ export const PRICE_TABLES: Record<PriceTableId, PriceTableConfig> = {
   },
   accessories: {
     title: "Accessories",
-    description: "One optional package per model, which buyers can add to the on-road price.",
+    description: "Packs buyers can add to the on-road price. A model can have several, and buyers tick the ones they want. Two rows with the same pack name can't cover the same days.",
     keys: [{ name: "modelId", header: "Model" }],
     columns: [
       { name: "name", header: "Package name", kind: "text" },

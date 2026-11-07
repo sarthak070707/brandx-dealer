@@ -125,12 +125,12 @@ async function seedCatalogue(cityIds: Record<CityName, string>) {
         photos: model.colours.map((colour) => colour.photo),
         featured: model.featured,
         accessoryPackages: {
-          create: {
-            name: model.accessories.name,
-            pricePaise: paise(model.accessories.rupees),
-            items: model.accessories.items,
+          create: model.accessories.map((pack) => ({
+            name: pack.name,
+            pricePaise: paise(pack.rupees),
+            items: pack.items,
             ...CURRENT,
-          },
+          })),
         },
         variants: {
           create: model.variants.map((variant) => ({

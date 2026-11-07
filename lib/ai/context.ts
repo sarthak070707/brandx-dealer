@@ -1,6 +1,7 @@
 import { formatSlot } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { leadScope, type StaffUser } from "@/lib/leads/access";
+import { variantPriceFacts } from "@/lib/ai/price-facts";
 import { quoteVariant } from "@/lib/pricing/quote";
 import type { AiLeadFacts, DraftNames, PriceFact } from "@/lib/ai/types";
 
@@ -28,16 +29,7 @@ export async function loadAssistContext(staff: StaffUser, leadId: string) {
 
   const prices: PriceFact[] = [];
   if (lead.variant) {
-    const quote = await quoteVariant(lead.variant, lead.cityId);
-    if (quote.withoutAccessories.available) {
-      prices.push({ label: `on-road price in ${lead.city.name}, without accessories`, paise: quote.withoutAccessories.totalPaise });
-    }
-    if (quote.withAccessories.available && quote.withAccessories.accessories) {
-      prices.push({
-        label: `on-road price in ${lead.city.name}, with the ${quote.withAccessories.accessories.name}`,
-        paise: quote.withAccessories.totalPaise,
-      });
-    }
+    prices.push(...variantPriceFacts(await quoteVariant(lead.variant, lead.cityId), lead.city.name));
   }
   if (lead.usedCar) prices.push({ label: `listed price of ${lead.usedCar.stockId}`, paise: lead.usedCar.pricePaise });
 

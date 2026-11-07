@@ -37,7 +37,7 @@ type ModelSeed = {
   description: string;
   featured: boolean;
   colours: { name: string; hex: string; photo: string }[];
-  accessories: { name: string; rupees: number; items: string[] };
+  accessories: { name: string; rupees: number; items: string[] }[];
   variants: VariantSeed[];
 };
 
@@ -54,11 +54,14 @@ export const MODELS: ModelSeed[] = [
       { name: "Oxford White", hex: "#F2F1EC", photo: "/cars/model-h-1.webp" },
       { name: "Midnight Black", hex: "#1B1C1E", photo: "/cars/model-h-black.webp" },
     ],
-    accessories: {
-      name: "Urban pack",
-      rupees: 18_000,
-      items: ["Floor mats", "Mud flaps", "Body side moulding", "Dash camera"],
-    },
+    accessories: [
+      {
+        name: "Urban pack",
+        rupees: 18_000,
+        items: ["Floor mats", "Mud flaps", "Body side moulding", "Dash camera"],
+      },
+      { name: "Protection pack", rupees: 9_500, items: ["Paint protection film", "Door edge guards", "Seat protectors"] },
+    ],
     variants: [
       {
         code: "NEW-H-01",
@@ -99,11 +102,14 @@ export const MODELS: ModelSeed[] = [
       { name: "Pearl White", hex: "#F2F1EC", photo: "/cars/model-c-1.webp" },
       { name: "Deep Teal", hex: "#1F3A3D", photo: "/cars/model-c-teal.webp" },
     ],
-    accessories: {
-      name: "Comfort pack",
-      rupees: 15_000,
-      items: ["Seat covers", "Floor mats", "Sunshades", "Boot organiser"],
-    },
+    accessories: [
+      {
+        name: "Comfort pack",
+        rupees: 15_000,
+        items: ["Seat covers", "Floor mats", "Sunshades", "Boot organiser"],
+      },
+      { name: "Tech pack", rupees: 12_500, items: ["Wireless charger", "Dash camera", "Parking sensors"] },
+    ],
     variants: [
       {
         code: "NEW-C-01",
@@ -136,11 +142,13 @@ export const MODELS: ModelSeed[] = [
       { name: "Pure White", hex: "#F2F2EF", photo: "/cars/model-s-1.webp" },
       { name: "Tornado Red", hex: "#C8102E", photo: "/cars/model-s-red.webp" },
     ],
-    accessories: {
-      name: "Essentials pack",
-      rupees: 9_500,
-      items: ["Floor mats", "Mud flaps", "Steering cover"],
-    },
+    accessories: [
+      {
+        name: "Essentials pack",
+        rupees: 9_500,
+        items: ["Floor mats", "Mud flaps", "Steering cover"],
+      },
+    ],
     variants: [
       {
         code: "NEW-S-01",
@@ -181,11 +189,13 @@ export const MODELS: ModelSeed[] = [
       { name: "Graphite Grey", hex: "#4A4D52", photo: "/cars/model-v-1.webp" },
       { name: "Pearl White", hex: "#F2F1EC", photo: "/cars/model-v-white.webp" },
     ],
-    accessories: {
-      name: "Family pack",
-      rupees: 14_000,
-      items: ["Seat covers", "Floor mats", "Roof rails", "Rear sunshades"],
-    },
+    accessories: [
+      {
+        name: "Family pack",
+        rupees: 14_000,
+        items: ["Seat covers", "Floor mats", "Roof rails", "Rear sunshades"],
+      },
+    ],
     variants: [
       {
         code: "NEW-V-01",
@@ -217,11 +227,13 @@ export const MODELS: ModelSeed[] = [
       { name: "Gondwana Stone", hex: "#8A7D6B", photo: "/cars/model-t-1.webp" },
       { name: "Slate Blue", hex: "#4F6475", photo: "/cars/model-t-blue.webp" },
     ],
-    accessories: {
-      name: "Expedition pack",
-      rupees: 32_000,
-      items: ["Roof rack", "All-weather mats", "Underbody protection", "Rear ladder"],
-    },
+    accessories: [
+      {
+        name: "Expedition pack",
+        rupees: 32_000,
+        items: ["Roof rack", "All-weather mats", "Underbody protection", "Rear ladder"],
+      },
+    ],
     variants: [
       {
         code: "NEW-T-01",
@@ -253,11 +265,13 @@ export const MODELS: ModelSeed[] = [
       { name: "Mineral Grey", hex: "#6E7377", photo: "/cars/model-g-1.webp" },
       { name: "Marina Blue", hex: "#1F3FA0", photo: "/cars/model-g-blue.webp" },
     ],
-    accessories: {
-      name: "Grand touring pack",
-      rupees: 26_000,
-      items: ["Carbon mirror caps", "Floor mats", "Boot liner"],
-    },
+    accessories: [
+      {
+        name: "Grand touring pack",
+        rupees: 26_000,
+        items: ["Carbon mirror caps", "Floor mats", "Boot liner"],
+      },
+    ],
     variants: [
       {
         code: "NEW-G-01",
@@ -289,11 +303,13 @@ export const MODELS: ModelSeed[] = [
       { name: "Pearl White", hex: "#F2F1EC", photo: "/cars/model-m-1.webp" },
       { name: "Onyx Black", hex: "#16171A", photo: "/cars/model-m-black.webp" },
     ],
-    accessories: {
-      name: "Weekender pack",
-      rupees: 12_000,
-      items: ["Roof bars", "Seat covers", "Floor mats"],
-    },
+    accessories: [
+      {
+        name: "Weekender pack",
+        rupees: 12_000,
+        items: ["Roof bars", "Seat covers", "Floor mats"],
+      },
+    ],
     variants: [
       {
         code: "NEW-M-01",
@@ -325,11 +341,13 @@ export const MODELS: ModelSeed[] = [
       { name: "Oryx White", hex: "#EEEDEA", photo: "/cars/model-r-1.webp" },
       { name: "Indium Grey", hex: "#4B5563", photo: "/cars/model-r-grey.webp" },
     ],
-    accessories: {
-      name: "Track pack",
-      rupees: 21_000,
-      items: ["Sports floor mats", "Gear knob", "Boot organiser"],
-    },
+    accessories: [
+      {
+        name: "Track pack",
+        rupees: 21_000,
+        items: ["Sports floor mats", "Gear knob", "Boot organiser"],
+      },
+    ],
     variants: [
       {
         code: "NEW-R-01",

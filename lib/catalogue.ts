@@ -3,7 +3,7 @@ import { z } from "zod";
 import { indiaToday } from "@/lib/dates";
 import type { BodyType } from "@/generated/prisma/enums";
 import { db } from "@/lib/db";
-import { computeOnRoadPrice, validOn, type PriceTables } from "@/lib/pricing/on-road-price";
+import { computeOnRoadPrice, offeredPacks, roundToRupee, validOn, type PriceTables } from "@/lib/pricing/on-road-price";
 
 // Tag for everything on the car pages that comes from the admin tables.
 export const CATALOGUE_TAG = "catalogue";
@@ -90,8 +90,9 @@ const specsSchema = z.record(z.string(), z.union([z.string(), z.number()]));
 export type CarPageData = NonNullable<Awaited<ReturnType<typeof getCarPage>>>;
 export type CarVariant = CarPageData["variants"][number];
 
-// Every variant x city x accessories quote is computed here on the server, so the
-// page can switch between them instantly without exposing the price tables.
+// Every variant x city price (without accessories) is computed here on the server, so the
+// page can switch between them instantly without exposing the price tables. The page adds any
+// accessory packs the buyer ticks to that price.
 export async function getCarPage(slug: string) {
   "use cache";
   cacheTag(CATALOGUE_TAG);
@@ -118,16 +119,10 @@ export async function getCarPage(slug: string) {
 
   const quotesFor = (variant: { id: string; fuel: (typeof model.variants)[number]["fuel"] }) =>
     Object.fromEntries(
-      cities.map((city) => {
-        const request = { variant: { ...variant, modelId: model.id }, cityId: city.id, date: today };
-        return [
-          city.id,
-          {
-            withAccessories: computeOnRoadPrice(tables, { ...request, includeAccessories: true }),
-            withoutAccessories: computeOnRoadPrice(tables, { ...request, includeAccessories: false }),
-          },
-        ];
-      }),
+      cities.map((city) => [
+        city.id,
+        computeOnRoadPrice(tables, { variant: { ...variant, modelId: model.id }, cityId: city.id, date: today, packs: [] }),
+      ]),
     );
 
   const variants = model.variants
@@ -143,7 +138,13 @@ export async function getCarPage(slug: string) {
     }))
     .sort((a, b) => (a.exShowroomPaise ?? Infinity) - (b.exShowroomPaise ?? Infinity));
 
-  const accessoryPackage = validOn(model.accessoryPackages, today);
+  const accessoryPackages = offeredPacks(model.accessoryPackages, today).map((pack) => ({
+    id: pack.id,
+    name: pack.name,
+    paise: roundToRupee(pack.pricePaise),
+    items: pack.items,
+    validTo: pack.validTo,
+  }));
 
   return {
     slug: model.slug,
@@ -154,8 +155,6 @@ export async function getCarPage(slug: string) {
     cities,
     showrooms: showrooms.map(({ id, name }) => ({ id, name })),
     defaultCityId: showrooms[0]?.cityId ?? cities[0].id,
-    accessoryPackage: accessoryPackage
-      ? { name: accessoryPackage.name, pricePaise: accessoryPackage.pricePaise, items: accessoryPackage.items }
-      : null,
+    accessoryPackages,
   };
 }

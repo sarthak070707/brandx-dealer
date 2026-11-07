@@ -16,8 +16,8 @@ type Props = {
   variant: CarVariant;
   cityId: string;
   onCityChange: (cityId: string) => void;
-  withAccessories: boolean;
-  onAccessoriesChange: (included: boolean) => void;
+  selectedPackIds: string[];
+  onPackToggle: (id: string) => void;
   quote: OnRoadPrice;
   className?: string;
 };
@@ -31,7 +31,7 @@ function Line({ label, amountPaise }: { label: string; amountPaise: number }) {
   );
 }
 
-export function PriceCard({ car, variant, cityId, onCityChange, withAccessories, onAccessoriesChange, quote, className }: Props) {
+export function PriceCard({ car, variant, cityId, onCityChange, selectedPackIds, onPackToggle, quote, className }: Props) {
   const t = useTranslations("Price");
   const labels = useTranslations("Labels");
   const content = useTranslations("Content");
@@ -40,7 +40,6 @@ export function PriceCard({ car, variant, cityId, onCityChange, withAccessories,
 
   const cityName = (name: string) => localised(content, "cities", name, name);
   const selectedCity = cityName(car.cities.find((city) => city.id === cityId)?.name ?? "");
-  const pack = car.accessoryPackage;
 
   return (
     <section aria-labelledby="price-title" className={cn("flex flex-col gap-4 rounded-2xl border bg-card p-5", className)}>
@@ -75,9 +74,9 @@ export function PriceCard({ car, variant, cityId, onCityChange, withAccessories,
               <Line label={t("exShowroom")} amountPaise={quote.exShowroomPaise} />
               <Line label={t("roadTax", { rate: quote.roadTax.rateBasisPoints / 100 })} amountPaise={quote.roadTax.paise} />
               <Line label={t("insurance")} amountPaise={quote.insurancePaise} />
-              {quote.accessories && (
-                <Line label={localised(content, "packs", quote.accessories.name, quote.accessories.name)} amountPaise={quote.accessories.paise} />
-              )}
+              {quote.accessories.map((pack) => (
+                <Line key={pack.name} label={localised(content, "packs", pack.name, pack.name)} amountPaise={pack.paise} />
+              ))}
             </dl>
           </>
         ) : (
@@ -89,19 +88,23 @@ export function PriceCard({ car, variant, cityId, onCityChange, withAccessories,
           </div>
         )}
 
-        {pack && (
-          <label className="flex cursor-pointer gap-3">
-            <input
-              type="checkbox"
-              checked={withAccessories}
-              onChange={(event) => onAccessoriesChange(event.target.checked)}
-              className="mt-1 size-4 accent-foreground"
-            />
-            <span className="flex flex-col">
-              <span>{t("addAccessories", { name: localised(content, "packs", pack.name, pack.name), price: formatRupees(pack.pricePaise) })}</span>
-              <span className="text-sm text-muted-foreground">{pack.items.map((item) => localised(content, "items", item, item)).join(", ")}</span>
-            </span>
-          </label>
+        {car.accessoryPackages.length > 0 && (
+          <div className="flex flex-col gap-4">
+            {car.accessoryPackages.map((pack) => (
+              <label key={pack.id} className="flex cursor-pointer gap-3">
+                <input
+                  type="checkbox"
+                  checked={selectedPackIds.includes(pack.id)}
+                  onChange={() => onPackToggle(pack.id)}
+                  className="mt-1 size-4 accent-foreground"
+                />
+                <span className="flex flex-col">
+                  <span>{t("addAccessories", { name: localised(content, "packs", pack.name, pack.name), price: formatRupees(pack.paise) })}</span>
+                  <span className="text-sm text-muted-foreground">{pack.items.map((item) => localised(content, "items", item, item)).join(", ")}</span>
+                </span>
+              </label>
+            ))}
+          </div>
         )}
 
         {quote.available && <p className="text-sm text-muted-foreground">{t("valid", { date: formatDate(quote.validUntil, locale) })}</p>}

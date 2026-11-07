@@ -11,6 +11,8 @@ import { VariantPicker } from "@/components/car/variant-picker";
 import type { CarPageData } from "@/lib/catalogue";
 import { localised } from "@/lib/i18n/content";
 import { formatRupees } from "@/lib/money";
+import { withPacks } from "@/lib/pricing/on-road-price";
+import { toggleItem } from "@/lib/utils";
 
 // One grid in mobile reading order; on desktop the price card moves to a sticky right column.
 // The mobile price bar sticks to the viewport only while this grid is on screen, so it
@@ -22,7 +24,7 @@ export function CarConfigurator({ car }: { car: CarPageData }) {
   const [cityId, setCityId] = useState(car.defaultCityId);
   const [photoIndex, setPhotoIndex] = useState(0);
   const gallery = useRef<MorphGalleryHandle>(null);
-  const [withAccessories, setWithAccessories] = useState(false);
+  const [selectedPackIds, setSelectedPackIds] = useState<string[]>([]);
 
   const variant = car.variants.find((option) => option.id === variantId) ?? car.variants[0];
   // Each colour has its own photo, so the photo on show decides the colour (and vice versa).
@@ -31,7 +33,9 @@ export function CarConfigurator({ car }: { car: CarPageData }) {
     const shown = variant.colours.find((option) => option.photo === src);
     return { src, alt: shown ? t("photoAlt", { name: car.name, colour: localised(content, "colours", shown.name, shown.name) }) : car.name };
   });
-  const quote = variant.quotes[cityId][withAccessories ? "withAccessories" : "withoutAccessories"];
+  // The packs belong to the car, not the variant, so a buyer's ticks stay when they change variant or city.
+  const base = variant.quotes[cityId];
+  const quote = base.available ? withPacks(base, car.accessoryPackages.filter((pack) => selectedPackIds.includes(pack.id))) : base;
   const description = localised(content, "models", car.slug, car.description);
   const cityName = car.cities.find((city) => city.id === cityId)?.name ?? "";
   const prices = car.variants.flatMap((option) => (option.exShowroomPaise === null ? [] : [option.exShowroomPaise]));
@@ -61,8 +65,8 @@ export function CarConfigurator({ car }: { car: CarPageData }) {
         variant={variant}
         cityId={cityId}
         onCityChange={setCityId}
-        withAccessories={withAccessories}
-        onAccessoriesChange={setWithAccessories}
+        selectedPackIds={selectedPackIds}
+        onPackToggle={(id) => setSelectedPackIds(toggleItem(selectedPackIds, id))}
         quote={quote}
         className="lg:sticky lg:top-20 lg:col-start-2 lg:row-span-5 lg:row-start-1 lg:max-h-[calc(100dvh-6rem)] lg:self-start"
       />

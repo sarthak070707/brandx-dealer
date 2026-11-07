@@ -393,7 +393,9 @@
       "track-pack": "ट्रैक पैक",
       "essentials-pack": "एसेंशियल्स पैक",
       "expedition-pack": "एक्सपीडिशन पैक",
-      "family-pack": "फ़ैमिली पैक"
+      "family-pack": "फ़ैमिली पैक",
+      "protection-pack": "प्रोटेक्शन पैक",
+      "tech-pack": "टेक पैक"
     },
     "items": {
       "seat-covers": "सीट कवर",
@@ -414,7 +416,12 @@
       "underbody-protection": "अंडरबॉडी प्रोटेक्शन",
       "rear-ladder": "रियर लैडर",
       "roof-rails": "रूफ़ रेल",
-      "rear-sunshades": "रियर सनशेड"
+      "rear-sunshades": "रियर सनशेड",
+      "paint-protection-film": "पेंट प्रोटेक्शन फ़िल्म",
+      "door-edge-guards": "डोर एज गार्ड",
+      "seat-protectors": "सीट प्रोटेक्टर",
+      "wireless-charger": "वायरलेस चार्जर",
+      "parking-sensors": "पार्किंग सेंसर"
     },
     "inspection": {
       "engine-and-transmission": "इंजन और ट्रांसमिशन",

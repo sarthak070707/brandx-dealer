@@ -128,7 +128,9 @@ export async function savePriceRow(table: PriceTableId, input: unknown, resoluti
       if (id && !existing) return GONE;
       const modelId = existing?.modelId ?? rest.modelId;
 
-      const outcome = overlapOutcome({ validFrom, validTo }, await db.accessoryPackage.findMany({ where: { modelId } }), id, resolution);
+      // Different packs may run at the same time. Only rows of the same pack, matched by name, must not overlap.
+      const rivals = await db.accessoryPackage.findMany({ where: { modelId, name: { equals: name, mode: "insensitive" } } });
+      const outcome = overlapOutcome({ validFrom, validTo }, rivals, id, resolution);
       if (outcome && "refusal" in outcome) return outcome.refusal;
       const data = { name, pricePaise: price, items, validFrom, validTo };
       await db.$transaction([
