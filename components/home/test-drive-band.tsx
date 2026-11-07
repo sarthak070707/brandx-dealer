@@ -19,7 +19,7 @@ export async function TestDriveBand() {
     <section id="showrooms" aria-labelledby="test-drive-title" className="scroll-mt-20 px-4 pb-20 sm:px-8 lg:px-12 lg:pb-section">
       <div className="flex flex-wrap justify-between gap-12 rounded-3xl bg-inverse px-6 py-12 text-inverse-foreground [--ring:var(--inverse-foreground)] sm:p-16 dark:border dark:border-inverse-border">
         <div className="flex max-w-md flex-col items-start gap-5">
-          <h2 id="test-drive-title" className="text-4xl leading-tight font-light tracking-tight font-stretch-semi-condensed sm:text-5xl">
+          <h2 id="test-drive-title" className="text-4xl leading-tight font-display tracking-tight sm:text-5xl">
             {t("bandTitle")}
           </h2>
           <p className="text-lg leading-relaxed text-inverse-muted">{t("bandBody")}</p>

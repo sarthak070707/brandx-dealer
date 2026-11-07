@@ -29,7 +29,7 @@ export default function PriceTablesPage({ params }: PageProps<"/admin/prices/[ta
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-light tracking-tight font-stretch-semi-condensed">Price tables</h1>
+        <h1 className="text-3xl font-display tracking-tight">Price tables</h1>
         <p className="max-w-prose text-muted-foreground">
           These tables feed every on-road price. Saving a change updates the car pages straight away, with no code change.
         </p>

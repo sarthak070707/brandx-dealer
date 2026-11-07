@@ -28,7 +28,7 @@ export default async function StopMessagesPage({ params, searchParams }: PagePro
     <main className="px-4 py-12 sm:px-8 lg:px-12 lg:pb-section">
       <div className="flex max-w-md flex-col gap-8">
         <div className="flex flex-col gap-3">
-          <h1 className="text-5xl font-light tracking-tight font-stretch-semi-condensed sm:text-6xl">{t("title")}</h1>
+          <h1 className="text-5xl font-display tracking-tight sm:text-6xl">{t("title")}</h1>
           <p className="text-lg text-muted-foreground">{t("lead")}</p>
         </div>
         <Suspense fallback={<div aria-hidden="true" className="h-56 animate-pulse rounded-2xl bg-muted" />}>

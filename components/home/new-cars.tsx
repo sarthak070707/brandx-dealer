@@ -41,7 +41,7 @@ export async function NewCars() {
       className="scroll-mt-20 px-4 py-20 sm:px-8 lg:px-12 lg:py-section"
     >
       <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-        <h2 id="new-cars-title" className="text-4xl font-light tracking-tight font-stretch-semi-condensed sm:text-5xl">
+        <h2 id="new-cars-title" className="text-4xl font-display tracking-tight sm:text-5xl">
           {t("newCarsTitle")}
         </h2>
         <Link href="/cars" className="underline-offset-4 hover:underline">

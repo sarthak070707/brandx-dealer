@@ -37,7 +37,7 @@ async function Confirmation({ params }: { params: PageProps<"/[locale]/test-driv
   return (
     <div className="flex max-w-2xl flex-col gap-8">
       <div className="flex flex-col gap-3">
-        <h1 className="text-5xl font-light tracking-tight font-stretch-semi-condensed sm:text-6xl">
+        <h1 className="text-5xl font-display tracking-tight sm:text-6xl">
           {cancelled ? t("titleCancelled") : t("titleBooked")}
         </h1>
         <p className="text-lg text-muted-foreground">

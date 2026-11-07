@@ -44,7 +44,7 @@ async function LoadedLead({ params }: { params: PageProps<"/consultant/leads/[id
     <>
       <div className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl font-light tracking-tight font-stretch-semi-condensed">{lead.buyerName}</h1>
+          <h1 className="text-3xl font-display tracking-tight">{lead.buyerName}</h1>
           <StatusBadge status={lead.status} />
           <LiveResponseTimer status={lead.status} createdAt={lead.createdAt} firstContactAt={lead.firstContactAt} renderedAt={lead.renderedAt} />
           {!lead.assignedTo && <Badge variant="warning">Needs assignment</Badge>}

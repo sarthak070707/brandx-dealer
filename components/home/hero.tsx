@@ -41,7 +41,7 @@ export async function Hero() {
         <div className="flex max-w-xl flex-col gap-6 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-3 motion-safe:duration-700">
           <h1
             id="hero-title"
-            className="text-5xl leading-[1.02] font-light tracking-tight font-stretch-semi-condensed sm:text-6xl xl:text-7xl"
+            className="text-5xl leading-[1.02] font-display tracking-tight sm:text-6xl xl:text-7xl"
           >
             {t("heroTitle")}
           </h1>

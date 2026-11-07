@@ -47,7 +47,7 @@ export function CarConfigurator({ car }: { car: CarPageData }) {
       </div>
 
       <header className="flex flex-col gap-2 lg:col-start-1">
-        <h1 className="text-5xl leading-none font-light tracking-tight font-stretch-semi-condensed sm:text-6xl">{car.name}</h1>
+        <h1 className="text-5xl leading-none font-display tracking-tight sm:text-6xl">{car.name}</h1>
         <p className="text-lg text-muted-foreground">
           {prices.length > 0
             ? t("fromPriceVariants", { price: formatRupees(Math.min(...prices)), count: car.variants.length })

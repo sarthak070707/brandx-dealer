@@ -33,7 +33,7 @@ export default async function TestDrivePage({ params, searchParams }: PageProps<
   return (
     <main className="px-4 py-12 sm:px-8 lg:px-12 lg:pb-section">
       <div className="mb-10 flex max-w-2xl flex-col gap-3">
-        <h1 className="text-5xl font-light tracking-tight font-stretch-semi-condensed sm:text-6xl">{t("title")}</h1>
+        <h1 className="text-5xl font-display tracking-tight sm:text-6xl">{t("title")}</h1>
         <p className="text-lg text-muted-foreground">{t("lead")}</p>
       </div>
       <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-muted" />}>

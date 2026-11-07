@@ -18,7 +18,7 @@ export default async function PrivacyPage({ params }: PageProps<"/[locale]/priva
   return (
     <main className="px-4 py-12 sm:px-8 lg:px-12 lg:pb-section">
       <div className="mb-10 flex max-w-2xl flex-col gap-3">
-        <h1 className="text-5xl font-light tracking-tight font-stretch-semi-condensed sm:text-6xl">{t("title")}</h1>
+        <h1 className="text-5xl font-display tracking-tight sm:text-6xl">{t("title")}</h1>
         <p className="text-lg text-muted-foreground">{t("lead")}</p>
       </div>
       <div className="flex max-w-2xl flex-col gap-8">

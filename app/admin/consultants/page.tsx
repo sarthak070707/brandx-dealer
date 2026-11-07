@@ -15,7 +15,7 @@ export default function ConsultantsPage() {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-light tracking-tight font-stretch-semi-condensed">Consultants</h1>
+        <h1 className="text-3xl font-display tracking-tight">Consultants</h1>
         <p className="max-w-prose text-muted-foreground">
           New leads go to the active consultant at the lead&apos;s showroom who handles that model and has the fewest open leads.
           Deactivating someone stops new leads and sign-in at once; their history stays.

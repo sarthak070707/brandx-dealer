@@ -27,7 +27,7 @@ export default async function NewCarsPage({ params }: PageProps<"/[locale]/cars"
   return (
     <main className="px-4 py-12 sm:px-8 lg:px-12 lg:pb-section">
       <div className="mb-10 flex flex-col gap-3">
-        <h1 className="text-5xl font-light tracking-tight font-stretch-semi-condensed sm:text-6xl">{t("title")}</h1>
+        <h1 className="text-5xl font-display tracking-tight sm:text-6xl">{t("title")}</h1>
         <p className="text-lg text-muted-foreground">{t("lead", { count: lineup.length, cities: cityList })}</p>
       </div>
       <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

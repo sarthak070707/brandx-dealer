@@ -3,31 +3,32 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Brand X design tokens. One accent (primary) for calls to action only; status colours are for staff screens only. */
+/* Brand X design tokens. Buttons are ink on light and off-white on dark. The lavender accent marks focus and the
+   highlight band. Status colours are for staff screens only. Every text pair is checked in lib/theme/theme.test.ts. */
 :root {
-  --background: #f7f4ee;
-  --foreground: #171512;
+  --background: #f6f4f8;
+  --foreground: #111013;
   --card: #ffffff;
-  --card-foreground: #171512;
+  --card-foreground: #111013;
   --popover: #ffffff;
-  --popover-foreground: #171512;
-  --muted: #efeae1;
-  --muted-foreground: #6b655c;
-  --border: #e6e0d5;
-  --input: #e6e0d5;
-  --ring: #171512;
+  --popover-foreground: #111013;
+  --muted: #ece9f0;
+  --muted-foreground: #5e5966;
+  --border: #e0dce6;
+  --input: #e0dce6;
+  --ring: #6b52a8;
 
-  --primary: #c8431d;
-  --primary-hover: #a93516;
-  --primary-foreground: #ffffff;
+  --primary: #111013;
+  --primary-hover: #2e2b33;
+  --primary-foreground: #f6f4f8;
 
-  --inverse: #171512;
-  --inverse-foreground: #f7f4ee;
-  --inverse-muted: #b9b2a6;
-  --inverse-border: #4a453e;
+  --inverse: #ae96da;
+  --inverse-foreground: #17121f;
+  --inverse-muted: #3d3254;
+  --inverse-border: #8e77bd;
 
   --status-on-time: #2f6b4f;
-  --status-due: #9a6a12;
+  --status-due: #8a5d0e;
   --status-overdue: #9f1f3a;
   --destructive: #9f1f3a;
 
@@ -36,22 +37,21 @@
 }
 
 .dark {
-  --background: #141210;
-  --foreground: #f2eee6;
-  --card: #1e1b18;
-  --card-foreground: #f2eee6;
-  --popover: #1e1b18;
-  --popover-foreground: #f2eee6;
-  --muted: #2a2621;
-  --muted-foreground: #a39c90;
-  --border: #34302a;
-  --input: #34302a;
-  --ring: #f2eee6;
+  --background: #111013;
+  --foreground: #efecf2;
+  --card: #1b191f;
+  --card-foreground: #efecf2;
+  --popover: #1b191f;
+  --popover-foreground: #efecf2;
+  --muted: #26232b;
+  --muted-foreground: #a7a1ae;
+  --border: #2c2931;
+  --input: #2c2931;
+  --ring: #ae96da;
 
-  --inverse: #0c0b09;
-  --inverse-foreground: #f2eee6;
-  --inverse-muted: #a39c90;
-  --inverse-border: #2a2621;
+  --primary: #eeefe8;
+  --primary-hover: #ffffff;
+  --primary-foreground: #111013;
 
   --status-on-time: #6fb592;
   --status-due: #d9a441;
@@ -85,7 +85,9 @@
   --color-status-overdue: var(--status-overdue);
   --color-destructive: var(--destructive);
 
-  --font-sans: var(--font-anek), ui-sans-serif, system-ui, sans-serif;
+  /* Latin letters come from the first font, Devanagari from the second, so Hindi pages match the English ones. */
+  --font-sans: var(--font-inter), var(--font-devanagari-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-newsreader), var(--font-devanagari-serif), ui-serif, Georgia, serif;
   --radius-lg: var(--radius);
   --spacing-section: 6rem;
 }

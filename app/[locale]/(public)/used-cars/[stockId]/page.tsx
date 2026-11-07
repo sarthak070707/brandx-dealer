@@ -112,7 +112,7 @@ async function UsedCarDetail({ params }: { params: PageProps<"/[locale]/used-car
         <section aria-labelledby="car-title" className="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
           <div className="flex flex-col gap-2">
             <p className="text-sm text-muted-foreground">{car.stockId}</p>
-            <h1 id="car-title" className="text-5xl leading-none font-light tracking-tight font-stretch-semi-condensed">
+            <h1 id="car-title" className="text-5xl leading-none font-display tracking-tight">
               {car.modelName} {car.variantName}
             </h1>
             <p className="text-3xl font-light tabular-nums">{formatRupees(car.pricePaise)}</p>

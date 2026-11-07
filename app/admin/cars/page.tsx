@@ -15,7 +15,7 @@ export default function CarsPage() {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-light tracking-tight font-stretch-semi-condensed">Cars</h1>
+        <h1 className="text-3xl font-display tracking-tight">Cars</h1>
         <p className="max-w-prose text-muted-foreground">
           The new cars on the website. A car you add appears on the site within seconds, with its prices. Prices and accessories can be changed later
           under Price tables.

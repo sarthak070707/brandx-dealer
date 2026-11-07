@@ -1,15 +1,15 @@
 import type { Viewport } from "next";
-import { Anek_Devanagari } from "next/font/google";
+import { Inter, Newsreader, Noto_Sans_Devanagari, Noto_Serif_Devanagari } from "next/font/google";
 import type { ReactNode } from "react";
 import "@/app/globals.css";
 
-// One family for both scripts, so Hindi pages look like the same brand. The width axis
-// lets headlines run narrower than body text.
-const anek = Anek_Devanagari({
-  subsets: ["latin", "devanagari"],
-  axes: ["wdth"],
-  variable: "--font-anek",
-});
+// Inter for text and Newsreader for the big headlines. Neither has Devanagari, so each has a Noto
+// companion for Hindi; the browser only downloads a companion when a page actually uses it.
+const sans = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const display = Newsreader({ subsets: ["latin"], variable: "--font-newsreader" });
+const devanagariSans = Noto_Sans_Devanagari({ subsets: ["devanagari"], variable: "--font-devanagari-sans" });
+const devanagariSerif = Noto_Serif_Devanagari({ subsets: ["devanagari"], variable: "--font-devanagari-serif" });
+const FONT_CLASSES = [sans, display, devanagariSans, devanagariSerif].map((font) => font.variable).join(" ");
 
 // Runs before first paint so a dark-mode visitor never sees a flash of the light theme.
 // A saved choice wins; otherwise the device setting decides.
@@ -17,8 +17,8 @@ const THEME_SCRIPT = `try{var t=localStorage.getItem("theme");document.documentE
 
 export const documentViewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f7f4ee" },
-    { media: "(prefers-color-scheme: dark)", color: "#141210" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f4f8" },
+    { media: "(prefers-color-scheme: dark)", color: "#111013" },
   ],
 };
 
@@ -26,7 +26,7 @@ export const documentViewport: Viewport = {
 export function Document({ lang, children }: { lang: string; children: ReactNode }) {
   return (
     // The theme script changes the class on <html> before React hydrates.
-    <html lang={lang} className={`${anek.variable} h-full`} suppressHydrationWarning>
+    <html lang={lang} className={`${FONT_CLASSES} h-full`} suppressHydrationWarning>
       {/* A root layout writes <head> itself; the App Router has no <Head>. */}
       {/* eslint-disable-next-line @next/next/no-head-element */}
       <head>

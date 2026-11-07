@@ -30,7 +30,7 @@ function InboxSkeleton() {
 export default function InboxPage() {
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-light tracking-tight font-stretch-semi-condensed">Lead inbox</h1>
+      <h1 className="text-3xl font-display tracking-tight">Lead inbox</h1>
       <Suspense fallback={<InboxSkeleton />}>
         <LoadedInbox />
       </Suspense>
