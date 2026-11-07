@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { accountSchema } from "@/lib/admin/account-schemas";
-import { validateAccountChange } from "@/lib/admin/account-rules";
+import { validateAccountChange, validateAccountRemoval } from "@/lib/admin/account-rules";
 import { fieldErrorsOf } from "@/lib/admin/field-errors";
 import { generateTemporaryPassword } from "@/lib/admin/password";
 import type { CurrentStaff } from "@/lib/auth/staff";
@@ -62,4 +62,17 @@ export async function resetPassword(id: string): Promise<AccountResult> {
   const temporaryPassword = generateTemporaryPassword();
   await db.user.update({ where: { id }, data: { passwordHash: await bcrypt.hash(temporaryPassword, BCRYPT_COST) } });
   return { ok: true, temporaryPassword };
+}
+
+// Deleting an account keeps its leads and history: they stay, with nobody named on them, and the
+// leads wait in the lead desk queue ("Needs assignment") until an admin hands them on.
+export async function removeAccount(actor: CurrentStaff, id: string): Promise<AccountResult> {
+  const account = await db.user.findFirst({ where: { id, role: { in: ["CONSULTANT", "ADMIN"] } }, select: { id: true, active: true } });
+  if (!account) return GONE;
+
+  const refusal = validateAccountRemoval({ actorId: actor.id, targetId: account.id, active: account.active });
+  if (refusal) return { ok: false, error: refusal };
+
+  await db.user.delete({ where: { id: account.id } });
+  return { ok: true, temporaryPassword: null };
 }

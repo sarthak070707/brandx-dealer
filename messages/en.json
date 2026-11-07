@@ -8,7 +8,7 @@
     "newCars": "New cars",
     "usedCars": "Certified used",
     "showrooms": "Showrooms",
-    "signIn": "Sign in",
+    "signIn": "Staff sign in",
     "bookTestDrive": "Book a test drive",
     "bookTestDriveShort": "Book test drive",
     "openMenu": "Open menu",
@@ -33,7 +33,7 @@
     "yourData": "Your data",
     "privacy": "Privacy and consent",
     "stopMessages": "Stop messages",
-    "staffSignIn": "Staff sign-in",
+    "staffSignIn": "Staff sign in",
     "tagline": "New and certified used Brand X cars across Lucknow, with the exact on-road price for your city.",
     "priceNote": "Prices shown are ex-showroom unless marked on-road.",
     "fictionalNote": "Brand X is a fictional brand. Prices and stock are sample data."
@@ -305,9 +305,9 @@
     "pending": "Stopping…"
   },
   "SignIn": {
-    "metaTitle": "Sign in | Brand X",
-    "title": "Sign in",
-    "lead": "For Brand X consultants and admins, and buyers who have booked a test drive.",
+    "metaTitle": "Staff sign in | Brand X",
+    "title": "Staff sign in",
+    "lead": "For Brand X consultants and admins.",
     "email": "Email",
     "password": "Password",
     "submit": "Sign in",

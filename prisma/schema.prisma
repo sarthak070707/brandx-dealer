@@ -361,3 +361,12 @@ model OutboxMessage {
 
   @@index([leadId])
 }
+
+// Photos an admin uploads for a car. They live in the database so a deploy can't lose them and no
+// extra storage service is needed; each is served from /api/car-photos/<id>.
+model CarPhoto {
+  id          String   @id @default(cuid())
+  contentType String
+  data        Bytes
+  createdAt   DateTime @default(now())
+}

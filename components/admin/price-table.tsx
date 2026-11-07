@@ -37,6 +37,7 @@ function EditableRow({ table, keyOptions, initial, onDone }: RowProps) {
   const [values, setValues] = useState(initial.values);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState<string | null>(null);
+  const [endEarlier, setEndEarlier] = useState<string | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -45,15 +46,16 @@ function EditableRow({ table, keyOptions, initial, onDone }: RowProps) {
   const label = isNew ? "new row" : config.keys.map((key) => labelOf(keyOptions, key.name, keys[key.name])).join(", ");
   const status = initial.status && STATUS_BADGE[initial.status];
 
-  const save = () =>
+  const save = (endOverlapping = false) =>
     startTransition(async () => {
-      const result = await savePrice(table, { id: initial.id, ...keys, ...values });
+      const result = await savePrice(table, { id: initial.id, ...keys, ...values }, endOverlapping);
       if (result.ok) {
         toast.success(isNew ? "Row added. The car pages update within seconds." : "Saved. The car pages update within seconds.");
         onDone();
       } else {
         setFieldErrors(result.fieldErrors ?? {});
         setMessage(result.error);
+        setEndEarlier(result.endEarlier ?? null);
       }
     });
 
@@ -106,7 +108,7 @@ function EditableRow({ table, keyOptions, initial, onDone }: RowProps) {
         <TableCell>{status ? <Badge variant={status.variant}>{status.label}</Badge> : <Badge variant="outline">New</Badge>}</TableCell>
         <TableCell>
           <div className="flex items-center justify-end gap-1">
-            <Button size="sm" disabled={!dirty || pending} onClick={save}>
+            <Button size="sm" disabled={!dirty || pending} onClick={() => save()}>
               {pending ? "Saving…" : "Save"}
             </Button>
             {isNew ? (
@@ -132,6 +134,11 @@ function EditableRow({ table, keyOptions, initial, onDone }: RowProps) {
                 return <span key={name} className="block">{header}: {error}</span>;
               })}
             </p>
+            {endEarlier && (
+              <Button size="sm" variant="outline" className="mt-2" disabled={pending} onClick={() => save(true)}>
+                End that row on {endEarlier} and save this one
+              </Button>
+            )}
           </TableCell>
         </TableRow>
       )}
@@ -170,7 +177,7 @@ export function PriceTable({ table, rows, keyOptions }: Props) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Input className="max-w-xs" type="search" aria-label="Filter rows" placeholder="Filter rows" value={query} onChange={(event) => setQuery(event.target.value)} />
+        <Input className="max-w-xs" type="search" aria-label="Search rows" placeholder="Search" value={query} onChange={(event) => setQuery(event.target.value)} />
         <Button variant="outline" onClick={() => setDrafts((current) => [crypto.randomUUID(), ...current])}>
           <PlusIcon />
           Add row

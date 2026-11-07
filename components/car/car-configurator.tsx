@@ -64,7 +64,7 @@ export function CarConfigurator({ car }: { car: CarPageData }) {
         withAccessories={withAccessories}
         onAccessoriesChange={setWithAccessories}
         quote={quote}
-        className="lg:sticky lg:top-24 lg:col-start-2 lg:row-span-5 lg:row-start-1 lg:self-start"
+        className="lg:sticky lg:top-20 lg:col-start-2 lg:row-span-5 lg:row-start-1 lg:max-h-[calc(100dvh-6rem)] lg:self-start"
       />
 
       {colour && (

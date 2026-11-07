@@ -10,3 +10,11 @@ export function validateAccountChange({ actorId, targetId, current, next }: { ac
   if (current.active && !next.active) return "You can't deactivate your own account.";
   return null;
 }
+
+// Only an account that is already inactive can be removed, so nobody is deleted by one slip.
+// Removing yourself is never allowed.
+export function validateAccountRemoval({ actorId, targetId, active }: { actorId: string; targetId: string; active: boolean }) {
+  if (actorId === targetId) return "You can't remove your own account.";
+  if (active) return "Deactivate this account before removing it.";
+  return null;
+}

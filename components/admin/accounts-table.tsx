@@ -3,6 +3,7 @@
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { AccountDialog } from "@/components/admin/account-dialog";
+import { RemoveAccountDialog } from "@/components/admin/remove-account-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -12,6 +13,7 @@ const ROLE_LABEL = { CONSULTANT: "Consultant", ADMIN: "Admin" } as const;
 
 export function AccountsTable({ accounts, showrooms, models }: AccountsData) {
   const [editing, setEditing] = useState<AccountView | "new" | null>(null);
+  const [removing, setRemoving] = useState<AccountView | null>(null);
 
   return (
     <div className="flex flex-col gap-4">
@@ -51,16 +53,25 @@ export function AccountsTable({ accounts, showrooms, models }: AccountsData) {
                 <TableCell>
                   <Badge variant={account.active ? "success" : "neutral"}>{account.active ? "Active" : "Inactive"}</Badge>
                 </TableCell>
-                <TableCell className="text-right">
-                  <Button size="sm" variant="outline" aria-label={`Edit ${account.name}`} onClick={() => setEditing(account)}>
-                    Edit
-                  </Button>
+                <TableCell>
+                  <div className="flex justify-end gap-2">
+                    <Button size="sm" variant="outline" aria-label={`Edit ${account.name}`} onClick={() => setEditing(account)}>
+                      Edit
+                    </Button>
+                    {!account.active && (
+                      <Button size="sm" variant="ghost" className="text-destructive" aria-label={`Remove ${account.name}`} onClick={() => setRemoving(account)}>
+                        Remove
+                      </Button>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+
+      {removing && <RemoveAccountDialog key={removing.id} account={removing} onClose={() => setRemoving(null)} />}
 
       {editing && (
         <AccountDialog

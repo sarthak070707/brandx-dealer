@@ -1,4 +1,5 @@
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
+import { CATALOGUE_TAG } from "@/lib/catalogue";
 import { db } from "@/lib/db";
 import { istDay } from "@/lib/booking/slots";
 
@@ -6,6 +7,8 @@ export type BookingOptions = Awaited<ReturnType<typeof getBookingOptions>>;
 
 export async function getBookingOptions() {
   "use cache";
+  // A new demo car appears on the booking page as soon as an admin adds the car.
+  cacheTag(CATALOGUE_TAG);
   cacheLife("minutes");
 
   const showrooms = await db.showroom.findMany({

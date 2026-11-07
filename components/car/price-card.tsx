@@ -43,66 +43,71 @@ export function PriceCard({ car, variant, cityId, onCityChange, withAccessories,
   const pack = car.accessoryPackage;
 
   return (
-    <section aria-labelledby="price-title" className={cn("flex flex-col gap-5 rounded-2xl border bg-card p-6", className)}>
-      <div>
-        <h2 id="price-title" className="text-2xl">
-          {t("title")}
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          {car.name} {variant.name}, {labels(`transmission.${variant.transmission}`)}, {labels(`fuel.${variant.fuel}`)}
-        </p>
+    <section aria-labelledby="price-title" className={cn("flex flex-col gap-4 rounded-2xl border bg-card p-5", className)}>
+      {/* On a short screen the details scroll inside the card, and the two buttons below stay in view. */}
+      <div className="flex min-h-0 flex-col gap-4 lg:overflow-y-auto">
+        <div>
+          <h2 id="price-title" className="text-2xl">
+            {t("title")}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {car.name} {variant.name}, {labels(`transmission.${variant.transmission}`)}, {labels(`fuel.${variant.fuel}`)}
+          </p>
+        </div>
+
+        <label className="flex flex-col gap-2">
+          <span className="text-sm text-muted-foreground">{t("city")}</span>
+          <NativeSelect value={cityId} onChange={(event) => onCityChange(event.target.value)}>
+            {car.cities.map((city) => (
+              <option key={city.id} value={city.id}>
+                {cityName(city.name)}
+              </option>
+            ))}
+          </NativeSelect>
+        </label>
+
+        {quote.available ? (
+          <>
+            <p className="text-4xl font-light tracking-tight tabular-nums" aria-live="polite">
+              {formatRupees(quote.totalPaise)}
+            </p>
+            <dl className="divide-y border-y">
+              <Line label={t("exShowroom")} amountPaise={quote.exShowroomPaise} />
+              <Line label={t("roadTax", { rate: quote.roadTax.rateBasisPoints / 100 })} amountPaise={quote.roadTax.paise} />
+              <Line label={t("insurance")} amountPaise={quote.insurancePaise} />
+              {quote.accessories && (
+                <Line label={localised(content, "packs", quote.accessories.name, quote.accessories.name)} amountPaise={quote.accessories.paise} />
+              )}
+            </dl>
+          </>
+        ) : (
+          <div className="rounded-xl bg-muted p-4" aria-live="polite">
+            <p>{t("unavailable", { city: selectedCity })}</p>
+            {variant.exShowroomPaise !== null && (
+              <p className="mt-1 text-sm text-muted-foreground">{t("exShowroomPrice", { price: formatRupees(variant.exShowroomPaise) })}</p>
+            )}
+          </div>
+        )}
+
+        {pack && (
+          <label className="flex cursor-pointer gap-3">
+            <input
+              type="checkbox"
+              checked={withAccessories}
+              onChange={(event) => onAccessoriesChange(event.target.checked)}
+              className="mt-1 size-4 accent-foreground"
+            />
+            <span className="flex flex-col">
+              <span>{t("addAccessories", { name: localised(content, "packs", pack.name, pack.name), price: formatRupees(pack.pricePaise) })}</span>
+              <span className="text-sm text-muted-foreground">{pack.items.map((item) => localised(content, "items", item, item)).join(", ")}</span>
+            </span>
+          </label>
+        )}
+
+        {quote.available && <p className="text-sm text-muted-foreground">{t("valid", { date: formatDate(quote.validUntil, locale) })}</p>}
       </div>
 
-      <label className="flex flex-col gap-2">
-        <span className="text-sm text-muted-foreground">{t("city")}</span>
-        <NativeSelect value={cityId} onChange={(event) => onCityChange(event.target.value)}>
-          {car.cities.map((city) => (
-            <option key={city.id} value={city.id}>
-              {cityName(city.name)}
-            </option>
-          ))}
-        </NativeSelect>
-      </label>
-
-      {quote.available ? (
-        <>
-          <p className="text-4xl font-light tracking-tight tabular-nums" aria-live="polite">
-            {formatRupees(quote.totalPaise)}
-          </p>
-          <dl className="divide-y border-y">
-            <Line label={t("exShowroom")} amountPaise={quote.exShowroomPaise} />
-            <Line label={t("roadTax", { rate: quote.roadTax.rateBasisPoints / 100 })} amountPaise={quote.roadTax.paise} />
-            <Line label={t("insurance")} amountPaise={quote.insurancePaise} />
-            {quote.accessories && <Line label={localised(content, "packs", quote.accessories.name, quote.accessories.name)} amountPaise={quote.accessories.paise} />}
-          </dl>
-        </>
-      ) : (
-        <div className="rounded-xl bg-muted p-4" aria-live="polite">
-          <p>{t("unavailable", { city: selectedCity })}</p>
-          {variant.exShowroomPaise !== null && (
-            <p className="mt-1 text-sm text-muted-foreground">{t("exShowroomPrice", { price: formatRupees(variant.exShowroomPaise) })}</p>
-          )}
-        </div>
-      )}
-
-      {pack && (
-        <label className="flex cursor-pointer gap-3">
-          <input
-            type="checkbox"
-            checked={withAccessories}
-            onChange={(event) => onAccessoriesChange(event.target.checked)}
-            className="mt-1 size-4 accent-foreground"
-          />
-          <span className="flex flex-col">
-            <span>{t("addAccessories", { name: localised(content, "packs", pack.name, pack.name), price: formatRupees(pack.pricePaise) })}</span>
-            <span className="text-sm text-muted-foreground">{pack.items.map((item) => localised(content, "items", item, item)).join(", ")}</span>
-          </span>
-        </label>
-      )}
-
-      {quote.available && <p className="text-sm text-muted-foreground">{t("valid", { date: formatDate(quote.validUntil, locale) })}</p>}
-
-      <div className="flex flex-col gap-3">
+      <div className="flex shrink-0 flex-col gap-3">
         <Button asChild size="lg">
           <Link href={`${TEST_DRIVE_HREF}?model=${car.slug}`}>{nav("bookTestDrive")}</Link>
         </Button>

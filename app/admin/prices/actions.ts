@@ -19,9 +19,10 @@ function published(result: SaveResult) {
   return result;
 }
 
-export async function savePrice(table: string, input: unknown): Promise<SaveResult> {
+// endEarlier is only set when the admin pressed the button that ends the overlapping row early.
+export async function savePrice(table: string, input: unknown, endEarlier = false): Promise<SaveResult> {
   if (!(await getAdmin())) return NOT_ADMIN;
-  return isPriceTableId(table) ? published(await savePriceRow(table, input)) : BAD_REQUEST;
+  return isPriceTableId(table) ? published(await savePriceRow(table, input, endEarlier === true)) : BAD_REQUEST;
 }
 
 export async function deletePrice(table: string, id: string): Promise<SaveResult> {

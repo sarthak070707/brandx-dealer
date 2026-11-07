@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findOverlap, overlapMessage, validityStatus } from "./validity";
+import { canEndEarly, dayBefore, findOverlap, findOverlaps, overlapMessage, validityStatus } from "./validity";
 
 const day = (iso: string) => new Date(`${iso}T00:00:00Z`);
 const range = (from: string, to: string) => ({ validFrom: day(from), validTo: day(to) });
@@ -58,10 +58,49 @@ describe("findOverlap: road tax slabs", () => {
   });
 });
 
+describe("findOverlaps", () => {
+  it("lists every row in the way, not just the first", () => {
+    const a = { id: "a", ...range("2026-01-01", "2026-06-30") };
+    const b = { id: "b", ...range("2026-07-01", "2026-12-31") };
+    const c = { id: "c", ...range("2027-01-01", "2027-06-30") };
+    expect(findOverlaps(range("2026-06-01", "2026-08-31"), [a, b, c])).toEqual([a, b]);
+  });
+});
+
+describe("canEndEarly", () => {
+  const current = range("2026-10-07", "2027-02-04");
+
+  it("is true for a normal price change: the new row starts later and runs at least as long", () => {
+    expect(canEndEarly(current, range("2026-11-20", "2027-06-30"))).toBe(true);
+    expect(canEndEarly(current, range("2026-11-20", "2027-02-04"))).toBe(true);
+  });
+
+  it("is false when the new row would sit inside the old one, which would lose its later days", () => {
+    expect(canEndEarly(current, range("2026-11-20", "2026-12-31"))).toBe(false);
+  });
+
+  it("is false when the new row starts on or before the old one, which would leave it with no days", () => {
+    expect(canEndEarly(current, range("2026-10-07", "2027-06-30"))).toBe(false);
+    expect(canEndEarly(current, range("2026-09-01", "2027-06-30"))).toBe(false);
+  });
+});
+
+describe("dayBefore", () => {
+  it("steps back one calendar day, across a month end", () => {
+    expect(dayBefore(day("2026-12-01")).toISOString().slice(0, 10)).toBe("2026-11-30");
+  });
+});
+
 describe("overlapMessage", () => {
-  it("names the dates of the row in the way", () => {
-    expect(overlapMessage(range("2026-10-01", "2026-12-31"))).toBe(
-      "Overlaps another row valid 01 Oct 2026 to 31 Dec 2026. End or move that row first.",
+  it("names the dates of the row in the way, and says how to fix it when it can be ended early", () => {
+    expect(overlapMessage(range("2026-10-01", "2026-12-31"), true)).toBe(
+      "Overlaps a row valid 01 Oct 2026 to 31 Dec 2026. You can end that row the day before this one starts.",
+    );
+  });
+
+  it("asks for different dates when ending the other row would lose days", () => {
+    expect(overlapMessage(range("2026-10-01", "2026-12-31"), false)).toBe(
+      "Overlaps a row valid 01 Oct 2026 to 31 Dec 2026. Change one of the two so the dates don't overlap.",
     );
   });
 });
