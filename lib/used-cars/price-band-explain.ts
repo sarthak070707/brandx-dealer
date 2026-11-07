@@ -41,6 +41,9 @@ export function explanationMessages({ carName, band, newPricePaise, listedPaise 
       content:
         "You help a car dealership's admin understand a suggested price range for a used car. Use only the facts given. " +
         "In two or three short sentences, say what pushes the price up or down and how the listed price compares with the range. " +
+        "Age always lowers the price: 'keeps about 69%' means the car is worth 69% of a new one. Distance, owners and the inspection score raise it, " +
+        "lower it or change nothing, as their signs say (+ raises, - lowers). Do not use these factors to explain why the listed price is high or low; " +
+        "just say whether it is below, inside or above the range. " +
         "Never write a rupee amount that is not in the facts, and say nothing about the market, demand or competitors. " +
         `Keep it under ${MAX_WORDS - 10} words. Reply with JSON only: {"explanation": "..."}.`,
     },

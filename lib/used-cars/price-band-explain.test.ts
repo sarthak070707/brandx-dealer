@@ -26,6 +26,8 @@ describe("explanationMessages", () => {
   it("gives the model the formatted figures to repeat, and forbids any other amount or market talk", () => {
     const [system, user] = explanationMessages(facts);
     expect(system.content).toMatch(/Never write a rupee amount that is not in the facts/);
+    expect(system.content).toMatch(/Age always lowers the price/);
+    expect(system.content).toMatch(/Do not use these factors to explain why the listed price is high or low/);
     expect(user.content).toContain("₹6,30,000");
     expect(user.content).toContain('"listedPriceComparedWithRange":"above"');
   });
