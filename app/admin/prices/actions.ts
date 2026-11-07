@@ -3,6 +3,7 @@
 import { refresh, updateTag } from "next/cache";
 import { z } from "zod";
 import { isPriceTableId } from "@/lib/admin/price-tables";
+import { RESOLUTIONS } from "@/lib/admin/validity";
 import { deletePriceRow, savePriceRow, type SaveResult } from "@/lib/admin/price-service";
 import { getAdmin } from "@/lib/auth/staff";
 import { CATALOGUE_TAG } from "@/lib/catalogue";
@@ -19,10 +20,11 @@ function published(result: SaveResult) {
   return result;
 }
 
-// endEarlier is only set when the admin pressed the button that ends the overlapping row early.
-export async function savePrice(table: string, input: unknown, endEarlier = false): Promise<SaveResult> {
+// resolution is only set when the admin pressed the button that settles an overlapping row.
+export async function savePrice(table: string, input: unknown, resolution?: string): Promise<SaveResult> {
   if (!(await getAdmin())) return NOT_ADMIN;
-  return isPriceTableId(table) ? published(await savePriceRow(table, input, endEarlier === true)) : BAD_REQUEST;
+  const chosen = z.enum(RESOLUTIONS).optional().safeParse(resolution);
+  return isPriceTableId(table) && chosen.success ? published(await savePriceRow(table, input, chosen.data)) : BAD_REQUEST;
 }
 
 export async function deletePrice(table: string, id: string): Promise<SaveResult> {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canEndEarly, dayBefore, findOverlap, findOverlaps, overlapMessage, validityStatus } from "./validity";
+import { dayAfter, dayBefore, findOverlap, findOverlaps, overlapMessage, overlapResolution, resolutionLabel, validityStatus } from "./validity";
 
 const day = (iso: string) => new Date(`${iso}T00:00:00Z`);
 const range = (from: string, to: string) => ({ validFrom: day(from), validTo: day(to) });
@@ -67,40 +67,56 @@ describe("findOverlaps", () => {
   });
 });
 
-describe("canEndEarly", () => {
+describe("overlapResolution", () => {
   const current = range("2026-10-07", "2027-02-04");
 
-  it("is true for a normal price change: the new row starts later and runs at least as long", () => {
-    expect(canEndEarly(current, range("2026-11-20", "2027-06-30"))).toBe(true);
-    expect(canEndEarly(current, range("2026-11-20", "2027-02-04"))).toBe(true);
+  it("ends the old row early for a normal price change: the new row starts later and runs at least as long", () => {
+    expect(overlapResolution(current, range("2026-11-20", "2027-06-30"))).toBe("end-early");
+    expect(overlapResolution(current, range("2026-11-20", "2027-02-04"))).toBe("end-early");
   });
 
-  it("is false when the new row would sit inside the old one, which would lose its later days", () => {
-    expect(canEndEarly(current, range("2026-11-20", "2026-12-31"))).toBe(false);
+  it("replaces the old row when the new one covers all of it, including the very same dates", () => {
+    expect(overlapResolution(current, range("2026-10-07", "2027-02-04"))).toBe("replace");
+    expect(overlapResolution(current, range("2026-10-07", "2027-06-30"))).toBe("replace");
+    expect(overlapResolution(current, range("2026-09-01", "2027-06-30"))).toBe("replace");
   });
 
-  it("is false when the new row starts on or before the old one, which would leave it with no days", () => {
-    expect(canEndEarly(current, range("2026-10-07", "2027-06-30"))).toBe(false);
-    expect(canEndEarly(current, range("2026-09-01", "2027-06-30"))).toBe(false);
+  it("starts the old row later when it runs on past the new one, which covers only its first part", () => {
+    expect(overlapResolution(current, range("2026-09-01", "2026-12-31"))).toBe("start-later");
+    expect(overlapResolution(current, range("2026-10-07", "2026-12-31"))).toBe("start-later");
+  });
+
+  it("offers nothing when the new row sits strictly inside the old one, which would split it", () => {
+    expect(overlapResolution(current, range("2026-11-20", "2026-12-31"))).toBeNull();
   });
 });
 
-describe("dayBefore", () => {
-  it("steps back one calendar day, across a month end", () => {
+describe("dayBefore and dayAfter", () => {
+  it("step one calendar day, across a month end", () => {
     expect(dayBefore(day("2026-12-01")).toISOString().slice(0, 10)).toBe("2026-11-30");
+    expect(dayAfter(day("2026-11-30")).toISOString().slice(0, 10)).toBe("2026-12-01");
   });
 });
 
 describe("overlapMessage", () => {
-  it("names the dates of the row in the way, and says how to fix it when it can be ended early", () => {
-    expect(overlapMessage(range("2026-10-01", "2026-12-31"), true)).toBe(
-      "Overlaps a row valid 01 Oct 2026 to 31 Dec 2026. You can end that row the day before this one starts.",
-    );
+  const clash = range("2026-10-01", "2026-12-31");
+
+  it("names the dates of the row in the way, and says how to settle it", () => {
+    expect(overlapMessage(clash, "end-early")).toBe("Overlaps a row valid 01 Oct 2026 to 31 Dec 2026. You can end that row the day before this one starts.");
+    expect(overlapMessage(clash, "start-later")).toBe("Overlaps a row valid 01 Oct 2026 to 31 Dec 2026. You can start that row the day after this one ends.");
+    expect(overlapMessage(clash, "replace")).toBe("Overlaps a row valid 01 Oct 2026 to 31 Dec 2026. This row covers all of it, so it can replace it.");
   });
 
-  it("asks for different dates when ending the other row would lose days", () => {
-    expect(overlapMessage(range("2026-10-01", "2026-12-31"), false)).toBe(
-      "Overlaps a row valid 01 Oct 2026 to 31 Dec 2026. Change one of the two so the dates don't overlap.",
-    );
+  it("asks for different dates when nothing can settle it", () => {
+    expect(overlapMessage(clash, null)).toBe("Overlaps a row valid 01 Oct 2026 to 31 Dec 2026. Change one of the two so the dates don't overlap.");
+  });
+});
+
+describe("resolutionLabel", () => {
+  it("names the date each button will use", () => {
+    const next = range("2026-11-20", "2027-06-30");
+    expect(resolutionLabel("end-early", next)).toBe("End that row on 19 Nov 2026 and save this one");
+    expect(resolutionLabel("start-later", next)).toBe("Start that row on 01 Jul 2027 and save this one");
+    expect(resolutionLabel("replace", next)).toBe("Replace that row with this one");
   });
 });

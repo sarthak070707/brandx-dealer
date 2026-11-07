@@ -12,6 +12,7 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { Option, PriceRowView } from "@/lib/admin/price-queries";
 import { PRICE_TABLES, type ColumnKind, type PriceTableId } from "@/lib/admin/price-tables";
+import type { Resolution } from "@/lib/admin/validity";
 import { cn } from "@/lib/utils";
 
 type KeyOptions = Record<string, Option[]>;
@@ -37,7 +38,7 @@ function EditableRow({ table, keyOptions, initial, onDone }: RowProps) {
   const [values, setValues] = useState(initial.values);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState<string | null>(null);
-  const [endEarlier, setEndEarlier] = useState<string | null>(null);
+  const [resolution, setResolution] = useState<{ kind: Resolution; label: string } | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -46,16 +47,16 @@ function EditableRow({ table, keyOptions, initial, onDone }: RowProps) {
   const label = isNew ? "new row" : config.keys.map((key) => labelOf(keyOptions, key.name, keys[key.name])).join(", ");
   const status = initial.status && STATUS_BADGE[initial.status];
 
-  const save = (endOverlapping = false) =>
+  const save = (settle?: Resolution) =>
     startTransition(async () => {
-      const result = await savePrice(table, { id: initial.id, ...keys, ...values }, endOverlapping);
+      const result = await savePrice(table, { id: initial.id, ...keys, ...values }, settle);
       if (result.ok) {
         toast.success(isNew ? "Row added. The car pages update within seconds." : "Saved. The car pages update within seconds.");
         onDone();
       } else {
         setFieldErrors(result.fieldErrors ?? {});
         setMessage(result.error);
-        setEndEarlier(result.endEarlier ?? null);
+        setResolution(result.resolution ?? null);
       }
     });
 
@@ -134,9 +135,9 @@ function EditableRow({ table, keyOptions, initial, onDone }: RowProps) {
                 return <span key={name} className="block">{header}: {error}</span>;
               })}
             </p>
-            {endEarlier && (
-              <Button size="sm" variant="outline" className="mt-2" disabled={pending} onClick={() => save(true)}>
-                End that row on {endEarlier} and save this one
+            {resolution && (
+              <Button size="sm" variant="outline" className="mt-2" disabled={pending} onClick={() => save(resolution.kind)}>
+                {resolution.label}
               </Button>
             )}
           </TableCell>

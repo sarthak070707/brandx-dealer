@@ -44,8 +44,8 @@ export function PriceCard({ car, variant, cityId, onCityChange, withAccessories,
 
   return (
     <section aria-labelledby="price-title" className={cn("flex flex-col gap-4 rounded-2xl border bg-card p-5", className)}>
-      {/* On a short screen the details scroll inside the card, and the two buttons below stay in view. */}
-      <div className="flex min-h-0 flex-col gap-4 lg:overflow-y-auto">
+      {/* On a short screen the details can still scroll inside the card, without a visible bar, and the two buttons below stay in view. */}
+      <div className="flex min-h-0 flex-col gap-4 lg:overflow-y-auto lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden">
         <div>
           <h2 id="price-title" className="text-2xl">
             {t("title")}

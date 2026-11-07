@@ -26,13 +26,43 @@ export const findOverlap = <T extends Validity & Slab>(candidate: Validity & Sla
 
 const DAY_MS = 24 * 60 * 60_000;
 export const dayBefore = (date: Date) => new Date(date.getTime() - DAY_MS);
+export const dayAfter = (date: Date) => new Date(date.getTime() + DAY_MS);
 
-// A normal price change: the old row began earlier and the new one takes over from its start date.
-// Ending the old row the day before then loses none of the old row's earlier days, and nothing of
-// its later days, because the new row covers them.
-export const canEndEarly = (clash: Validity, candidate: Validity) =>
-  clash.validFrom < candidate.validFrom && clash.validTo <= candidate.validTo;
+// How the one row in the way can be settled, so that no day of it that the new row doesn't cover is lost:
+// - end-early: it began earlier, so it ends the day before the new row starts (a normal price change).
+// - start-later: it runs on past the new row, so it starts the day after the new row ends.
+// - replace: the new row covers all of it, so it goes.
+// Nothing fits when the new row sits strictly inside it, because that would split it in two.
+export const RESOLUTIONS = ["end-early", "start-later", "replace"] as const;
+export type Resolution = (typeof RESOLUTIONS)[number];
 
-export const overlapMessage = ({ validFrom, validTo }: Validity, canEnd: boolean) =>
-  `Overlaps a row valid ${formatDate(validFrom)} to ${formatDate(validTo)}. ` +
-  (canEnd ? "You can end that row the day before this one starts." : "Change one of the two so the dates don't overlap.");
+export function overlapResolution(clash: Validity, candidate: Validity): Resolution | null {
+  if (clash.validFrom < candidate.validFrom) return clash.validTo <= candidate.validTo ? "end-early" : null;
+  return clash.validTo <= candidate.validTo ? "replace" : "start-later";
+}
+
+export const overlapMessage = ({ validFrom, validTo }: Validity, resolution: Resolution | null) => {
+  const dates = `Overlaps a row valid ${formatDate(validFrom)} to ${formatDate(validTo)}. `;
+  switch (resolution) {
+    case "end-early":
+      return `${dates}You can end that row the day before this one starts.`;
+    case "start-later":
+      return `${dates}You can start that row the day after this one ends.`;
+    case "replace":
+      return `${dates}This row covers all of it, so it can replace it.`;
+    default:
+      return `${dates}Change one of the two so the dates don't overlap.`;
+  }
+};
+
+// The text of the button that settles the overlap, naming the date it will use.
+export function resolutionLabel(resolution: Resolution, { validFrom, validTo }: Validity) {
+  switch (resolution) {
+    case "end-early":
+      return `End that row on ${formatDate(dayBefore(validFrom))} and save this one`;
+    case "start-later":
+      return `Start that row on ${formatDate(dayAfter(validTo))} and save this one`;
+    case "replace":
+      return "Replace that row with this one";
+  }
+}
