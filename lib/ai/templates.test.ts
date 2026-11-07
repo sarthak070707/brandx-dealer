@@ -10,6 +10,11 @@ describe("fillPlaceholders", () => {
     );
   });
 
+  it("names the showroom in Hindi in a Hindi draft", () => {
+    expect(fillPlaceholders("Brand X {{showroom}}", names, "HI")).toBe("Brand X गोमती नगर");
+    expect(fillPlaceholders("Brand X {{showroom}}", names, "EN")).toBe("Brand X Gomti Nagar");
+  });
+
   it("refers to the team when the lead is waiting at the lead desk", () => {
     expect(fillPlaceholders("{{consultant}} will call.", { ...names, consultant: null }, "EN")).toBe("our team will call.");
     expect(fillPlaceholders("{{consultant}} कॉल करेंगे।", { ...names, consultant: null }, "HI")).toBe("हमारी टीम कॉल करेंगे।");

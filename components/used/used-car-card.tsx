@@ -1,17 +1,16 @@
+import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
 import { cardStyle } from "@/components/model-card";
-import { FUEL_LABEL, TRANSMISSION_LABEL } from "@/lib/labels";
+import { Link } from "@/i18n/navigation";
 import { formatRupees } from "@/lib/money";
 import type { UsedCarCard as UsedCar } from "@/lib/used-cars/queries";
 
 const kmFormat = new Intl.NumberFormat("en-IN");
 
-export function ownersLabel(owners: number) {
-  return owners === 1 ? "1st owner" : owners === 2 ? "2nd owner" : `${owners} owners`;
-}
-
 export function UsedCarCard({ car }: { car: UsedCar }) {
+  const t = useTranslations("UsedCard");
+  const labels = useTranslations("Labels");
+
   return (
     <Link href={`/used-cars/${car.stockId}`} className={cardStyle}>
       <div className="relative h-48 shrink-0 overflow-hidden bg-muted">
@@ -25,9 +24,7 @@ export function UsedCarCard({ car }: { car: UsedCar }) {
           />
         )}
         {car.status === "BOOKED" && (
-          <span className="absolute top-3 left-3 rounded-full bg-card/90 px-2.5 py-1 text-sm text-card-foreground">
-            Booked
-          </span>
+          <span className="absolute top-3 left-3 rounded-full bg-card/90 px-2.5 py-1 text-sm text-card-foreground">{t("booked")}</span>
         )}
       </div>
       <div className="flex flex-1 flex-col gap-1 p-5">
@@ -36,8 +33,13 @@ export function UsedCarCard({ car }: { car: UsedCar }) {
           {car.modelName} {car.variantName}
         </h3>
         <p className="text-sm text-muted-foreground">
-          {car.year}, {FUEL_LABEL[car.fuel]}, {TRANSMISSION_LABEL[car.transmission]}, {kmFormat.format(car.km)} km,{" "}
-          {ownersLabel(car.owners)}
+          {t("details", {
+            year: car.year,
+            fuel: labels(`fuel.${car.fuel}`),
+            transmission: labels(`transmission.${car.transmission}`),
+            km: kmFormat.format(car.km),
+            owners: t("owners", { count: car.owners }),
+          })}
         </p>
         <p className="mt-auto pt-3 text-lg tabular-nums">{formatRupees(car.pricePaise)}</p>
       </div>

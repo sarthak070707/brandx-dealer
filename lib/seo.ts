@@ -1,3 +1,5 @@
+import { routing } from "@/i18n/routing";
+
 // Structured data for search engines (schema.org). Built from public facts only: it never takes
 // a registration number or any buyer detail.
 type CarInput = { name: string; description: string; photos: string[]; lowestPaise: number | null; variantCount: number };
@@ -40,6 +42,18 @@ export function usedCarJsonLd(car: UsedCarInput, origin: string) {
     brand: BRAND,
     ...(car.photo && { image: absolute(car.photo, origin) }),
     offers: { "@type": "Offer", priceCurrency: "INR", price: rupees(car.pricePaise), availability: AVAILABILITY[car.status] },
+  };
+}
+
+// Tells search engines that /en/x and /hi/x are the same page in two languages (hreflang).
+export function alternatesFor(path: string, locale: string) {
+  const suffix = path === "/" ? "" : path;
+  return {
+    canonical: `/${locale}${suffix}`,
+    languages: {
+      ...Object.fromEntries(routing.locales.map((language) => [language, `/${language}${suffix}`])),
+      "x-default": `/${routing.defaultLocale}${suffix}`,
+    },
   };
 }
 

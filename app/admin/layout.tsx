@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { Document } from "@/components/document";
 import { StaffShell, StaffShellSkeleton } from "@/components/staff/staff-shell";
 import { SegmentedNav } from "@/components/ui/segmented-nav";
 import { Toaster } from "@/components/ui/sonner";
@@ -17,7 +18,7 @@ const SECTIONS = [
 
 export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   return (
-    <>
+    <Document lang="en">
       <Suspense fallback={<StaffShellSkeleton />}>
         <StaffShell adminOnly>
           <div className="flex flex-col gap-6">
@@ -27,6 +28,6 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
         </StaffShell>
       </Suspense>
       <Toaster />
-    </>
+    </Document>
   );
 }

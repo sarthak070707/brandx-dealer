@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { BrandMark } from "@/components/brand-mark";
+import Link from "next/link";
+import { BrandMark, brandLinkStyle } from "@/components/brand-mark";
 import { SidebarContent } from "@/components/staff/sidebar-content";
 import { StaffMobileMenu } from "@/components/staff/staff-mobile-menu";
 import { requireAdmin, requireStaff } from "@/lib/auth/staff";
@@ -16,7 +17,9 @@ export async function StaffShell({ children, adminOnly = false }: { children: Re
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 items-center justify-between border-b bg-card px-4 lg:hidden">
+          <Link href="/" className={brandLinkStyle}>
           <BrandMark />
+        </Link>
           <StaffMobileMenu>
             <SidebarContent staff={staff} />
           </StaffMobileMenu>

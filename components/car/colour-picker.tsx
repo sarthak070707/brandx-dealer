@@ -1,11 +1,18 @@
+import { useTranslations } from "next-intl";
+import { localised } from "@/lib/i18n/content";
+
 type Colour = { name: string; hex: string; photo: string };
 type Props = { colours: Colour[]; selected: Colour; onSelect: (colour: Colour) => void };
 
 export function ColourPicker({ colours, selected, onSelect }: Props) {
+  const t = useTranslations("Colour");
+  const content = useTranslations("Content");
+  const nameOf = (colour: Colour) => localised(content, "colours", colour.name, colour.name);
+
   return (
     <fieldset>
       <legend className="mb-3 text-sm text-muted-foreground">
-        Colour: <span className="text-foreground">{selected.name}</span>
+        {t("legend")}: <span className="text-foreground">{nameOf(selected)}</span>
       </legend>
       <div className="flex flex-wrap gap-3">
         {colours.map((colour) => (
@@ -18,7 +25,7 @@ export function ColourPicker({ colours, selected, onSelect }: Props) {
               onChange={() => onSelect(colour)}
               className="peer sr-only"
             />
-            <span className="sr-only">{colour.name}</span>
+            <span className="sr-only">{nameOf(colour)}</span>
             <span
               aria-hidden="true"
               style={{ backgroundColor: colour.hex }}

@@ -1,5 +1,6 @@
 import type { Language } from "@/generated/prisma/enums";
 import type { DraftNames } from "@/lib/ai/types";
+import { showroomNameFor } from "@/lib/i18n/server-content";
 
 // Plain replies with no prices, used when the AI is down, unsure or blocked by the guard.
 const TEMPLATES = {
@@ -28,7 +29,7 @@ export function fillPlaceholders(text: string, names: DraftNames, language: Lang
   const values: Record<string, string> = {
     name: names.name,
     consultant: names.consultant ?? TEAM_NAME[language],
-    showroom: names.showroom,
+    showroom: showroomNameFor(language, names.showroom),
   };
   return text.replace(/\s*\{\{\s*(\w+)\s*\}\}/g, (placeholder, key: string) => {
     const value = values[key];

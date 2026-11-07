@@ -33,3 +33,16 @@ describe("formatSlot", () => {
     expect(formatSlot(slot)).toBe("Wed, 4 Nov, 11:00 am");
   });
 });
+
+describe("dates in Hindi", () => {
+  it("show the same instant in Hindi, still in IST", () => {
+    const slot = new Date("2026-11-04T05:30:00Z");
+    expect(formatSlotTime(slot, "hi")).toMatch(/11:00/);
+    expect(formatSlot(slot, "hi")).toMatch(/[\u0900-\u097F]/);
+    expect(formatSlot(slot, "hi")).toContain("4");
+  });
+
+  it("show a validity date in Hindi", () => {
+    expect(formatDate(new Date("2026-12-31T00:00:00Z"), "hi")).toMatch(/31.*2026/);
+  });
+});

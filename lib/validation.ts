@@ -1,18 +1,19 @@
 import { z } from "zod";
 
-// Indian mobile numbers, stored as +91XXXXXXXXXX whatever the buyer typed.
+// Indian mobile numbers, stored as +91XXXXXXXXXX whatever the buyer typed. The messages are keys
+// (Errors.phone and so on in the message files), so each page can show them in its language.
 export const indianMobile = z
   .string()
   .transform((value) => value.replace(/[\s-]/g, "").replace(/^(\+91|91|0)(?=\d{10}$)/, ""))
-  .pipe(z.string().regex(/^[6-9]\d{9}$/, "Enter a 10-digit Indian mobile number"))
+  .pipe(z.string().regex(/^[6-9]\d{9}$/, "phone"))
   .transform((digits) => `+91${digits}`);
 
 // The fields every public form collects, with the DPDP consent the spec requires.
 export const buyerContact = z.object({
-  buyerName: z.string().trim().min(2, "Enter your name").max(80),
+  buyerName: z.string().trim().min(2, "name").max(80),
   buyerPhone: indianMobile,
   language: z.enum(["EN", "HI"]),
-  consent: z.literal(true, "Please agree so we can contact you"),
+  consent: z.literal(true, "consent"),
 });
 
 // What a form sends: the server still refuses anything without consent.

@@ -1,26 +1,27 @@
 import { z } from "zod";
 import { db } from "@/lib/db";
+import type { PublicError } from "@/lib/public-errors";
 import { createLead } from "@/lib/leads/create-lead";
 import { enquirySchema, type EnquiryInput } from "@/lib/leads/enquiry-schema";
-import { isRateLimited, RATE_LIMITED_MESSAGE } from "@/lib/leads/rate-limit";
+import { isRateLimited, RATE_LIMITED } from "@/lib/leads/rate-limit";
 
 export type EnquiryResult =
   | { ok: true; consultantName: string | null; showroomName: string; acknowledged: boolean }
-  | { ok: false; error: string; fieldErrors?: Record<string, string[]> };
+  | { ok: false; error: PublicError; fieldErrors?: Record<string, string[]> };
 
-const NOT_FOUND = { ok: false, error: "We couldn't find that car. Please refresh the page and try again." } as const;
+const NOT_FOUND = { ok: false, error: "carNotFound" } as const;
 
 type LeadTarget = { modelId: string; variantId?: string; usedCarId?: string; cityId: string; showroomId: string; carLabel: string };
 
 // Resolves what the buyer was looking at from the database; ids from the browser are only lookups.
-async function resolveTarget(target: z.output<typeof enquirySchema>["target"]): Promise<LeadTarget | { error: string }> {
+async function resolveTarget(target: z.output<typeof enquirySchema>["target"]): Promise<LeadTarget | { error: PublicError }> {
   if (target.type === "used") {
     const car = await db.usedCar.findUnique({
       where: { stockId: target.stockId },
       select: { id: true, status: true, modelId: true, variantName: true, model: { select: { name: true } }, showroom: { select: { id: true, cityId: true } } },
     });
     if (!car) return NOT_FOUND;
-    if (car.status === "SOLD") return { error: "This car has just been sold." };
+    if (car.status === "SOLD") return { error: "carSold" as const };
     return {
       modelId: car.modelId,
       usedCarId: car.id,
@@ -52,13 +53,13 @@ async function resolveTarget(target: z.output<typeof enquirySchema>["target"]): 
 export async function createEnquiry(input: EnquiryInput): Promise<EnquiryResult> {
   const parsed = enquirySchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: "Please check the highlighted fields.", fieldErrors: z.flattenError(parsed.error).fieldErrors };
+    return { ok: false, error: "checkFields", fieldErrors: z.flattenError(parsed.error).fieldErrors };
   }
   const { target, message, buyerName, buyerPhone, language } = parsed.data;
 
   const resolved = await resolveTarget(target);
   if ("error" in resolved) return { ok: false, error: resolved.error };
-  if (await isRateLimited(buyerPhone)) return { ok: false, error: RATE_LIMITED_MESSAGE };
+  if (await isRateLimited(buyerPhone)) return { ok: false, error: RATE_LIMITED };
 
   const { carLabel, ...car } = resolved;
   const { consultantName, showroomName, acknowledged } = await db.$transaction((tx) =>

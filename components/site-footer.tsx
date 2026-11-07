@@ -1,33 +1,42 @@
-import Link from "next/link";
-import { BrandMark } from "@/components/brand-mark";
+import { useTranslations } from "next-intl";
+import { BrandMark, brandLinkStyle } from "@/components/brand-mark";
 import { NAV_LINKS, SIGN_IN_HREF, TEST_DRIVE_HREF } from "@/components/site-links";
-
-const FOOTER_GROUPS = [
-  { title: "Explore", links: [...NAV_LINKS, { href: TEST_DRIVE_HREF, label: "Book a test drive" }] },
-  {
-    title: "Your data",
-    links: [
-      { href: "/privacy", label: "Privacy and consent" },
-      { href: "/stop-messages", label: "Stop messages" },
-      { href: SIGN_IN_HREF, label: "Staff sign-in" },
-    ],
-  },
-];
+import { Link } from "@/i18n/navigation";
 
 export function SiteFooter() {
+  const nav = useTranslations("Nav");
+  const t = useTranslations("Footer");
+
+  const groups = [
+    {
+      id: "explore",
+      title: t("explore"),
+      links: [...NAV_LINKS.map((link) => ({ href: link.href, label: nav(link.key) })), { href: TEST_DRIVE_HREF, label: nav("bookTestDrive") }],
+    },
+    {
+      id: "data",
+      title: t("yourData"),
+      links: [
+        { href: "/privacy", label: t("privacy") },
+        { href: "/stop-messages", label: t("stopMessages") },
+        { href: SIGN_IN_HREF, label: t("staffSignIn") },
+      ],
+    },
+  ];
+
   return (
     <footer className="mt-auto border-t bg-muted/50">
       <div className="grid gap-10 px-4 py-16 sm:px-8 md:grid-cols-[2fr_1fr_1fr] lg:px-12">
         <div className="flex max-w-sm flex-col items-start gap-4">
-          <BrandMark />
-          <p className="text-muted-foreground">
-            New and certified used Brand X cars across Lucknow, with the exact on-road price for your city.
-          </p>
+          <Link href="/" className={brandLinkStyle}>
+            <BrandMark />
+          </Link>
+          <p className="text-muted-foreground">{t("tagline")}</p>
         </div>
 
-        {FOOTER_GROUPS.map((group) => (
-          <nav key={group.title} aria-labelledby={`footer-${group.title}`}>
-            <h2 id={`footer-${group.title}`} className="mb-4 text-sm text-muted-foreground">
+        {groups.map((group) => (
+          <nav key={group.id} aria-labelledby={`footer-${group.id}`}>
+            <h2 id={`footer-${group.id}`} className="mb-4 text-sm text-muted-foreground">
               {group.title}
             </h2>
             <ul className="flex flex-col gap-3">
@@ -47,8 +56,8 @@ export function SiteFooter() {
       </div>
 
       <div className="flex flex-col gap-2 border-t px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:justify-between sm:px-8 lg:px-12">
-        <p>Prices shown are ex-showroom unless marked on-road.</p>
-        <p>Brand X is a fictional brand. Prices and stock are sample data.</p>
+        <p>{t("priceNote")}</p>
+        <p>{t("fictionalNote")}</p>
       </div>
     </footer>
   );

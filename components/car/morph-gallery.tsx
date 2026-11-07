@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useEffect, useImperativeHandle, useRef, useState, type KeyboardEvent, type PointerEvent, type Ref } from "react";
 import { createMorphRenderer, type MorphRenderer } from "@/components/car/morph-renderer";
@@ -22,6 +23,7 @@ const arrowStyle =
 // The parent can call show() (e.g. when a colour is picked) and hears back through
 // onActiveChange, so every change of photo goes through the same dissolve.
 export function MorphGallery({ photos, label, onActiveChange, ref }: Props) {
+  const t = useTranslations("Gallery");
   const [active, setActive] = useState(0);
   const [previous, setPrevious] = useState<number | null>(null);
   const [morphing, setMorphing] = useState(false);
@@ -109,10 +111,10 @@ export function MorphGallery({ photos, label, onActiveChange, ref }: Props) {
         />
         {photos.length > 1 && (
           <>
-            <button type="button" aria-label="Previous photo" className={cn(arrowStyle, "left-3")} onClick={() => show(active - 1)}>
+            <button type="button" aria-label={t("previous")} className={cn(arrowStyle, "left-3")} onClick={() => show(active - 1)}>
               <ChevronLeftIcon className="size-5" />
             </button>
-            <button type="button" aria-label="Next photo" className={cn(arrowStyle, "right-3")} onClick={() => show(active + 1)}>
+            <button type="button" aria-label={t("next")} className={cn(arrowStyle, "right-3")} onClick={() => show(active + 1)}>
               <ChevronRightIcon className="size-5" />
             </button>
             <p className="absolute right-3 bottom-3 z-10 rounded-full bg-card/90 px-2.5 py-1 text-sm text-card-foreground tabular-nums">
@@ -128,7 +130,7 @@ export function MorphGallery({ photos, label, onActiveChange, ref }: Props) {
             <li key={photo.src}>
               <button
                 type="button"
-                aria-label={`Show photo ${index + 1}`}
+                aria-label={t("show", { number: index + 1 })}
                 aria-current={index === active}
                 onClick={() => show(index)}
                 className={cn(
@@ -143,7 +145,7 @@ export function MorphGallery({ photos, label, onActiveChange, ref }: Props) {
         </ul>
       )}
       <p className="sr-only" aria-live="polite">
-        Photo {active + 1} of {photos.length}
+        {t("live", { current: active + 1, total: photos.length })}
       </p>
     </div>
   );

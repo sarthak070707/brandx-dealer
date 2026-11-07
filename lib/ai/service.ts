@@ -66,7 +66,7 @@ export async function sendReply(staff: StaffUser, draftId: string, text: string)
     });
     if (updated.count === 0) return false;
     // The consultant edits the reply; the way to stop messages is added to what goes out.
-    const body = `${parsedText.data}\n\n${optOutNotice(draft.lead.language, optOutLink(draft.leadId))}`;
+    const body = `${parsedText.data}\n\n${optOutNotice(draft.lead.language, optOutLink(draft.leadId, draft.lead.language))}`;
     await tx.outboxMessage.create({ data: { leadId: draft.leadId, channel: "WHATSAPP", body } });
     await tx.leadEvent.create({
       data: { leadId: draft.leadId, type: "MESSAGE", actorId: staff.id, details: { channel: "WHATSAPP", simulated: true, kind: "reply" } },

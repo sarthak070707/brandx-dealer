@@ -1,5 +1,6 @@
 import { LogOutIcon } from "lucide-react";
-import { BrandMark } from "@/components/brand-mark";
+import Link from "next/link";
+import { BrandMark, brandLinkStyle } from "@/components/brand-mark";
 import { StaffNav } from "@/components/staff/staff-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,9 @@ export function SidebarContent({ staff }: { staff: CurrentStaff }) {
   return (
     <div className="flex h-full flex-col">
       <div className="px-5 py-5">
-        <BrandMark />
+        <Link href="/" className={brandLinkStyle}>
+          <BrandMark />
+        </Link>
       </div>
       <div className="flex-1 px-3">
         <StaffNav isAdmin={staff.role === "ADMIN"} />
@@ -30,7 +33,7 @@ export function SidebarContent({ staff }: { staff: CurrentStaff }) {
               Sign out
             </Button>
           </form>
-          <ThemeToggle />
+          <ThemeToggle label="Switch between light and dark theme" />
         </div>
       </div>
     </div>

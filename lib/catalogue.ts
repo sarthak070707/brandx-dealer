@@ -1,9 +1,12 @@
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { z } from "zod";
 import { indiaToday } from "@/lib/dates";
 import type { BodyType } from "@/generated/prisma/enums";
 import { db } from "@/lib/db";
 import { computeOnRoadPrice, validOn, type PriceTables } from "@/lib/pricing/on-road-price";
+
+// Tag for everything on the car pages that comes from the admin tables.
+export const CATALOGUE_TAG = "catalogue";
 
 export type ModelSummary = {
   slug: string;
@@ -18,6 +21,7 @@ export type ModelSummary = {
 // Lowest ex-showroom price valid today per model; null when no current price exists.
 export async function getModelLineup(): Promise<ModelSummary[]> {
   "use cache";
+  cacheTag(CATALOGUE_TAG);
   cacheLife("hours");
 
   const today = indiaToday(new Date());
@@ -74,6 +78,7 @@ export async function getShowrooms() {
 
 export async function getModelSlugs() {
   "use cache";
+  cacheTag(CATALOGUE_TAG);
   cacheLife("hours");
 
   return db.model.findMany({ select: { slug: true } });
@@ -89,6 +94,7 @@ export type CarVariant = CarPageData["variants"][number];
 // page can switch between them instantly without exposing the price tables.
 export async function getCarPage(slug: string) {
   "use cache";
+  cacheTag(CATALOGUE_TAG);
   cacheLife("minutes");
 
   const model = await db.model.findUnique({

@@ -1,8 +1,13 @@
 import { CircleAlertIcon, CircleCheckIcon } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { formatDate } from "@/lib/dates";
+import { localised } from "@/lib/i18n/content";
 import type { UsedCarDetail } from "@/lib/used-cars/queries";
 
 export function InspectionReport({ inspection }: { inspection: UsedCarDetail["inspection"] }) {
+  const t = useTranslations("Inspection");
+  const content = useTranslations("Content");
+  const locale = useLocale();
   const needsAttention = inspection.checks.filter((check) => check.result === "ATTENTION").length;
 
   return (
@@ -10,10 +15,10 @@ export function InspectionReport({ inspection }: { inspection: UsedCarDetail["in
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 id="inspection-title" className="text-2xl">
-            Inspection report
+            {t("title")}
           </h2>
           <p className="text-sm text-muted-foreground">
-            Inspected on {formatDate(new Date(`${inspection.inspectedOn}T00:00:00Z`))}
+            {t("inspectedOn", { date: formatDate(new Date(`${inspection.inspectedOn}T00:00:00Z`), locale) })}
           </p>
         </div>
         <p className="text-right">
@@ -24,23 +29,21 @@ export function InspectionReport({ inspection }: { inspection: UsedCarDetail["in
       <ul className="divide-y border-y">
         {inspection.checks.map((check) => (
           <li key={check.area} className="flex items-center justify-between gap-4 py-3">
-            <span>{check.area}</span>
+            <span>{localised(content, "inspection", check.area, check.area)}</span>
             {check.result === "PASS" ? (
               <span className="flex items-center gap-1.5 text-muted-foreground">
-                <CircleCheckIcon aria-hidden="true" className="size-4" /> Passed
+                <CircleCheckIcon aria-hidden="true" className="size-4" /> {t("passed")}
               </span>
             ) : (
               <span className="flex items-center gap-1.5 font-medium">
-                <CircleAlertIcon aria-hidden="true" className="size-4" /> Needs attention
+                <CircleAlertIcon aria-hidden="true" className="size-4" /> {t("attention")}
               </span>
             )}
           </li>
         ))}
       </ul>
       <p className="mt-4 text-sm text-muted-foreground">
-        {needsAttention === 0
-          ? "Every area passed."
-          : `${needsAttention} ${needsAttention === 1 ? "area needs" : "areas need"} attention. Ask the showroom what will be fixed before delivery.`}
+        {needsAttention === 0 ? t("allPassed") : t("needsAttention", { count: needsAttention })}
       </p>
     </section>
   );

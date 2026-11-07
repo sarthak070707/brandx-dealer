@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { ColourPicker } from "@/components/car/colour-picker";
 import { MorphGallery, type MorphGalleryHandle } from "@/components/car/morph-gallery";
@@ -8,12 +9,15 @@ import { PriceCard } from "@/components/car/price-card";
 import { SpecList } from "@/components/car/spec-list";
 import { VariantPicker } from "@/components/car/variant-picker";
 import type { CarPageData } from "@/lib/catalogue";
+import { localised } from "@/lib/i18n/content";
 import { formatRupees } from "@/lib/money";
 
 // One grid in mobile reading order; on desktop the price card moves to a sticky right column.
 // The mobile price bar sticks to the viewport only while this grid is on screen, so it
 // never covers the footer.
 export function CarConfigurator({ car }: { car: CarPageData }) {
+  const t = useTranslations("Car");
+  const content = useTranslations("Content");
   const [variantId, setVariantId] = useState(car.variants[0].id);
   const [cityId, setCityId] = useState(car.defaultCityId);
   const [photoIndex, setPhotoIndex] = useState(0);
@@ -25,24 +29,27 @@ export function CarConfigurator({ car }: { car: CarPageData }) {
   const colour = variant.colours.find((option) => option.photo === car.photos[photoIndex]) ?? variant.colours[0];
   const photos = car.photos.map((src) => {
     const shown = variant.colours.find((option) => option.photo === src);
-    return { src, alt: shown ? `${car.name} in ${shown.name}` : car.name };
+    return { src, alt: shown ? t("photoAlt", { name: car.name, colour: localised(content, "colours", shown.name, shown.name) }) : car.name };
   });
   const quote = variant.quotes[cityId][withAccessories ? "withAccessories" : "withoutAccessories"];
+  const description = localised(content, "models", car.slug, car.description);
+  const cityName = car.cities.find((city) => city.id === cityId)?.name ?? "";
   const prices = car.variants.flatMap((option) => (option.exShowroomPaise === null ? [] : [option.exShowroomPaise]));
 
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-x-16">
       <div className="lg:col-start-1">
-        <MorphGallery ref={gallery} label={`${car.name} photos`} photos={photos} onActiveChange={setPhotoIndex} />
+        <MorphGallery ref={gallery} label={t("galleryLabel", { name: car.name })} photos={photos} onActiveChange={setPhotoIndex} />
       </div>
 
       <header className="flex flex-col gap-2 lg:col-start-1">
         <h1 className="text-5xl leading-none font-light tracking-tight font-stretch-semi-condensed sm:text-6xl">{car.name}</h1>
         <p className="text-lg text-muted-foreground">
-          {prices.length > 0 && `From ${formatRupees(Math.min(...prices))} ex-showroom, `}
-          {car.variants.length} {car.variants.length === 1 ? "variant" : "variants"}
+          {prices.length > 0
+            ? t("fromPriceVariants", { price: formatRupees(Math.min(...prices)), count: car.variants.length })
+            : t("variantsCount", { count: car.variants.length })}
         </p>
-        <p className="max-w-prose">{car.description}</p>
+        <p className="max-w-prose">{description}</p>
       </header>
 
       <div className="lg:col-start-1">
@@ -77,7 +84,7 @@ export function CarConfigurator({ car }: { car: CarPageData }) {
 
       <MobilePriceBar
         slug={car.slug}
-        cityName={car.cities.find((city) => city.id === cityId)?.name ?? ""}
+        cityName={localised(content, "cities", cityName, cityName)}
         quote={quote}
         exShowroomPaise={variant.exShowroomPaise}
       />

@@ -12,10 +12,10 @@ function toggleTheme() {
   }
 }
 
-export function ThemeToggle() {
+export function ThemeToggle({ label }: { label: string }) {
   // Icons switch with CSS, not state, so the server and first client render match.
   return (
-    <Button variant="ghost" size="icon" aria-label="Switch between light and dark theme" onClick={toggleTheme}>
+    <Button variant="ghost" size="icon" aria-label={label} onClick={toggleTheme}>
       <SunIcon className="hidden dark:block" />
       <MoonIcon className="dark:hidden" />
     </Button>

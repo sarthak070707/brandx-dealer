@@ -1,4 +1,5 @@
 import type { Language } from "@/generated/prisma/enums";
+import { showroomNameFor } from "@/lib/i18n/server-content";
 
 type AcknowledgementInput = {
   language: Language;
@@ -16,10 +17,11 @@ export const optOutNotice = (language: Language, url: string) =>
 // Mocked WhatsApp/SMS text written to the outbox when a lead is created.
 export function acknowledgement({ language, buyerName, carLabel, showroomName, consultantName, optOutUrl }: AcknowledgementInput) {
   const notice = optOutUrl ? ` ${optOutNotice(language, optOutUrl)}` : "";
+  const showroom = showroomNameFor(language, showroomName);
   if (language === "HI") {
     const who = consultantName ?? "हमारी टीम";
-    return `नमस्ते ${buyerName}, ${carLabel} में रुचि के लिए धन्यवाद। Brand X ${showroomName} से ${who} जल्द ही आपको कॉल करेंगे।${notice}`;
+    return `नमस्ते ${buyerName}, ${carLabel} में रुचि के लिए धन्यवाद। Brand X ${showroom} से ${who} जल्द ही आपको कॉल करेंगे।${notice}`;
   }
   const who = consultantName ?? "Our team";
-  return `Hi ${buyerName}, thanks for your interest in the ${carLabel}. ${who} at Brand X ${showroomName} will call you shortly.${notice}`;
+  return `Hi ${buyerName}, thanks for your interest in the ${carLabel}. ${who} at Brand X ${showroom} will call you shortly.${notice}`;
 }

@@ -1,9 +1,14 @@
 "use client";
 
-type Props = { checked: boolean; onChange: (checked: boolean) => void; purpose: string };
+import { useTranslations } from "next-intl";
 
-// The DPDP consent the spec requires on every public form, in plain language.
-export function ConsentField({ checked, onChange, purpose }: Props) {
+type Props = { checked: boolean; onChange: (checked: boolean) => void; kind: "testDrive" | "enquiry" };
+
+// The DPDP consent the spec requires on every public form, in plain language and in the
+// visitor's language. It is never ticked for them.
+export function ConsentField({ checked, onChange, kind }: Props) {
+  const t = useTranslations("Consent");
+
   return (
     <label className="flex cursor-pointer gap-3 rounded-xl border bg-card p-4">
       <input
@@ -13,10 +18,7 @@ export function ConsentField({ checked, onChange, purpose }: Props) {
         className="mt-1 size-4 shrink-0 accent-foreground"
         required
       />
-      <span className="text-sm">
-        I agree that Brand X may contact me by phone, WhatsApp or SMS about {purpose}. My details are used only for this
-        request, and I can stop messages at any time.
-      </span>
+      <span className="text-sm">{t(kind)}</span>
     </label>
   );
 }

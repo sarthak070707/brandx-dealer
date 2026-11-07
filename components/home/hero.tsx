@@ -1,32 +1,39 @@
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import Link from "next/link";
 import { Marquee } from "@/components/marquee";
 import { TEST_DRIVE_HREF } from "@/components/site-links";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import { getModelLineup, type ModelSummary } from "@/lib/catalogue";
 import { formatRupees } from "@/lib/money";
 
-function CarTile({ model, photo }: { model: ModelSummary; photo: string }) {
+function CarTile({ model, photo, fromLabel }: { model: ModelSummary; photo: string; fromLabel: string | null }) {
   return (
     <figure className="relative h-40 w-60 shrink-0 overflow-hidden rounded-2xl bg-muted sm:h-48 sm:w-72">
       <Image src={photo} alt={model.name} fill sizes="288px" className="object-cover" />
       <figcaption className="absolute bottom-3 left-3 rounded-lg bg-card/90 px-2.5 py-1 text-sm text-card-foreground">
         {model.name}
-        {model.fromPaise !== null && <span className="text-muted-foreground"> from {formatRupees(model.fromPaise)}</span>}
+        {fromLabel && <span className="text-muted-foreground"> {fromLabel}</span>}
       </figcaption>
     </figure>
   );
 }
 
-function tilesFor(models: ModelSummary[]) {
-  return models.flatMap((model) =>
-    model.photos.map((photo) => <CarTile key={photo} model={model} photo={photo} />),
-  );
-}
-
 export async function Hero() {
-  const lineup = await getModelLineup();
+  const [lineup, t, nav] = await Promise.all([getModelLineup(), getTranslations("Home"), getTranslations("Nav")]);
   const prices = lineup.flatMap((model) => (model.fromPaise === null ? [] : [model.fromPaise]));
+
+  const tilesFor = (models: ModelSummary[]) =>
+    models.flatMap((model) =>
+      model.photos.map((photo) => (
+        <CarTile
+          key={photo}
+          model={model}
+          photo={photo}
+          fromLabel={model.fromPaise === null ? null : t("tileFrom", { price: formatRupees(model.fromPaise) })}
+        />
+      )),
+    );
 
   return (
     <section aria-labelledby="hero-title" className="overflow-hidden border-b bg-card">
@@ -36,18 +43,17 @@ export async function Hero() {
             id="hero-title"
             className="text-5xl leading-[1.02] font-light tracking-tight font-stretch-semi-condensed sm:text-6xl xl:text-7xl"
           >
-            Every Brand X, priced for your city.
+            {t("heroTitle")}
           </h1>
           <p className="text-lg leading-relaxed text-muted-foreground">
-            {prices.length > 0 && `New cars from ${formatRupees(Math.min(...prices))} ex-showroom, and inspected certified used cars. `}
-            See the exact on-road price for your city before you visit.
+            {prices.length > 0 ? t("heroLeadWithPrice", { price: formatRupees(Math.min(...prices)) }) : t("heroLead")}
           </p>
           <div className="flex flex-wrap gap-3">
             <Button asChild size="lg">
-              <Link href={TEST_DRIVE_HREF}>Book a test drive</Link>
+              <Link href={TEST_DRIVE_HREF}>{nav("bookTestDrive")}</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link href="/cars">See on-road prices</Link>
+              <Link href="/cars">{t("seePrices")}</Link>
             </Button>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { carJsonLd, serializeJsonLd, usedCarJsonLd } from "./seo";
+import { alternatesFor, carJsonLd, serializeJsonLd, usedCarJsonLd } from "./seo";
 
 const ORIGIN = "https://brandx.example";
 
@@ -47,5 +47,18 @@ describe("serializeJsonLd", () => {
     const out = serializeJsonLd({ name: "</script><script>alert(1)</script>" });
     expect(out).not.toContain("<");
     expect(JSON.parse(out).name).toBe("</script><script>alert(1)</script>");
+  });
+});
+
+describe("alternatesFor", () => {
+  it("points each language at its own address, with English as the default", () => {
+    expect(alternatesFor("/cars/model-h", "hi")).toEqual({
+      canonical: "/hi/cars/model-h",
+      languages: { en: "/en/cars/model-h", hi: "/hi/cars/model-h", "x-default": "/en/cars/model-h" },
+    });
+  });
+
+  it("has no trailing slash for the home page", () => {
+    expect(alternatesFor("/", "en").canonical).toBe("/en");
   });
 });

@@ -1,7 +1,7 @@
+import { useTranslations } from "next-intl";
 import { useId } from "react";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Slider } from "@/components/ui/slider";
-import { FUEL_LABEL } from "@/lib/labels";
 import { formatRupees } from "@/lib/money";
 import { toggleItem } from "@/lib/utils";
 import type { filterOptionsFor, UsedCarFilters } from "@/lib/used-cars/filter";
@@ -40,6 +40,8 @@ function CheckboxGroup<T extends string>(props: {
 }
 
 export function FilterPanel({ options, filters, onChange }: Props) {
+  const t = useTranslations("UsedFilters");
+  const labels = useTranslations("Labels");
   // The panel can render twice (sidebar and phone sheet), so label ids must be unique.
   const id = useId();
   const priceRange = filters.priceRangePaise ?? options.priceBoundsPaise;
@@ -53,38 +55,38 @@ export function FilterPanel({ options, filters, onChange }: Props) {
   return (
     <div className="flex flex-col gap-8">
       <CheckboxGroup
-        legend="Model"
+        legend={t("model")}
         options={options.models.map((model) => ({ value: model.slug, label: model.name }))}
         selected={filters.modelSlugs}
         onToggle={(slug) => onChange({ ...filters, modelSlugs: toggleItem(filters.modelSlugs, slug) })}
       />
 
       <CheckboxGroup
-        legend="Fuel"
-        options={options.fuels.map((fuel) => ({ value: fuel, label: FUEL_LABEL[fuel] }))}
+        legend={t("fuel")}
+        options={options.fuels.map((fuel) => ({ value: fuel, label: labels(`fuel.${fuel}`) }))}
         selected={filters.fuels}
         onToggle={(fuel) => onChange({ ...filters, fuels: toggleItem(filters.fuels, fuel) })}
       />
 
       <fieldset className="grid grid-cols-2 gap-3">
-        <legend className="mb-3 text-sm text-muted-foreground">Year</legend>
+        <legend className="mb-3 text-sm text-muted-foreground">{t("year")}</legend>
         <label className="flex flex-col gap-1 text-sm">
-          From
+          {t("from")}
           <NativeSelect
             value={filters.yearFrom ?? ""}
             onChange={(event) => onChange({ ...filters, yearFrom: event.target.value ? Number(event.target.value) : null })}
           >
-            <option value="">Any</option>
+            <option value="">{t("any")}</option>
             {options.years.map(yearOption)}
           </NativeSelect>
         </label>
         <label className="flex flex-col gap-1 text-sm">
-          To
+          {t("to")}
           <NativeSelect
             value={filters.yearTo ?? ""}
             onChange={(event) => onChange({ ...filters, yearTo: event.target.value ? Number(event.target.value) : null })}
           >
-            <option value="">Any</option>
+            <option value="">{t("any")}</option>
             {options.years.map(yearOption)}
           </NativeSelect>
         </label>
@@ -92,7 +94,11 @@ export function FilterPanel({ options, filters, onChange }: Props) {
 
       <div className="flex flex-col gap-3">
         <p id={`${id}-price`} className="text-sm text-muted-foreground">
-          Price: <span className="text-foreground">{formatRupees(priceRange[0])} to {formatRupees(priceRange[1])}</span>
+          {t.rich("price", {
+            min: formatRupees(priceRange[0]),
+            max: formatRupees(priceRange[1]),
+            strong: (chunks) => <span className="text-foreground">{chunks}</span>,
+          })}
         </p>
         <Slider
           aria-labelledby={`${id}-price`}
@@ -110,7 +116,7 @@ export function FilterPanel({ options, filters, onChange }: Props) {
 
       <div className="flex flex-col gap-3">
         <p id={`${id}-km`} className="text-sm text-muted-foreground">
-          Driven up to <span className="text-foreground">{kmFormat.format(maxKm)} km</span>
+          {t.rich("km", { km: kmFormat.format(maxKm), strong: (chunks) => <span className="text-foreground">{chunks}</span> })}
         </p>
         <Slider
           aria-labelledby={`${id}-km`}

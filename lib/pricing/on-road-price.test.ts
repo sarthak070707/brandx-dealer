@@ -84,6 +84,25 @@ describe("computeOnRoadPrice", () => {
     expect(priced(computeOnRoadPrice(versioned, request)).exShowroomPaise).toBe(rupees(12_45_000));
   });
 
+  it("ignores a row that has not started yet, so an upcoming price never shows early", () => {
+    const upcoming = tables({
+      variantPrices: [
+        { variantId: "h02", exShowroomPaise: rupees(12_45_000), ...current },
+        { variantId: "h02", exShowroomPaise: rupees(13_00_000), validFrom: day("2027-01-01"), validTo: day("2027-03-31") },
+      ],
+    });
+    expect(priced(computeOnRoadPrice(upcoming, request)).exShowroomPaise).toBe(rupees(12_45_000));
+  });
+
+  it("starts using a row on its first day, and not before", () => {
+    const rows = [
+      { ...current, value: 12 },
+      { validFrom: day("2027-01-01"), validTo: day("2027-03-31"), value: 13 },
+    ];
+    expect(validOn(rows, day("2026-12-31"))?.value).toBe(12);
+    expect(validOn(rows, day("2027-01-01"))?.value).toBe(13);
+  });
+
   it("prefers the most recently started version when two overlap", () => {
     const overlapping = tables({
       variantPrices: [

@@ -3,15 +3,16 @@ import { auth } from "@/auth";
 import { bookingSchema, type BookingInput } from "@/lib/booking/schema";
 import { isBookableSlot, slotsForDay, bookingDays } from "@/lib/booking/slots";
 import { db } from "@/lib/db";
+import type { PublicError } from "@/lib/public-errors";
 import { isUniqueViolation } from "@/lib/db-errors";
 import { createLead } from "@/lib/leads/create-lead";
-import { isRateLimited, RATE_LIMITED_MESSAGE } from "@/lib/leads/rate-limit";
+import { isRateLimited, RATE_LIMITED } from "@/lib/leads/rate-limit";
 
 const NEXT_FREE_SLOT_COUNT = 3;
 
 export type BookingResult =
   | { ok: true; cancelToken: string }
-  | { ok: false; error: string; fieldErrors?: Record<string, string[]>; nextFreeSlots?: string[] };
+  | { ok: false; error: PublicError; fieldErrors?: Record<string, string[]>; nextFreeSlots?: string[] };
 
 async function nextFreeSlots(demoCarId: string, hours: { openMinute: number; closeMinute: number }, after: Date) {
   const now = new Date();
@@ -30,7 +31,7 @@ async function nextFreeSlots(demoCarId: string, hours: { openMinute: number; clo
 export async function createBooking(input: BookingInput): Promise<BookingResult> {
   const parsed = bookingSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: "Please check the highlighted fields.", fieldErrors: z.flattenError(parsed.error).fieldErrors };
+    return { ok: false, error: "checkFields", fieldErrors: z.flattenError(parsed.error).fieldErrors };
   }
   const booking = parsed.data;
 
@@ -42,12 +43,12 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
       variant: { select: { id: true, name: true, model: { select: { id: true, name: true } } } },
     },
   });
-  if (!demoCar?.available) return { ok: false, error: "This demo car is not available for test drives right now." };
+  if (!demoCar?.available) return { ok: false, error: "demoCarUnavailable" };
   if (!isBookableSlot(booking.slotStart, demoCar.showroom, new Date())) {
-    return { ok: false, error: "That time is no longer available. Please pick another slot." };
+    return { ok: false, error: "slotUnavailable" };
   }
 
-  if (await isRateLimited(booking.buyerPhone)) return { ok: false, error: RATE_LIMITED_MESSAGE };
+  if (await isRateLimited(booking.buyerPhone)) return { ok: false, error: RATE_LIMITED };
 
   const session = await auth();
   const buyerId = session?.user.role === "BUYER" ? session.user.id : null;
@@ -85,7 +86,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     if (!isUniqueViolation(error)) throw error;
     return {
       ok: false,
-      error: "That slot was just taken. Here are the next free ones.",
+      error: "slotTaken",
       nextFreeSlots: await nextFreeSlots(booking.demoCarId, demoCar.showroom, booking.slotStart),
     };
   }

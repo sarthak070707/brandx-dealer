@@ -82,7 +82,7 @@ export async function createLead(tx: Prisma.TransactionClient, lead: NewLead) {
           carLabel,
           showroomName: showroom.name,
           consultantName: consultant?.name ?? null,
-          optOutUrl: optOutLink(created.id),
+          optOutUrl: optOutLink(created.id, lead.language),
         }),
       },
     });

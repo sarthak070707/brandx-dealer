@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canAccessPath } from "./access";
+import { canAccessPath, isStaffArea } from "./access";
 
 describe("canAccessPath", () => {
   it("lets anyone open public pages", () => {
@@ -29,5 +29,12 @@ describe("canAccessPath", () => {
 
   it("matches whole path segments only", () => {
     expect(canAccessPath("/administration-fees", undefined)).toBe(true);
+  });
+});
+
+describe("isStaffArea", () => {
+  it("is true for the staff areas and their pages, and false for public pages in either language", () => {
+    for (const path of ["/admin", "/admin/prices/road-tax", "/consultant", "/consultant/leads/abc"]) expect(isStaffArea(path), path).toBe(true);
+    for (const path of ["/", "/en", "/hi/cars", "/en/sign-in", "/administrator", "/consultants"]) expect(isStaffArea(path), path).toBe(false);
   });
 });

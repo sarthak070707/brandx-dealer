@@ -23,6 +23,10 @@ describe("acknowledgement", () => {
     expect(acknowledgement({ ...base, language: "HI", consultantName: null, optOutUrl: url }).endsWith(url)).toBe(true);
   });
 
+  it("names the showroom in Hindi for a Hindi buyer", () => {
+    expect(acknowledgement({ ...base, language: "HI", consultantName: "Rohan Verma" })).toContain("गोमती नगर");
+  });
+
   it("has no opt-out line when no link is given", () => {
     expect(acknowledgement({ ...base, language: "EN", consultantName: null })).not.toContain("stop messages");
   });

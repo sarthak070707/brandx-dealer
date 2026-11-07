@@ -11,4 +11,4 @@ export async function isRateLimited(buyerPhone: string) {
   return recent >= MAX_LEADS;
 }
 
-export const RATE_LIMITED_MESSAGE = "We've received several requests from this number. Please try again in a few minutes.";
+export const RATE_LIMITED = "rateLimited" as const;

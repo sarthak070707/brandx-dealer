@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { Document } from "@/components/document";
 import { StaffShell, StaffShellSkeleton } from "@/components/staff/staff-shell";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -10,11 +11,11 @@ export const metadata: Metadata = {
 
 export default function ConsultantLayout({ children }: LayoutProps<"/consultant">) {
   return (
-    <>
+    <Document lang="en">
       <Suspense fallback={<StaffShellSkeleton />}>
         <StaffShell>{children}</StaffShell>
       </Suspense>
       <Toaster />
-    </>
+    </Document>
   );
 }

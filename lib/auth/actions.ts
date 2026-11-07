@@ -4,6 +4,7 @@ import { AuthError } from "next-auth";
 import { z } from "zod";
 import { signIn, signOut } from "@/auth";
 
+// The error is a key into the Errors messages, so the page shows it in the visitor's language.
 export type SignInState = { error: string | null };
 
 const credentialsSchema = z.object({
@@ -19,14 +20,14 @@ export async function signInWithPassword(_previous: SignInState, formData: FormD
     password: formData.get("password"),
     redirectTo: formData.get("redirectTo") || "/consultant",
   });
-  if (!credentials.success) return { error: "Enter your email and password." };
+  if (!credentials.success) return { error: "credentialsMissing" };
 
   try {
     // Buyers who land on /consultant are sent home by the proxy, so one default fits everyone.
     await signIn("credentials", credentials.data);
     return { error: null };
   } catch (error) {
-    if (error instanceof AuthError) return { error: "That email and password don't match." };
+    if (error instanceof AuthError) return { error: "credentialsWrong" };
     throw error;
   }
 }

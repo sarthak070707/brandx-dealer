@@ -16,3 +16,6 @@ export function canAccessPath(pathname: string, role: Role | undefined) {
   if (!area) return true;
   return role !== undefined && area.roles.includes(role);
 }
+
+// Staff screens live outside the language folders and stay in English.
+export const isStaffArea = (pathname: string) => areaFor(pathname) !== undefined;

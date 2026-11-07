@@ -1,6 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
-import { formatSlotTime } from "@/lib/dates";
+import { formatMonthYear, formatSlotTime, formatWeekday } from "@/lib/dates";
 import { slotsForDay, type ShowroomHours } from "@/lib/booking/slots";
 import { cn } from "@/lib/utils";
 
@@ -15,8 +16,6 @@ type Props = {
 
 const DAY_MS = 24 * 60 * 60_000;
 const MONDAY_TO_SATURDAY = 6;
-const weekdayFormat = new Intl.DateTimeFormat("en-IN", { weekday: "short", timeZone: "UTC" });
-const monthFormat = new Intl.DateTimeFormat("en-IN", { month: "long", year: "numeric", timeZone: "UTC" });
 const dayNumber = (day: string) => Number(day.slice(8));
 const toDate = (day: string) => new Date(`${day}T00:00:00Z`);
 
@@ -39,6 +38,8 @@ const choiceStyle =
 // Adapted from 21st.dev's delivery scheduler: a Monday-to-Saturday strip and a slot grid,
 // in IST, with taken slots greyed out rather than hidden (spec).
 export function SlotScheduler({ days, hours, takenSlots, now, selectedSlot, onSelect }: Props) {
+  const t = useTranslations("Scheduler");
+  const locale = useLocale();
   const weeks = [...new Set(days.map(weekStart))];
   const freeSlots = (day: string) =>
     slotsForDay(day, hours).filter((slot) => slot > now && !takenSlots.has(slot.toISOString()));
@@ -51,11 +52,11 @@ export function SlotScheduler({ days, hours, takenSlots, now, selectedSlot, onSe
     <div className="flex flex-col gap-6">
       <fieldset>
         <div className="mb-3 flex items-center justify-between">
-          <legend className="text-lg">{monthFormat.format(toDate(shownWeek[0]))}</legend>
+          <legend className="text-lg">{formatMonthYear(toDate(shownWeek[0]), locale)}</legend>
           <div className="flex gap-1">
             <button
               type="button"
-              aria-label="Previous week"
+              aria-label={t("previousWeek")}
               disabled={weekIndex === 0}
               onClick={() => setWeekIndex(weekIndex - 1)}
               className="grid size-11 place-items-center rounded-lg hover:bg-muted disabled:opacity-30"
@@ -64,7 +65,7 @@ export function SlotScheduler({ days, hours, takenSlots, now, selectedSlot, onSe
             </button>
             <button
               type="button"
-              aria-label="Next week"
+              aria-label={t("nextWeek")}
               disabled={weekIndex === weeks.length - 1}
               onClick={() => setWeekIndex(weekIndex + 1)}
               className="grid size-11 place-items-center rounded-lg hover:bg-muted disabled:opacity-30"
@@ -76,7 +77,7 @@ export function SlotScheduler({ days, hours, takenSlots, now, selectedSlot, onSe
         <div className="grid grid-cols-6 gap-2">
           {shownWeek.map((day) => (
             <label key={day} className="flex cursor-pointer flex-col items-center gap-1">
-              <span className="text-xs text-muted-foreground">{weekdayFormat.format(toDate(day))}</span>
+              <span className="text-xs text-muted-foreground">{formatWeekday(toDate(day), locale)}</span>
               <input
                 type="radio"
                 name="day"
@@ -93,7 +94,7 @@ export function SlotScheduler({ days, hours, takenSlots, now, selectedSlot, onSe
       </fieldset>
 
       <fieldset>
-        <legend className="mb-3 text-sm text-muted-foreground">Time (IST), 30 minutes</legend>
+        <legend className="mb-3 text-sm text-muted-foreground">{t("timeLegend")}</legend>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
           {slotsForDay(selectedDay, hours).map((slot) => {
             const iso = slot.toISOString();
@@ -110,8 +111,8 @@ export function SlotScheduler({ days, hours, takenSlots, now, selectedSlot, onSe
                   className="peer sr-only"
                 />
                 <span className={cn(choiceStyle, "h-11 text-sm tabular-nums", taken && "line-through")}>
-                  {formatSlotTime(slot)}
-                  {taken && <span className="sr-only"> (taken)</span>}
+                  {formatSlotTime(slot, locale)}
+                  {taken && <span className="sr-only"> {t("taken")}</span>}
                 </span>
               </label>
             );

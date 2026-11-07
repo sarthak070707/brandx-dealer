@@ -20,7 +20,7 @@ export const enquirySchema = buyerContact.extend({
   message: z
     .string()
     .trim()
-    .max(MAX_MESSAGE_LENGTH, `Keep it under ${MAX_MESSAGE_LENGTH} characters`)
+    .max(MAX_MESSAGE_LENGTH, "messageTooLong")
     .transform((value) => value || null),
 });
 

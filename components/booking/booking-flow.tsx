@@ -1,27 +1,24 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { bookTestDrive, loadTakenSlots } from "@/app/(public)/test-drive/actions";
+import { bookTestDrive, loadTakenSlots } from "@/app/[locale]/(public)/test-drive/actions";
 import { SlotScheduler } from "@/components/booking/slot-scheduler";
 import { ConsentField } from "@/components/forms/consent-field";
 import { Field } from "@/components/forms/field";
 import { LanguageField } from "@/components/forms/language-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "@/i18n/navigation";
 import type { BookingOptions } from "@/lib/booking/queries";
 import { bookingDays } from "@/lib/booking/slots";
 import { formatSlot } from "@/lib/dates";
-import { FUEL_LABEL, TRANSMISSION_LABEL } from "@/lib/labels";
+import { errorText, localised } from "@/lib/i18n/content";
 import { cn } from "@/lib/utils";
 
 type Step = "car" | "time" | "details";
-const STEPS: { id: Step; label: string }[] = [
-  { id: "car", label: "Car" },
-  { id: "time", label: "Date and time" },
-  { id: "details", label: "Your details" },
-];
+const STEPS: Step[] = ["car", "time", "details"];
 
 const cardStyle =
   "flex h-full gap-4 rounded-xl border bg-card p-4 transition-colors peer-checked:border-foreground peer-checked:ring-1 peer-checked:ring-foreground peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ring peer-disabled:cursor-not-allowed peer-disabled:opacity-50";
@@ -29,19 +26,26 @@ const cardStyle =
 type Props = { options: BookingOptions; preselected: { showroomId: string; demoCarId: string } | null };
 
 export function BookingFlow({ options, preselected }: Props) {
+  const t = useTranslations("Booking");
+  const labels = useTranslations("Labels");
+  const content = useTranslations("Content");
+  const errors = useTranslations("Errors");
+  const locale = useLocale();
   const router = useRouter();
   const [step, setStep] = useState<Step>(preselected ? "time" : "car");
   const [showroomId, setShowroomId] = useState(preselected?.showroomId ?? options[0].id);
   const [demoCarId, setDemoCarId] = useState(preselected?.demoCarId ?? null);
   const [takenSlots, setTakenSlots] = useState<Set<string> | null>(null);
   const [slot, setSlot] = useState<string | null>(null);
-  const [details, setDetails] = useState({ buyerName: "", buyerPhone: "", language: "EN" as "EN" | "HI", consent: false });
+  const [details, setDetails] = useState({ buyerName: "", buyerPhone: "", language: (locale === "hi" ? "HI" : "EN") as "EN" | "HI", consent: false });
   const [error, setError] = useState<{ message: string; fields?: Record<string, string[]>; nextFreeSlots?: string[] } | null>(null);
   const [pending, startTransition] = useTransition();
   const [now] = useState(() => new Date());
 
   const showroom = options.find((option) => option.id === showroomId) ?? options[0];
   const demoCar = showroom.demoCars.find((car) => car.id === demoCarId);
+  const showroomName = (name: string) => localised(content, "showrooms", name, name, "name");
+  const showroomAddress = (name: string, address: string) => localised(content, "showrooms", name, address, "address");
 
   const openTimes = (carId: string) =>
     startTransition(async () => {
@@ -63,19 +67,19 @@ export function BookingFlow({ options, preselected }: Props) {
       <ol className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
         {STEPS.map((item, index) => (
           <li
-            key={item.id}
-            aria-current={item.id === step ? "step" : undefined}
-            className={cn("flex items-center gap-2", item.id === step ? "text-foreground" : "text-muted-foreground")}
+            key={item}
+            aria-current={item === step ? "step" : undefined}
+            className={cn("flex items-center gap-2", item === step ? "text-foreground" : "text-muted-foreground")}
           >
             <span
               className={cn(
                 "grid size-7 place-items-center rounded-full border tabular-nums",
-                item.id === step && "border-foreground bg-foreground text-background",
+                item === step && "border-foreground bg-foreground text-background",
               )}
             >
               {index + 1}
             </span>
-            {item.label}
+            {t(`steps.${item}`)}
           </li>
         ))}
       </ol>
@@ -83,7 +87,7 @@ export function BookingFlow({ options, preselected }: Props) {
       {step === "car" && (
         <div className="flex flex-col gap-8">
           <fieldset>
-            <legend className="mb-3 text-sm text-muted-foreground">Showroom</legend>
+            <legend className="mb-3 text-sm text-muted-foreground">{t("showroom")}</legend>
             <div className="grid gap-3 sm:grid-cols-3">
               {options.map((option) => (
                 <label key={option.id} className="cursor-pointer">
@@ -98,8 +102,8 @@ export function BookingFlow({ options, preselected }: Props) {
                     className="peer sr-only"
                   />
                   <span className={cn(cardStyle, "flex-col gap-1")}>
-                    <span className="text-lg">{option.name}</span>
-                    <span className="text-sm text-muted-foreground">{option.address}</span>
+                    <span className="text-lg">{showroomName(option.name)}</span>
+                    <span className="text-sm text-muted-foreground">{showroomAddress(option.name, option.address)}</span>
                   </span>
                 </label>
               ))}
@@ -107,7 +111,7 @@ export function BookingFlow({ options, preselected }: Props) {
           </fieldset>
 
           <fieldset>
-            <legend className="mb-3 text-sm text-muted-foreground">Demo car at {showroom.name}</legend>
+            <legend className="mb-3 text-sm text-muted-foreground">{t("demoCarAt", { showroom: showroomName(showroom.name) })}</legend>
             <div className="grid gap-3 sm:grid-cols-2">
               {showroom.demoCars.map((car) => (
                 <label key={car.id} className={car.available ? "cursor-pointer" : undefined}>
@@ -131,8 +135,8 @@ export function BookingFlow({ options, preselected }: Props) {
                       </span>
                       <span className="text-sm text-muted-foreground">
                         {car.available
-                          ? `${TRANSMISSION_LABEL[car.variant.transmission]}, ${FUEL_LABEL[car.variant.fuel]}`
-                          : "In service, no slots this week"}
+                          ? `${labels(`transmission.${car.variant.transmission}`)}, ${labels(`fuel.${car.variant.fuel}`)}`
+                          : t("inService")}
                       </span>
                     </span>
                   </span>
@@ -142,7 +146,7 @@ export function BookingFlow({ options, preselected }: Props) {
           </fieldset>
 
           <Button size="lg" className="self-start" disabled={!demoCar || pending} onClick={() => demoCar && openTimes(demoCar.id)}>
-            {pending ? "Loading slots…" : "Choose a time"}
+            {pending ? t("loadingSlots") : t("chooseTime")}
           </Button>
         </div>
       )}
@@ -150,9 +154,9 @@ export function BookingFlow({ options, preselected }: Props) {
       {step === "time" && demoCar && (
         <div className="flex max-w-xl flex-col gap-6">
           <p className="text-muted-foreground">
-            {demoCar.variant.model.name} {demoCar.variant.name} at {showroom.name}.{" "}
+            {t("summary", { car: `${demoCar.variant.model.name} ${demoCar.variant.name}`, showroom: showroomName(showroom.name) })}{" "}
             <button type="button" className="text-foreground underline underline-offset-4" onClick={() => setStep("car")}>
-              Change
+              {t("change")}
             </button>
           </p>
           {takenSlots ? (
@@ -166,11 +170,11 @@ export function BookingFlow({ options, preselected }: Props) {
             />
           ) : (
             <Button variant="outline" className="self-start" disabled={pending} onClick={() => openTimes(demoCar.id)}>
-              {pending ? "Loading slots…" : "Show free slots"}
+              {pending ? t("loadingSlots") : t("showFreeSlots")}
             </Button>
           )}
           <Button size="lg" className="self-start" disabled={!slot} onClick={() => setStep("details")}>
-            Continue
+            {t("continue")}
           </Button>
         </div>
       )}
@@ -184,13 +188,17 @@ export function BookingFlow({ options, preselected }: Props) {
           }}
         >
           <p className="text-muted-foreground">
-            {demoCar.variant.model.name} {demoCar.variant.name} at {showroom.name}, {formatSlot(new Date(slot))}.{" "}
+            {t("summaryWhen", {
+              car: `${demoCar.variant.model.name} ${demoCar.variant.name}`,
+              showroom: showroomName(showroom.name),
+              when: formatSlot(new Date(slot), locale),
+            })}{" "}
             <button type="button" className="text-foreground underline underline-offset-4" onClick={() => setStep("time")}>
-              Change
+              {t("change")}
             </button>
           </p>
 
-          <Field label="Name" error={error?.fields?.buyerName?.[0]}>
+          <Field label={t("name")} error={error?.fields?.buyerName?.[0] && errorText(errors, error.fields.buyerName[0])}>
             <Input
               autoComplete="name"
               value={details.buyerName}
@@ -200,7 +208,7 @@ export function BookingFlow({ options, preselected }: Props) {
             />
           </Field>
 
-          <Field label="Mobile number" error={error?.fields?.buyerPhone?.[0]}>
+          <Field label={t("phone")} error={error?.fields?.buyerPhone?.[0] && errorText(errors, error.fields.buyerPhone[0])}>
             <Input
               type="tel"
               inputMode="tel"
@@ -215,11 +223,11 @@ export function BookingFlow({ options, preselected }: Props) {
 
           <LanguageField value={details.language} onChange={(language) => setDetails({ ...details, language })} />
 
-          <ConsentField checked={details.consent} onChange={(consent) => setDetails({ ...details, consent })} purpose="this test drive" />
+          <ConsentField checked={details.consent} onChange={(consent) => setDetails({ ...details, consent })} kind="testDrive" />
 
           {error && (
             <div role="alert" className="rounded-xl bg-muted p-4">
-              <p>{error.message}</p>
+              <p>{errorText(errors, error.message)}</p>
               {error.nextFreeSlots && error.nextFreeSlots.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {error.nextFreeSlots.map((free) => (
@@ -233,7 +241,7 @@ export function BookingFlow({ options, preselected }: Props) {
                         setError(null);
                       }}
                     >
-                      {formatSlot(new Date(free))}
+                      {formatSlot(new Date(free), locale)}
                     </Button>
                   ))}
                 </div>
@@ -242,7 +250,7 @@ export function BookingFlow({ options, preselected }: Props) {
           )}
 
           <Button type="submit" size="lg" className="self-start" disabled={pending || !details.consent}>
-            {pending ? "Booking…" : "Confirm test drive"}
+            {pending ? t("booking") : t("confirm")}
           </Button>
         </form>
       )}

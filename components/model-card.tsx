@@ -1,7 +1,8 @@
+import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { ModelSummary } from "@/lib/catalogue";
-import { BODY_TYPE_LABEL } from "@/lib/labels";
+import { localised } from "@/lib/i18n/content";
 import { formatRupees } from "@/lib/money";
 import { cn } from "@/lib/utils";
 
@@ -9,6 +10,10 @@ export const cardStyle =
   "group flex h-full flex-col overflow-hidden rounded-2xl border bg-card transition-colors hover:border-foreground/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 export function ModelCard({ model, large = false }: { model: ModelSummary; large?: boolean }) {
+  const t = useTranslations("ModelCard");
+  const labels = useTranslations("Labels");
+  const content = useTranslations("Content");
+
   return (
     <Link href={`/cars/${model.slug}`} className={cardStyle}>
       <div className={cn("relative shrink-0 overflow-hidden bg-muted", large ? "h-64 sm:h-80" : "h-56")}>
@@ -23,12 +28,15 @@ export function ModelCard({ model, large = false }: { model: ModelSummary; large
         )}
       </div>
       <div className="flex flex-1 flex-col gap-1 p-6">
-        <p className="text-sm text-muted-foreground">{BODY_TYPE_LABEL[model.bodyType]}</p>
+        <p className="text-sm text-muted-foreground">{labels(`bodyType.${model.bodyType}`)}</p>
         <h3 className="text-2xl">{model.name}</h3>
-        <p className="text-muted-foreground">{model.description}</p>
+        <p className="text-muted-foreground">{localised(content, "models", model.slug, model.description)}</p>
         {model.fromPaise !== null && (
           <p className="mt-auto pt-4">
-            from {formatRupees(model.fromPaise)} <span className="text-muted-foreground">ex-showroom</span>
+            {t.rich("fromPrice", {
+              price: formatRupees(model.fromPaise),
+              muted: (chunks) => <span className="text-muted-foreground">{chunks}</span>,
+            })}
           </p>
         )}
       </div>

@@ -1,0 +1,456 @@
+{
+  "Meta": {
+    "title": "Brand X Lucknow",
+    "description": "New and certified used Brand X cars in Lucknow, with on-road prices and test drives."
+  },
+  "Nav": {
+    "main": "Main",
+    "newCars": "New cars",
+    "usedCars": "Certified used",
+    "showrooms": "Showrooms",
+    "signIn": "Sign in",
+    "bookTestDrive": "Book a test drive",
+    "bookTestDriveShort": "Book test drive",
+    "openMenu": "Open menu",
+    "menu": "Menu",
+    "breadcrumb": "Breadcrumb"
+  },
+  "Theme": {
+    "switch": "Switch between light and dark theme"
+  },
+  "Language": {
+    "label": "Language",
+    "switchTo": "Switch to {language}",
+    "english": "English",
+    "hindi": "हिन्दी",
+    "short": {
+      "en": "EN",
+      "hi": "हिं"
+    }
+  },
+  "Footer": {
+    "explore": "Explore",
+    "yourData": "Your data",
+    "privacy": "Privacy and consent",
+    "stopMessages": "Stop messages",
+    "staffSignIn": "Staff sign-in",
+    "tagline": "New and certified used Brand X cars across Lucknow, with the exact on-road price for your city.",
+    "priceNote": "Prices shown are ex-showroom unless marked on-road.",
+    "fictionalNote": "Brand X is a fictional brand. Prices and stock are sample data."
+  },
+  "Common": {
+    "hours": "Mon to Sat, {open} to {close}"
+  },
+  "Home": {
+    "heroTitle": "Every Brand X, priced for your city.",
+    "heroLeadWithPrice": "New cars from {price} ex-showroom, and inspected certified used cars. See the exact on-road price for your city before you visit.",
+    "heroLead": "See the exact on-road price for your city before you visit.",
+    "seePrices": "See on-road prices",
+    "tileFrom": "from {price}",
+    "newCarsTitle": "New cars",
+    "seeAllModels": "{count, plural, one {See all # model} other {See all # models}}",
+    "usedLabel": "Certified used",
+    "usedHeadline": "{count, plural, one {# inspected car available} other {# inspected cars available}}",
+    "usedBody": "Every car comes with its full inspection report. Filter by model, year, fuel, km and price.",
+    "usedCta": "Browse certified used",
+    "bandTitle": "Drive it before you decide.",
+    "bandBody": "Pick a showroom, a demo car and a free 30-minute slot. A named consultant confirms it with you."
+  },
+  "ModelCard": {
+    "fromPrice": "from {price} <muted>ex-showroom</muted>"
+  },
+  "Cars": {
+    "metaTitle": "New Brand X cars with on-road prices | Brand X Lucknow",
+    "metaDescription": "Every Brand X model, with the exact on-road price for your city before you visit.",
+    "title": "New cars",
+    "lead": "{count, plural, one {# model} other {# models}}, lowest price first. On-road prices for {cities}."
+  },
+  "Car": {
+    "metaTitle": "{name} on-road price in Lucknow | Brand X",
+    "metaDescription": "{description} See the exact on-road price for your city and book a test drive.",
+    "galleryLabel": "{name} photos",
+    "photoAlt": "{name} in {colour}",
+    "fromPriceVariants": "From {price} ex-showroom, {count, plural, one {# variant} other {# variants}}",
+    "variantsCount": "{count, plural, one {# variant} other {# variants}}"
+  },
+  "Price": {
+    "title": "On-road price",
+    "city": "City",
+    "exShowroom": "Ex-showroom",
+    "roadTax": "Road tax ({rate}%)",
+    "insurance": "Insurance, first year",
+    "unavailable": "On-road price not available for {city} yet. Enquire for a quote.",
+    "exShowroomPrice": "Ex-showroom price: {price}",
+    "addAccessories": "Add {name} ({price})",
+    "valid": "Price valid until {date}. Prices may change.",
+    "enquire": "Enquire"
+  },
+  "Colour": {
+    "legend": "Colour"
+  },
+  "Variant": {
+    "legend": "Variant",
+    "onRequest": "Price on request",
+    "exShowroom": "{price} ex-showroom"
+  },
+  "Specs": {
+    "title": "Key specs, {variant}",
+    "fuel": "Fuel",
+    "transmission": "Transmission",
+    "engine": "Engine",
+    "power": "Power",
+    "mileage": "Mileage",
+    "seats": "Seats",
+    "boot": "Boot",
+    "powerValue": "{value} bhp",
+    "mileageValue": "{value} km/l",
+    "bootValue": "{value} litres"
+  },
+  "MobileBar": {
+    "onRoadIn": "On-road, {city}",
+    "exShowroom": "Ex-showroom"
+  },
+  "Gallery": {
+    "previous": "Previous photo",
+    "next": "Next photo",
+    "show": "Show photo {number}",
+    "live": "Photo {current} of {total}"
+  },
+  "Used": {
+    "metaTitle": "Certified used cars | Brand X Lucknow",
+    "metaDescription": "Inspected used Brand X cars with full inspection reports. Filter by model, year, fuel, km and price.",
+    "title": "Certified used",
+    "lead": "Every car is inspected across six areas before it is listed, and the full report is on its page.",
+    "empty": "No certified used cars right now. New stock arrives every week."
+  },
+  "UsedBrowser": {
+    "count": "{count, plural, one {# car} other {# cars}}",
+    "filters": "Filters",
+    "filtersCount": "Filters ({count})",
+    "sort": "Sort",
+    "sortOptions": {
+      "price-asc": "Price, low to high",
+      "price-desc": "Price, high to low",
+      "year-desc": "Newest first",
+      "km-asc": "Lowest km first"
+    },
+    "activeFilters": "Active filters",
+    "remove": "Remove filter: {label}",
+    "fromYear": "From {year}",
+    "upToYear": "Up to {year}",
+    "range": "{min} to {max}",
+    "upToKm": "Up to {km} km",
+    "clearAll": "Clear all",
+    "noMatch": "No cars match these filters.",
+    "noMatchHint": "New stock arrives every week. Try widening the price or km range.",
+    "clearFilters": "Clear all filters"
+  },
+  "UsedFilters": {
+    "model": "Model",
+    "fuel": "Fuel",
+    "year": "Year",
+    "from": "From",
+    "to": "To",
+    "any": "Any",
+    "price": "Price: <strong>{min} to {max}</strong>",
+    "km": "Driven up to <strong>{km} km</strong>"
+  },
+  "UsedCard": {
+    "booked": "Booked",
+    "details": "{year}, {fuel}, {transmission}, {km} km, {owners}",
+    "owners": "{count, plural, =1 {1st owner} =2 {2nd owner} other {# owners}}"
+  },
+  "UsedDetail": {
+    "metaTitle": "{year} {name}, {price} | Brand X certified used",
+    "metaDescription": "{km} km, {owners}, inspection score {score}/100.",
+    "breadcrumb": "Certified used",
+    "noteBooked": "Booked: another buyer has reserved this car. It may come back if their purchase falls through.",
+    "noteSold": "Sold: this car has found a new owner.",
+    "enquire": "Enquire about this car",
+    "year": "Year",
+    "fuel": "Fuel",
+    "transmission": "Transmission",
+    "driven": "Driven",
+    "owners": "Owners",
+    "registration": "Registration",
+    "kmValue": "{km} km",
+    "seeAt": "See it at {showroom}",
+    "photoNote": "Photo shows the model; the car itself is at the showroom. The registration number is shared once you buy.",
+    "photoAlt": "{name}, stock photo"
+  },
+  "Inspection": {
+    "title": "Inspection report",
+    "inspectedOn": "Inspected on {date}",
+    "passed": "Passed",
+    "attention": "Needs attention",
+    "allPassed": "Every area passed.",
+    "needsAttention": "{count, plural, one {# area needs attention. Ask the showroom what will be fixed before delivery.} other {# areas need attention. Ask the showroom what will be fixed before delivery.}}"
+  },
+  "Booking": {
+    "metaTitle": "Book a test drive | Brand X Lucknow",
+    "title": "Book a test drive",
+    "lead": "Pick a showroom, a demo car and a free 30-minute slot. A named consultant confirms it with you.",
+    "steps": {
+      "car": "Car",
+      "time": "Date and time",
+      "details": "Your details"
+    },
+    "showroom": "Showroom",
+    "demoCarAt": "Demo car at {showroom}",
+    "inService": "In service, no slots this week",
+    "chooseTime": "Choose a time",
+    "loadingSlots": "Loading slots…",
+    "showFreeSlots": "Show free slots",
+    "continue": "Continue",
+    "change": "Change",
+    "summary": "{car} at {showroom}.",
+    "summaryWhen": "{car} at {showroom}, {when}.",
+    "name": "Name",
+    "phone": "Mobile number",
+    "confirm": "Confirm test drive",
+    "booking": "Booking…"
+  },
+  "Scheduler": {
+    "previousWeek": "Previous week",
+    "nextWeek": "Next week",
+    "timeLegend": "Time (IST), 30 minutes",
+    "taken": "(taken)"
+  },
+  "Booked": {
+    "metaTitle": "Your test drive | Brand X Lucknow",
+    "titleBooked": "Test drive booked",
+    "titleCancelled": "Test drive cancelled",
+    "bodyCancelled": "The slot is free again. You can book another time whenever suits you.",
+    "bodyBooked": "{who} will call you to confirm.",
+    "team": "Our team at {showroom}",
+    "whatsapp": "We've also sent the details on WhatsApp (simulated).",
+    "when": "When",
+    "car": "Car",
+    "showroom": "Showroom",
+    "consultant": "Your consultant",
+    "consultantPending": "Being assigned by the showroom",
+    "cancel": "Cancel this test drive",
+    "bookAnother": "Book another time",
+    "keepBrowsing": "Keep browsing cars"
+  },
+  "Enquiry": {
+    "trigger": "Enquire",
+    "title": "Enquire about the {car}",
+    "thanks": "Thank you, {name}.",
+    "callSoon": "{who} at Brand X {showroom} will call you shortly.",
+    "teamWho": "Our team",
+    "whatsapp": "We have also sent the details on WhatsApp (simulated).",
+    "done": "Done",
+    "name": "Name",
+    "phone": "Mobile number",
+    "showroomPick": "Showroom to call you from",
+    "question": "Your question (optional)",
+    "send": "Send enquiry",
+    "sending": "Sending…"
+  },
+  "Forms": {
+    "preferredLanguage": "Preferred language"
+  },
+  "Consent": {
+    "testDrive": "I agree that Brand X may contact me by phone, WhatsApp or SMS about this test drive. My details are used only for this request, and I can stop messages at any time.",
+    "enquiry": "I agree that Brand X may contact me by phone, WhatsApp or SMS about this enquiry. My details are used only for this request, and I can stop messages at any time."
+  },
+  "Privacy": {
+    "metaTitle": "Privacy and consent | Brand X Lucknow",
+    "metaDescription": "What Brand X collects when you enquire or book a test drive, who sees it, and how to stop messages.",
+    "title": "Privacy and consent",
+    "lead": "What happens to your details, in plain words.",
+    "sections": {
+      "collect": {
+        "title": "What we collect",
+        "body": "Your name, mobile number, the language you prefer, your message, and the car or test-drive slot you asked about. We also keep the time you agreed to be contacted."
+      },
+      "why": {
+        "title": "Why we collect it",
+        "body": "Only to answer your enquiry or arrange your test drive. We do not sell your details or pass them to advertisers."
+      },
+      "who": {
+        "title": "Who can see it",
+        "body": "The consultant your enquiry is assigned to, and the dealership's admins. It is never shown on the website. On used-car pages the registration number is partly hidden until you buy."
+      },
+      "ai": {
+        "title": "AI and your enquiry",
+        "body": "A consultant may use an AI tool to summarise your message and draft a reply. It sees your message, the car, the city and our listed prices. It never sees your name, number or email, and a consultant reads and approves every reply before it goes out."
+      },
+      "messages": {
+        "title": "Messages",
+        "body": "With your agreement, we may contact you by phone, WhatsApp or SMS about your enquiry. In this demo no real message is sent. Every message carries a link to stop them."
+      },
+      "choices": {
+        "title": "Your choices",
+        "body": "You can stop all messages at any time on the Stop messages page. You can also ask to see, correct or delete your details by writing to privacy@brandx.example. This follows India's Digital Personal Data Protection Act, 2023."
+      },
+      "consent": {
+        "title": "Consent",
+        "body": "We ask for your agreement before every enquiry and booking, in plain language, and the box is never ticked for you."
+      }
+    },
+    "note": "Brand X is a fictional brand, and every name, number and price on this site is sample data."
+  },
+  "Stop": {
+    "metaTitle": "Stop messages | Brand X Lucknow",
+    "title": "Stop messages",
+    "lead": "We'll stop every WhatsApp and SMS message to your number. It takes effect straight away.",
+    "done": "Done. We won't send any more messages to this number.",
+    "stillCall": "We may still call you about an enquiry you made.",
+    "confirm": "Stop all messages to {phone}?",
+    "linkProblem": "That link didn't work, but you can use your number.",
+    "phone": "Mobile number",
+    "submit": "Stop all messages",
+    "pending": "Stopping…"
+  },
+  "SignIn": {
+    "metaTitle": "Sign in | Brand X",
+    "title": "Sign in",
+    "lead": "For Brand X consultants and admins, and buyers who have booked a test drive.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "pending": "Signing in…"
+  },
+  "Error": {
+    "title": "Something went wrong",
+    "body": "This page didn't load. Nothing you entered has been sent, and trying again usually fixes it.",
+    "retry": "Try again"
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "body": "This page doesn't exist, or the car has moved. The models and certified used cars are a good place to start.",
+    "allModels": "See all models",
+    "usedCars": "Certified used cars"
+  },
+  "Errors": {
+    "name": "Enter your name",
+    "phone": "Enter a 10-digit Indian mobile number",
+    "consent": "Please agree so we can contact you",
+    "messageTooLong": "Keep it under 500 characters",
+    "checkFields": "Please check the highlighted fields.",
+    "demoCarUnavailable": "This demo car is not available for test drives right now.",
+    "slotUnavailable": "That time is no longer available. Please pick another slot.",
+    "slotTaken": "That slot was just taken. Here are the next free ones.",
+    "rateLimited": "We've received several requests from this number. Please try again in a few minutes.",
+    "carNotFound": "We couldn't find that car. Please refresh the page and try again.",
+    "carSold": "This car has just been sold.",
+    "linkInvalid": "This link isn't valid. You can use your mobile number instead.",
+    "credentialsMissing": "Enter your email and password.",
+    "credentialsWrong": "That email and password don't match."
+  },
+  "Labels": {
+    "bodyType": {
+      "HATCHBACK": "Hatchback",
+      "SEDAN": "Sedan",
+      "SUV": "SUV",
+      "MPV": "MPV",
+      "COUPE": "Coupe"
+    },
+    "fuel": {
+      "PETROL": "Petrol",
+      "DIESEL": "Diesel",
+      "CNG": "CNG"
+    },
+    "transmission": {
+      "MANUAL": "Manual",
+      "AUTOMATIC": "Automatic"
+    }
+  },
+  "Content": {
+    "models": {
+      "model-c": "A long-wheelbase sedan built for highway comfort and a large boot.",
+      "model-g": "A two-door grand tourer with a long bonnet and a cabin built for the open road.",
+      "model-h": "A mid-size SUV with a quiet cabin, high seating and room for five.",
+      "model-m": "A boxy, practical people-carrier with sliding rear doors and a tall cabin.",
+      "model-r": "A performance hatchback with all-wheel drive and a quick-shifting gearbox.",
+      "model-s": "A compact hatchback that is easy to park and cheap to run in the city.",
+      "model-t": "A full-size off-road SUV with a ladder-tough body and room for seven.",
+      "model-v": "A seven-seat MPV with three usable rows and sliding second-row seats."
+    },
+    "colours": {
+      "deep-teal": "Deep Teal",
+      "gondwana-stone": "Gondwana Stone",
+      "graphite-grey": "Graphite Grey",
+      "indium-grey": "Indium Grey",
+      "marina-blue": "Marina Blue",
+      "midnight-black": "Midnight Black",
+      "mineral-grey": "Mineral Grey",
+      "onyx-black": "Onyx Black",
+      "oryx-white": "Oryx White",
+      "oxford-white": "Oxford White",
+      "pearl-white": "Pearl White",
+      "pure-white": "Pure White",
+      "slate-blue": "Slate Blue",
+      "tornado-red": "Tornado Red"
+    },
+    "packs": {
+      "comfort-pack": "Comfort pack",
+      "grand-touring-pack": "Grand touring pack",
+      "urban-pack": "Urban pack",
+      "weekender-pack": "Weekender pack",
+      "track-pack": "Track pack",
+      "essentials-pack": "Essentials pack",
+      "expedition-pack": "Expedition pack",
+      "family-pack": "Family pack"
+    },
+    "items": {
+      "seat-covers": "Seat covers",
+      "floor-mats": "Floor mats",
+      "sunshades": "Sunshades",
+      "boot-organiser": "Boot organiser",
+      "carbon-mirror-caps": "Carbon mirror caps",
+      "boot-liner": "Boot liner",
+      "mud-flaps": "Mud flaps",
+      "body-side-moulding": "Body side moulding",
+      "dash-camera": "Dash camera",
+      "roof-bars": "Roof bars",
+      "sports-floor-mats": "Sports floor mats",
+      "gear-knob": "Gear knob",
+      "steering-cover": "Steering cover",
+      "roof-rack": "Roof rack",
+      "all-weather-mats": "All-weather mats",
+      "underbody-protection": "Underbody protection",
+      "rear-ladder": "Rear ladder",
+      "roof-rails": "Roof rails",
+      "rear-sunshades": "Rear sunshades"
+    },
+    "inspection": {
+      "engine-and-transmission": "Engine and transmission",
+      "suspension-and-brakes": "Suspension and brakes",
+      "body-and-paint": "Body and paint",
+      "electricals": "Electricals",
+      "interior": "Interior",
+      "tyres": "Tyres"
+    },
+    "engines": {
+      "1-2-l-petrol": "1.2 L petrol",
+      "1-2-l-petrol-cng": "1.2 L petrol + CNG",
+      "1-5-l-diesel": "1.5 L diesel",
+      "1-5-l-petrol": "1.5 L petrol",
+      "2-0-l-turbo-petrol": "2.0 L turbo petrol",
+      "2-2-l-diesel": "2.2 L diesel",
+      "3-0-l-turbo-petrol": "3.0 L turbo petrol"
+    },
+    "showrooms": {
+      "alambagh": {
+        "name": "Alambagh",
+        "address": "45 Kanpur Road, Alambagh, Lucknow 226005"
+      },
+      "gomti-nagar": {
+        "name": "Gomti Nagar",
+        "address": "Plot 12, Vibhuti Khand, Gomti Nagar, Lucknow 226010"
+      },
+      "hazratganj": {
+        "name": "Hazratganj",
+        "address": "8 Mahatma Gandhi Marg, Hazratganj, Lucknow 226001"
+      }
+    },
+    "cities": {
+      "lucknow": "Lucknow",
+      "kanpur": "Kanpur",
+      "barabanki": "Barabanki"
+    }
+  }
+}

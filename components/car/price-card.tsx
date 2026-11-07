@@ -1,11 +1,12 @@
-import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { EnquirySheet } from "@/components/enquiry/enquiry-sheet";
 import { TEST_DRIVE_HREF } from "@/components/site-links";
 import { Button } from "@/components/ui/button";
 import { NativeSelect } from "@/components/ui/native-select";
+import { Link } from "@/i18n/navigation";
 import type { CarPageData, CarVariant } from "@/lib/catalogue";
 import { formatDate } from "@/lib/dates";
-import { FUEL_LABEL, TRANSMISSION_LABEL } from "@/lib/labels";
+import { localised } from "@/lib/i18n/content";
 import { formatRupees } from "@/lib/money";
 import type { OnRoadPrice } from "@/lib/pricing/on-road-price";
 import { cn } from "@/lib/utils";
@@ -31,25 +32,33 @@ function Line({ label, amountPaise }: { label: string; amountPaise: number }) {
 }
 
 export function PriceCard({ car, variant, cityId, onCityChange, withAccessories, onAccessoriesChange, quote, className }: Props) {
-  const cityName = car.cities.find((city) => city.id === cityId)?.name;
+  const t = useTranslations("Price");
+  const labels = useTranslations("Labels");
+  const content = useTranslations("Content");
+  const nav = useTranslations("Nav");
+  const locale = useLocale();
+
+  const cityName = (name: string) => localised(content, "cities", name, name);
+  const selectedCity = cityName(car.cities.find((city) => city.id === cityId)?.name ?? "");
+  const pack = car.accessoryPackage;
 
   return (
     <section aria-labelledby="price-title" className={cn("flex flex-col gap-5 rounded-2xl border bg-card p-6", className)}>
       <div>
         <h2 id="price-title" className="text-2xl">
-          On-road price
+          {t("title")}
         </h2>
         <p className="text-sm text-muted-foreground">
-          {car.name} {variant.name}, {TRANSMISSION_LABEL[variant.transmission]}, {FUEL_LABEL[variant.fuel]}
+          {car.name} {variant.name}, {labels(`transmission.${variant.transmission}`)}, {labels(`fuel.${variant.fuel}`)}
         </p>
       </div>
 
       <label className="flex flex-col gap-2">
-        <span className="text-sm text-muted-foreground">City</span>
+        <span className="text-sm text-muted-foreground">{t("city")}</span>
         <NativeSelect value={cityId} onChange={(event) => onCityChange(event.target.value)}>
           {car.cities.map((city) => (
             <option key={city.id} value={city.id}>
-              {city.name}
+              {cityName(city.name)}
             </option>
           ))}
         </NativeSelect>
@@ -61,24 +70,22 @@ export function PriceCard({ car, variant, cityId, onCityChange, withAccessories,
             {formatRupees(quote.totalPaise)}
           </p>
           <dl className="divide-y border-y">
-            <Line label="Ex-showroom" amountPaise={quote.exShowroomPaise} />
-            <Line label={`Road tax (${quote.roadTax.rateBasisPoints / 100}%)`} amountPaise={quote.roadTax.paise} />
-            <Line label="Insurance, first year" amountPaise={quote.insurancePaise} />
-            {quote.accessories && <Line label={quote.accessories.name} amountPaise={quote.accessories.paise} />}
+            <Line label={t("exShowroom")} amountPaise={quote.exShowroomPaise} />
+            <Line label={t("roadTax", { rate: quote.roadTax.rateBasisPoints / 100 })} amountPaise={quote.roadTax.paise} />
+            <Line label={t("insurance")} amountPaise={quote.insurancePaise} />
+            {quote.accessories && <Line label={localised(content, "packs", quote.accessories.name, quote.accessories.name)} amountPaise={quote.accessories.paise} />}
           </dl>
         </>
       ) : (
         <div className="rounded-xl bg-muted p-4" aria-live="polite">
-          <p>On-road price not available for {cityName} yet. Enquire for a quote.</p>
+          <p>{t("unavailable", { city: selectedCity })}</p>
           {variant.exShowroomPaise !== null && (
-            <p className="mt-1 text-sm text-muted-foreground">
-              Ex-showroom price: {formatRupees(variant.exShowroomPaise)}
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground">{t("exShowroomPrice", { price: formatRupees(variant.exShowroomPaise) })}</p>
           )}
         </div>
       )}
 
-      {car.accessoryPackage && (
+      {pack && (
         <label className="flex cursor-pointer gap-3">
           <input
             type="checkbox"
@@ -87,28 +94,22 @@ export function PriceCard({ car, variant, cityId, onCityChange, withAccessories,
             className="mt-1 size-4 accent-foreground"
           />
           <span className="flex flex-col">
-            <span>
-              Add {car.accessoryPackage.name} ({formatRupees(car.accessoryPackage.pricePaise)})
-            </span>
-            <span className="text-sm text-muted-foreground">{car.accessoryPackage.items.join(", ")}</span>
+            <span>{t("addAccessories", { name: localised(content, "packs", pack.name, pack.name), price: formatRupees(pack.pricePaise) })}</span>
+            <span className="text-sm text-muted-foreground">{pack.items.map((item) => localised(content, "items", item, item)).join(", ")}</span>
           </span>
         </label>
       )}
 
-      {quote.available && (
-        <p className="text-sm text-muted-foreground">
-          Price valid until {formatDate(quote.validUntil)}. Prices may change.
-        </p>
-      )}
+      {quote.available && <p className="text-sm text-muted-foreground">{t("valid", { date: formatDate(quote.validUntil, locale) })}</p>}
 
       <div className="flex flex-col gap-3">
         <Button asChild size="lg">
-          <Link href={`${TEST_DRIVE_HREF}?model=${car.slug}`}>Book a test drive</Link>
+          <Link href={`${TEST_DRIVE_HREF}?model=${car.slug}`}>{nav("bookTestDrive")}</Link>
         </Button>
         <EnquirySheet
           target={{ type: "model", modelSlug: car.slug, variantId: variant.id, cityId, showrooms: car.showrooms }}
           carLabel={`${car.name} ${variant.name}`}
-          label="Enquire"
+          label={t("enquire")}
           size="lg"
         />
       </div>
