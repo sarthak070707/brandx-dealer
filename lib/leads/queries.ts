@@ -5,7 +5,7 @@ import { describeEvent, referencedUserIds } from "@/lib/leads/events";
 import { carLabelOf } from "@/lib/leads/car-label";
 import type { InboxLead } from "@/lib/leads/inbox-filter";
 
-const CREATED_FROM = { ENQUIRY: "enquiry form", TEST_DRIVE: "test-drive booking", TRADE_IN: "trade-in form" } as const;
+const CREATED_FROM = { ENQUIRY: "enquiry form", TEST_DRIVE: "test-drive booking", TRADE_IN: "trade-in form", PORTAL: "CSV import", SERVICE: "service booking" } as const;
 
 export type InboxData = Awaited<ReturnType<typeof getInbox>>;
 

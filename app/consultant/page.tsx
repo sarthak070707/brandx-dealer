@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { Inbox } from "@/components/staff/inbox";
+import { Button } from "@/components/ui/button";
 import { requireStaff } from "@/lib/auth/staff";
 import { getInbox } from "@/lib/leads/queries";
 
@@ -30,7 +32,12 @@ function InboxSkeleton() {
 export default function InboxPage() {
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-display tracking-tight">Lead inbox</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-3xl font-display tracking-tight">Lead inbox</h1>
+        <Button asChild variant="outline">
+          <Link href="/consultant/import">Import leads</Link>
+        </Button>
+      </div>
       <Suspense fallback={<InboxSkeleton />}>
         <LoadedInbox />
       </Suspense>

@@ -53,6 +53,8 @@ enum LeadSource {
   ENQUIRY
   TEST_DRIVE
   TRADE_IN
+  PORTAL
+  SERVICE
 }
 
 enum LeadStatus {
@@ -125,6 +127,7 @@ model Showroom {
   demoCars    DemoCar[]
   usedCars    UsedCar[]
   leads       Lead[]
+  serviceBookings ServiceBooking[]
 }
 
 model ConsultantModel {
@@ -312,6 +315,7 @@ model Lead {
   // A13: the 5-minute response target is measured up to this moment.
   firstContactAt DateTime?
   booking        TestDriveBooking?
+  serviceBooking ServiceBooking?
   events         LeadEvent[]
   aiDrafts       AiDraft[]
   outbox         OutboxMessage[]
@@ -370,4 +374,38 @@ model CarPhoto {
   contentType String
   data        Bytes
   createdAt   DateTime @default(now())
+}
+
+enum ServiceType {
+  PERIODIC
+  REPAIR
+  ACCESSORIES
+  CHECKUP
+}
+
+// A customer's visit to the service bay. Each showroom has a few bays, and the database allows only one
+// confirmed booking per bay per slot, so two customers can never get the same bay.
+model ServiceBooking {
+  id          String        @id @default(cuid())
+  showroomId  String
+  showroom    Showroom      @relation(fields: [showroomId], references: [id])
+  bay         Int
+  slotStart   DateTime
+  serviceType ServiceType
+  vehicle     String
+  regNumber   String
+  km          Int
+  notes       String?
+  buyerName   String
+  buyerPhone  String
+  language    Language
+  consentAt   DateTime
+  status      BookingStatus @default(CONFIRMED)
+  cancelToken String        @unique @default(cuid())
+  leadId      String        @unique
+  lead        Lead          @relation(fields: [leadId], references: [id])
+  createdAt   DateTime      @default(now())
+
+  // Only confirmed bookings hold a bay, so cancelling frees it for the next customer.
+  @@unique([showroomId, slotStart, bay], where: raw("status = 'CONFIRMED'"))
 }

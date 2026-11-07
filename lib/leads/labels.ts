@@ -13,4 +13,6 @@ export const SOURCE_LABEL: Record<LeadSource, string> = {
   ENQUIRY: "Enquiry",
   TEST_DRIVE: "Test drive",
   TRADE_IN: "Trade-in",
+  PORTAL: "Portal import",
+  SERVICE: "Service booking",
 };

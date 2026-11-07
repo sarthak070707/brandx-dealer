@@ -3,11 +3,9 @@ import { Fuel, Transmission, UsedCarStatus } from "@/generated/prisma/enums";
 import { wholeNumber } from "@/lib/admin/fields";
 import { dateField, positiveRupeesField } from "@/lib/admin/parse";
 import { INSPECTION_AREAS } from "@/lib/admin/used-car-report";
+import { normaliseRegistration, REGISTRATION } from "@/lib/registration";
 
-export const normaliseRegistration = (text: string) => text.toUpperCase().replace(/[\s-]+/g, "");
-
-// State, two-digit RTO, one to three series letters, four digits: UP32MN2741.
-const REGISTRATION = /^[A-Z]{2}\d{2}[A-Z]{1,3}\d{4}$/;
+export { normaliseRegistration };
 
 // A photo is one of the model's own (served from /cars) or one the admin uploaded.
 const PHOTO = /^\/(cars\/[a-z0-9-]+\.(webp|jpg|png)|api\/car-photos\/[a-z0-9]{20,32})$/;

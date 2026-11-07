@@ -18,6 +18,12 @@ type NewLead = {
   cityId: string;
   showroomId: string;
   carLabel: string;
+  // For imported leads: hand the lead straight to this person instead of choosing, send no automatic
+  // message, keep the date the buyer first asked, and record why in the history.
+  assignToId?: string;
+  sendAcknowledgement?: boolean;
+  createdAt?: Date;
+  note?: string;
 };
 
 // Runs inside the caller's transaction, so a lead is never saved without its assignment,
@@ -44,19 +50,22 @@ export async function createLead(tx: Prisma.TransactionClient, lead: NewLead) {
   ]);
   const optedOut = earlierOptOuts > 0;
 
-  const consultantId = pickConsultant(
-    candidates.map((candidate) => ({
-      id: candidate.id,
-      openLeads: candidate._count.assignedLeads,
-      lastAssignedAt: candidate.lastAssignedAt,
-    })),
-  );
+  const consultantId =
+    lead.assignToId ??
+    pickConsultant(
+      candidates.map((candidate) => ({
+        id: candidate.id,
+        openLeads: candidate._count.assignedLeads,
+        lastAssignedAt: candidate.lastAssignedAt,
+      })),
+    );
   const consultant = candidates.find((candidate) => candidate.id === consultantId) ?? null;
-  const { carLabel, ...fields } = lead;
+  const { carLabel, assignToId, sendAcknowledgement = true, note, createdAt, ...fields } = lead;
+  const sendMessage = sendAcknowledgement && !optedOut;
 
   const assigned = {
     type: "ASSIGNED" as const,
-    details: consultantId ? { reason: "auto", toUserId: consultantId } : { reason: "no-eligible-consultant", toUserId: null },
+    details: consultantId ? { reason: assignToId ? "importer" : "auto", toUserId: consultantId } : { reason: "no-eligible-consultant", toUserId: null },
   };
   const created = await tx.lead.create({
     data: {
@@ -64,15 +73,18 @@ export async function createLead(tx: Prisma.TransactionClient, lead: NewLead) {
       assignedToId: consultantId,
       consentAt: now,
       optedOutAt: optedOut ? now : null,
+      ...(createdAt && { createdAt }),
       events: {
-        create: optedOut
-          ? [assigned, { type: "NOTE", details: { note: "This buyer opted out of messages earlier, so no acknowledgement was sent" } }]
-          : [assigned],
+        create: [
+          assigned,
+          ...(note ? [{ type: "NOTE" as const, details: { note } }] : []),
+          ...(optedOut ? [{ type: "NOTE" as const, details: { note: "This buyer opted out of messages earlier, so no acknowledgement was sent" } }] : []),
+        ],
       },
     },
   });
 
-  if (!optedOut) {
+  if (sendMessage) {
     await tx.outboxMessage.create({
       data: {
         leadId: created.id,
@@ -91,5 +103,5 @@ export async function createLead(tx: Prisma.TransactionClient, lead: NewLead) {
   }
 
   if (consultantId) await tx.user.update({ where: { id: consultantId }, data: { lastAssignedAt: now } });
-  return { lead: created, consultantName: consultant?.name ?? null, showroomName: showroom.name, acknowledged: !optedOut };
+  return { lead: created, consultantName: consultant?.name ?? null, showroomName: showroom.name, acknowledged: sendMessage };
 }

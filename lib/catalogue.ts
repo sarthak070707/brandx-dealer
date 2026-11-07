@@ -173,3 +173,12 @@ export async function getTradeInOptions() {
   ]);
   return { showrooms, models };
 }
+
+// The showrooms the service page offers, with the hours the date picker needs.
+export async function getServiceOptions() {
+  "use cache";
+  cacheTag(CATALOGUE_TAG);
+  cacheLife("minutes");
+
+  return db.showroom.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, address: true, openMinute: true, closeMinute: true } });
+}

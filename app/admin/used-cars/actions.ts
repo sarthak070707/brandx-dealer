@@ -5,6 +5,7 @@ import { z } from "zod";
 import { UsedCarStatus } from "@/generated/prisma/enums";
 import { removeUsedCar, saveUsedCar, setUsedCarStatus, type UsedCarResult } from "@/lib/admin/used-car-service";
 import { getAdmin } from "@/lib/auth/staff";
+import { suggestUsedCarPrice, type PriceSuggestion } from "@/lib/used-cars/price-band-service";
 import { USED_STOCK_TAG } from "@/lib/used-cars/queries";
 
 const NOT_ADMIN = { ok: false, error: "Only admins can change the used stock." } as const;
@@ -34,4 +35,10 @@ export async function removeUsedCarById(id: string): Promise<UsedCarResult> {
   if (!(await getAdmin())) return NOT_ADMIN;
   const parsed = z.string().min(1).safeParse(id);
   return parsed.success ? published(await removeUsedCar(parsed.data)) : BAD_REQUEST;
+}
+
+// A suggestion changes nothing, so it is not published; it only needs an admin to ask.
+export async function suggestUsedCarPriceAction(input: unknown): Promise<PriceSuggestion> {
+  if (!(await getAdmin())) return NOT_ADMIN;
+  return suggestUsedCarPrice(input);
 }

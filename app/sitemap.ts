@@ -13,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/used-cars",
     "/test-drive",
     "/trade-in",
+    "/service",
     "/privacy",
     ...models.map((model) => `/cars/${model.slug}`),
     ...usedCars.map((car) => `/used-cars/${car.stockId}`),

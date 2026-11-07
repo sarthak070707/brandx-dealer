@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { saveUsedCarAction } from "@/app/admin/used-cars/actions";
+import { saveUsedCarAction, suggestUsedCarPriceAction } from "@/app/admin/used-cars/actions";
 import { PhotoUpload } from "@/components/admin/photo-upload";
 import { Field } from "@/components/forms/field";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,8 @@ import { Fuel, Transmission, UsedCarStatus } from "@/generated/prisma/enums";
 import { INSPECTION_AREAS, type InspectionResult } from "@/lib/admin/used-car-report";
 import type { UsedCarFormValues, UsedCarOptions } from "@/lib/admin/used-car-queries";
 import { FUEL_LABEL, TRANSMISSION_LABEL } from "@/lib/labels";
+import { formatRupees } from "@/lib/money";
+import type { PriceSuggestion } from "@/lib/used-cars/price-band-service";
 import { cn } from "@/lib/utils";
 
 type Props = { options: UsedCarOptions; today: string; initial?: UsedCarFormValues };
@@ -44,6 +46,9 @@ export function UsedCarForm({ options, today, initial }: Props) {
   }));
   const [problems, setProblems] = useState<{ message: string | null; fields: Record<string, string> }>({ message: null, fields: {} });
   const [pending, startTransition] = useTransition();
+  const [suggestion, setSuggestion] = useState<Extract<PriceSuggestion, { ok: true }> | null>(null);
+  const [suggestionProblem, setSuggestionProblem] = useState<string | null>(null);
+  const [suggesting, startSuggesting] = useTransition();
 
   const error = (field: string) => problems.fields[field];
   const set = <K extends keyof FormState>(field: K, value: FormState[K]) => setForm((current) => ({ ...current, [field]: value }));
@@ -66,6 +71,23 @@ export function UsedCarForm({ options, today, initial }: Props) {
       />
     </Field>
   );
+
+  const suggest = () =>
+    startSuggesting(async () => {
+      const result = await suggestUsedCarPriceAction({
+        modelId: form.modelId,
+        variantName: form.variantName,
+        fuel: form.fuel,
+        transmission: form.transmission,
+        year: form.year,
+        km: form.km,
+        owners: form.owners,
+        score: form.score,
+        price: form.price,
+      });
+      setSuggestion(result.ok ? result : null);
+      setSuggestionProblem(result.ok ? null : result.error);
+    });
 
   const submit = () =>
     startTransition(async () => {
@@ -151,6 +173,53 @@ export function UsedCarForm({ options, today, initial }: Props) {
           </Field>
         </div>
         <p className="text-sm text-muted-foreground">Buyers only see the state and RTO of the registration number, never the whole of it.</p>
+
+        <div className="flex flex-col gap-3 rounded-xl border p-4" aria-live="polite">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 className="text-lg">Suggested price band</h3>
+              <p className="text-sm text-muted-foreground">Worked out from the new price, age, distance, owners and inspection score.</p>
+            </div>
+            <Button type="button" variant="outline" size="sm" disabled={suggesting} onClick={suggest}>
+              {suggesting ? "Working it out…" : suggestion ? "Update the band" : "Suggest a price band"}
+            </Button>
+          </div>
+          {suggestionProblem && (
+            <p role="alert" className="text-sm text-destructive">
+              {suggestionProblem}
+            </p>
+          )}
+          {suggestion && (
+            <>
+              <p className="text-2xl font-light tabular-nums">
+                {formatRupees(suggestion.band.lowPaise)} to {formatRupees(suggestion.band.highPaise)}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Middle {formatRupees(suggestion.band.midPaise)}, measured against {suggestion.reference.label} ({formatRupees(suggestion.reference.paise)}).
+              </p>
+              <ul className="list-disc pl-5 text-sm text-muted-foreground">
+                {suggestion.band.factors.map((factor) => (
+                  <li key={factor.key}>{factor.label}</li>
+                ))}
+              </ul>
+              <p>{suggestion.explanation.text}</p>
+              <p className="text-xs text-muted-foreground">
+                {suggestion.explanation.source === "ai"
+                  ? "Explained by AI. The range itself comes from the rules above, not from the AI."
+                  : "Standard explanation, because the AI's answer wasn't available or couldn't be used. The range comes from the rules above."}{" "}
+                A guide only: it knows nothing about demand or local offers.
+              </p>
+              <Button
+                type="button"
+                size="sm"
+                className="self-start"
+                onClick={() => set("price", new Intl.NumberFormat("en-IN").format(suggestion.band.midPaise / 100))}
+              >
+                Use {formatRupees(suggestion.band.midPaise)} as the price
+              </Button>
+            </>
+          )}
+        </div>
       </section>
 
       <section className={sectionStyle} aria-labelledby="used-inspection">

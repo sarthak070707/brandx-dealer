@@ -18,3 +18,8 @@ export const buyerContact = z.object({
 
 // What a form sends: the server still refuses anything without consent.
 export type FormInput<T extends z.ZodType> = Omit<z.input<T>, "consent"> & { consent: boolean };
+
+// A whole number typed as text, with an error key (Errors.<key>) that each page shows in its language.
+export function wholeNumberKey(min: number, max: number, key: string) {
+  return z.string().trim().regex(/^\d{1,7}$/, key).transform(Number).pipe(z.number().min(min, key).max(max, key));
+}

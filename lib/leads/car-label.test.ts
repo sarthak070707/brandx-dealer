@@ -12,9 +12,11 @@ describe("carLabelOf", () => {
     expect(carLabelOf({ source: "ENQUIRY", model: { name: "Model C" }, variant: null, usedCar: { stockId: "UC-1182", variantName: "VX" } })).toBe("Model C VX (UC-1182)");
   });
 
-  it("calls a lead with no car a general enquiry, or a trade-in when that is what it is", () => {
+  it("calls a lead with no car a general enquiry, or a trade-in or a service visit when that is what it is", () => {
     expect(carLabelOf({ source: "ENQUIRY", ...none })).toBe("General enquiry");
+    expect(carLabelOf({ source: "PORTAL", ...none })).toBe("General enquiry");
     expect(carLabelOf({ source: "TRADE_IN", ...none })).toBe("Trade-in");
+    expect(carLabelOf({ source: "SERVICE", ...none })).toBe("Service");
   });
 
   it("shows the Brand X car a trade-in buyer is considering", () => {

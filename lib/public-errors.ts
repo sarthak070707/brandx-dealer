@@ -12,6 +12,8 @@ export type PublicError =
   | "tradeCondition"
   | "tradePrice"
   | "showroom"
+  | "regNumber"
+  | "serviceType"
   | "checkFields"
   | "demoCarUnavailable"
   | "slotUnavailable"

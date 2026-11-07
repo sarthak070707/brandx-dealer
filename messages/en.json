@@ -37,7 +37,8 @@
     "tagline": "New and certified used Brand X cars across Lucknow, with the exact on-road price for your city.",
     "priceNote": "Prices shown are ex-showroom unless marked on-road.",
     "fictionalNote": "Brand X is a fictional brand. Prices and stock are sample data.",
-    "tradeIn": "Trade in your car"
+    "tradeIn": "Trade in your car",
+    "service": "Book a service"
   },
   "Common": {
     "hours": "Mon to Sat, {open} to {close}"
@@ -255,7 +256,8 @@
   "Consent": {
     "testDrive": "I agree that Brand X may contact me by phone, WhatsApp or SMS about this test drive. My details are used only for this request, and I can stop messages at any time.",
     "enquiry": "I agree that Brand X may contact me by phone, WhatsApp or SMS about this enquiry. My details are used only for this request, and I can stop messages at any time.",
-    "tradeIn": "I agree that Brand X may contact me by phone, WhatsApp or SMS about this trade-in. My details are used only for this request, and I can stop messages at any time."
+    "tradeIn": "I agree that Brand X may contact me by phone, WhatsApp or SMS about this trade-in. My details are used only for this request, and I can stop messages at any time.",
+    "service": "I agree that Brand X may contact me by phone, WhatsApp or SMS about this service booking. My details are used only for this request, and I can stop messages at any time."
   },
   "Privacy": {
     "metaTitle": "Privacy and consent | Brand X Lucknow",
@@ -347,7 +349,9 @@
     "tradeOwners": "Enter how many owners it has had, from 1 to 6",
     "tradeCondition": "Choose the condition",
     "tradePrice": "Enter an amount in rupees, or leave it empty",
-    "showroom": "Choose a showroom"
+    "showroom": "Choose a showroom",
+    "regNumber": "Enter the registration number, like UP32AB1234",
+    "serviceType": "Choose what your car needs"
   },
   "Emi": {
     "title": "Estimate your EMI",
@@ -396,6 +400,55 @@
     "whatsapp": "We have also sent the details on WhatsApp (simulated).",
     "stripTitle": "Trading in your current car?",
     "stripLink": "Get a trade-in value"
+  },
+  "Service": {
+    "metaTitle": "Book a service | Brand X Lucknow",
+    "metaDescription": "Book your car's service at a Brand X showroom. Pick a free time and a consultant will confirm it.",
+    "title": "Book a service",
+    "lead": "Pick a showroom, what your car needs and a free time. A consultant will call you to confirm.",
+    "whereHeading": "Where and what",
+    "carHeading": "Your car",
+    "timeHeading": "Date and time",
+    "aboutHeading": "About you",
+    "showroom": "Showroom",
+    "chooseShowroom": "Choose a showroom",
+    "serviceType": "What does your car need?",
+    "types": {
+      "PERIODIC": "Periodic service",
+      "REPAIR": "Repair",
+      "ACCESSORIES": "Accessories fitting",
+      "CHECKUP": "Check-up"
+    },
+    "vehicle": "Your car (make and model)",
+    "vehiclePlaceholder": "Maruti Swift VXi",
+    "regNumber": "Registration number",
+    "regPlaceholder": "UP32AB1234",
+    "km": "Driven so far (km)",
+    "notes": "Anything we should know (optional)",
+    "pickShowroomFirst": "Choose a showroom to see its free times.",
+    "loadingTimes": "Loading free times…",
+    "name": "Name",
+    "phone": "Mobile number",
+    "confirm": "Book the service",
+    "booking": "Booking…"
+  },
+  "ServiceBooked": {
+    "metaTitle": "Your service booking | Brand X Lucknow",
+    "titleBooked": "Service booked",
+    "titleCancelled": "Service cancelled",
+    "bodyCancelled": "The time is free again. You can book another whenever suits you.",
+    "bodyBooked": "{who} will call you to confirm.",
+    "team": "Our team at {showroom}",
+    "whatsapp": "We've also sent the details on WhatsApp (simulated).",
+    "when": "When",
+    "service": "Service",
+    "car": "Your car",
+    "showroom": "Showroom",
+    "consultant": "Your consultant",
+    "consultantPending": "Being assigned by the showroom",
+    "cancel": "Cancel this booking",
+    "bookAnother": "Book another time",
+    "home": "Back to the home page"
   },
   "Labels": {
     "bodyType": {
