@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-type Props = { checked: boolean; onChange: (checked: boolean) => void; kind: "testDrive" | "enquiry" };
+type Props = { checked: boolean; onChange: (checked: boolean) => void; kind: "testDrive" | "enquiry" | "tradeIn" };
 
 // The DPDP consent the spec requires on every public form, in plain language and in the
 // visitor's language. It is never ticked for them.

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { DetailSkeleton } from "@/components/detail-skeleton";
 import { EnquirySheet } from "@/components/enquiry/enquiry-sheet";
+import { EmiCalculator } from "@/components/finance/emi-calculator";
 import { JsonLd } from "@/components/json-ld";
 import { InspectionReport } from "@/components/used/inspection-report";
 import { Link } from "@/i18n/navigation";
@@ -100,13 +101,15 @@ async function UsedCarDetail({ params }: { params: PageProps<"/[locale]/used-car
                 src={car.photos[0]}
                 alt={t("photoAlt", { name: `${car.modelName} ${car.variantName}` })}
                 fill
-                preload
+                loading="eager"
+                fetchPriority="high"
                 sizes="(min-width: 1024px) 58vw, 100vw"
                 className="object-cover"
               />
             )}
           </div>
           <InspectionReport inspection={car.inspection} />
+          {car.status !== "SOLD" && <EmiCalculator pricePaise={car.pricePaise} />}
         </div>
 
         <section aria-labelledby="car-title" className="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">

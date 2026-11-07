@@ -2,19 +2,10 @@ import { toDraftView } from "@/lib/ai/view";
 import { db } from "@/lib/db";
 import { leadScope, type StaffUser } from "@/lib/leads/access";
 import { describeEvent, referencedUserIds } from "@/lib/leads/events";
+import { carLabelOf } from "@/lib/leads/car-label";
 import type { InboxLead } from "@/lib/leads/inbox-filter";
 
-const carLabelOf = (lead: {
-  model: { name: string } | null;
-  variant: { name: string } | null;
-  usedCar: { stockId: string; variantName: string } | null;
-}) => {
-  const name = [lead.model?.name, lead.usedCar?.variantName ?? lead.variant?.name].filter(Boolean).join(" ");
-  if (!name) return "General enquiry";
-  return lead.usedCar ? `${name} (${lead.usedCar.stockId})` : name;
-};
-
-const CREATED_FROM = { ENQUIRY: "enquiry form", TEST_DRIVE: "test-drive booking" } as const;
+const CREATED_FROM = { ENQUIRY: "enquiry form", TEST_DRIVE: "test-drive booking", TRADE_IN: "trade-in form" } as const;
 
 export type InboxData = Awaited<ReturnType<typeof getInbox>>;
 

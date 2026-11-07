@@ -3,6 +3,7 @@ import { z } from "zod";
 import { indiaToday } from "@/lib/dates";
 import type { BodyType } from "@/generated/prisma/enums";
 import { db } from "@/lib/db";
+import { USED_STOCK_TAG } from "@/lib/used-cars/queries";
 import { computeOnRoadPrice, offeredPacks, roundToRupee, validOn, type PriceTables } from "@/lib/pricing/on-road-price";
 
 // Tag for everything on the car pages that comes from the admin tables.
@@ -53,6 +54,7 @@ export async function getModelLineup(): Promise<ModelSummary[]> {
 
 export async function getAvailableUsedCarCount() {
   "use cache";
+  cacheTag(USED_STOCK_TAG);
   cacheLife("minutes");
 
   return db.usedCar.count({ where: { status: "AVAILABLE" } });
@@ -157,4 +159,17 @@ export async function getCarPage(slug: string) {
     defaultCityId: showrooms[0]?.cityId ?? cities[0].id,
     accessoryPackages,
   };
+}
+
+// What the trade-in form offers to pick from: the showrooms, and the Brand X cars a buyer may be eyeing.
+export async function getTradeInOptions() {
+  "use cache";
+  cacheTag(CATALOGUE_TAG);
+  cacheLife("minutes");
+
+  const [showrooms, models] = await Promise.all([
+    db.showroom.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    db.model.findMany({ orderBy: { name: "asc" }, select: { id: true, slug: true, name: true } }),
+  ]);
+  return { showrooms, models };
 }

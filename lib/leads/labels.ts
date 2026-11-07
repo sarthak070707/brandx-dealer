@@ -12,4 +12,5 @@ export const STATUS_LABEL: Record<LeadStatus, string> = {
 export const SOURCE_LABEL: Record<LeadSource, string> = {
   ENQUIRY: "Enquiry",
   TEST_DRIVE: "Test drive",
+  TRADE_IN: "Trade-in",
 };

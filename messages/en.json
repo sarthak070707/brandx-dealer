@@ -36,7 +36,8 @@
     "staffSignIn": "Staff sign in",
     "tagline": "New and certified used Brand X cars across Lucknow, with the exact on-road price for your city.",
     "priceNote": "Prices shown are ex-showroom unless marked on-road.",
-    "fictionalNote": "Brand X is a fictional brand. Prices and stock are sample data."
+    "fictionalNote": "Brand X is a fictional brand. Prices and stock are sample data.",
+    "tradeIn": "Trade in your car"
   },
   "Common": {
     "hours": "Mon to Sat, {open} to {close}"
@@ -253,7 +254,8 @@
   },
   "Consent": {
     "testDrive": "I agree that Brand X may contact me by phone, WhatsApp or SMS about this test drive. My details are used only for this request, and I can stop messages at any time.",
-    "enquiry": "I agree that Brand X may contact me by phone, WhatsApp or SMS about this enquiry. My details are used only for this request, and I can stop messages at any time."
+    "enquiry": "I agree that Brand X may contact me by phone, WhatsApp or SMS about this enquiry. My details are used only for this request, and I can stop messages at any time.",
+    "tradeIn": "I agree that Brand X may contact me by phone, WhatsApp or SMS about this trade-in. My details are used only for this request, and I can stop messages at any time."
   },
   "Privacy": {
     "metaTitle": "Privacy and consent | Brand X Lucknow",
@@ -338,7 +340,62 @@
     "carSold": "This car has just been sold.",
     "linkInvalid": "This link isn't valid. You can use your mobile number instead.",
     "credentialsMissing": "Enter your email and password.",
-    "credentialsWrong": "That email and password don't match."
+    "credentialsWrong": "That email and password don't match.",
+    "yourCar": "Tell us which car it is, like Maruti Swift VXi",
+    "tradeYear": "Enter the year it was made, like 2018",
+    "tradeKm": "Enter how far it has driven, in km",
+    "tradeOwners": "Enter how many owners it has had, from 1 to 6",
+    "tradeCondition": "Choose the condition",
+    "tradePrice": "Enter an amount in rupees, or leave it empty",
+    "showroom": "Choose a showroom"
+  },
+  "Emi": {
+    "title": "Estimate your EMI",
+    "lead": "See what the monthly instalment could be for this car.",
+    "downPayment": "Down payment",
+    "rate": "Interest rate per year",
+    "tenure": "Loan period",
+    "months": "{count} months",
+    "loanAmount": "Loan amount",
+    "monthly": "Monthly EMI",
+    "perMonth": "per month",
+    "interest": "Total interest",
+    "payable": "Total payable",
+    "disclaimer": "An estimate only. Your bank or lender sets the real rate and fees."
+  },
+  "TradeIn": {
+    "metaTitle": "Trade in your car | Brand X Lucknow",
+    "metaDescription": "Tell us about your current car and a Brand X consultant will call you to talk about its trade-in value.",
+    "title": "Trade in your car",
+    "lead": "Tell us about the car you want to trade in. A consultant will call you to talk about what it is worth.",
+    "yourCarHeading": "Your car",
+    "aboutYouHeading": "About you",
+    "yourCar": "Make, model and variant",
+    "yourCarPlaceholder": "Maruti Swift VXi",
+    "year": "Year it was made",
+    "km": "Driven so far (km)",
+    "owners": "Owners so far",
+    "condition": "Condition",
+    "conditions": {
+      "GOOD": "Good, runs well",
+      "FAIR": "Fair, some wear",
+      "NEEDS_WORK": "Needs some work"
+    },
+    "expectedPrice": "What you hope to get, in rupees (optional)",
+    "notes": "Anything else we should know (optional)",
+    "name": "Name",
+    "phone": "Mobile number",
+    "showroom": "Showroom to visit",
+    "interested": "A Brand X you are considering (optional)",
+    "notSure": "Not sure yet",
+    "send": "Ask for a trade-in value",
+    "sending": "Sending…",
+    "thanks": "Thank you, {name}.",
+    "callSoon": "{who} at Brand X {showroom} will call you to talk about your {car}.",
+    "teamWho": "Our team",
+    "whatsapp": "We have also sent the details on WhatsApp (simulated).",
+    "stripTitle": "Trading in your current car?",
+    "stripLink": "Get a trade-in value"
   },
   "Labels": {
     "bodyType": {

@@ -1,18 +1,8 @@
 import { z } from "zod";
 import { BodyType, Fuel, Transmission } from "@/generated/prisma/enums";
 import { photoIdFrom } from "@/lib/admin/car-photos";
+import { decimalNumber, wholeNumber } from "@/lib/admin/fields";
 import { positiveRupeesField } from "@/lib/admin/parse";
-
-// The form sends everything as text, so these turn the text into numbers with a clear message.
-function wholeNumber(min: number, max: number) {
-  const message = `Enter a whole number from ${min} to ${max}`;
-  return z.string().trim().regex(/^\d{1,5}$/, message).transform(Number).pipe(z.number().min(min, message).max(max, message));
-}
-
-function decimalNumber(min: number, max: number) {
-  const message = `Enter a number from ${min} to ${max}, like 17.5`;
-  return z.string().trim().regex(/^\d{1,2}(\.\d)?$/, message).transform(Number).pipe(z.number().min(min, message).max(max, message));
-}
 
 export const colourSchema = z.object({
   name: z.string().trim().min(2, "Name the colour").max(30, "Keep it under 30 characters"),

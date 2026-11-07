@@ -7,7 +7,9 @@ import { MorphGallery, type MorphGalleryHandle } from "@/components/car/morph-ga
 import { MobilePriceBar } from "@/components/car/mobile-price-bar";
 import { PriceCard } from "@/components/car/price-card";
 import { SpecList } from "@/components/car/spec-list";
+import { TradeInStrip } from "@/components/car/trade-in-strip";
 import { VariantPicker } from "@/components/car/variant-picker";
+import { EmiCalculator } from "@/components/finance/emi-calculator";
 import type { CarPageData } from "@/lib/catalogue";
 import { localised } from "@/lib/i18n/content";
 import { formatRupees } from "@/lib/money";
@@ -38,6 +40,8 @@ export function CarConfigurator({ car }: { car: CarPageData }) {
   const quote = base.available ? withPacks(base, car.accessoryPackages.filter((pack) => selectedPackIds.includes(pack.id))) : base;
   const description = localised(content, "models", car.slug, car.description);
   const cityName = car.cities.find((city) => city.id === cityId)?.name ?? "";
+  // The on-road price when there is one for this city, otherwise the ex-showroom price.
+  const emiBasePaise = quote.available ? quote.totalPaise : variant.exShowroomPaise;
   const prices = car.variants.flatMap((option) => (option.exShowroomPaise === null ? [] : [option.exShowroomPaise]));
 
   return (
@@ -68,7 +72,7 @@ export function CarConfigurator({ car }: { car: CarPageData }) {
         selectedPackIds={selectedPackIds}
         onPackToggle={(id) => setSelectedPackIds(toggleItem(selectedPackIds, id))}
         quote={quote}
-        className="lg:sticky lg:top-20 lg:col-start-2 lg:row-span-5 lg:row-start-1 lg:max-h-[calc(100dvh-6rem)] lg:self-start"
+        className="lg:sticky lg:top-20 lg:col-start-2 lg:row-span-7 lg:row-start-1 lg:max-h-[calc(100dvh-6rem)] lg:self-start"
       />
 
       {colour && (
@@ -84,6 +88,16 @@ export function CarConfigurator({ car }: { car: CarPageData }) {
 
       <div className="lg:col-start-1">
         <SpecList variant={variant} />
+      </div>
+
+      {emiBasePaise !== null && (
+        <div className="lg:col-start-1">
+          <EmiCalculator pricePaise={emiBasePaise} />
+        </div>
+      )}
+
+      <div className="lg:col-start-1">
+        <TradeInStrip slug={car.slug} />
       </div>
 
       <MobilePriceBar

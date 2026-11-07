@@ -1,32 +1,12 @@
 import { z } from "zod";
 import { auth } from "@/auth";
+import { confirmBooking, type BookingResult } from "@/lib/booking/confirm-booking";
 import { bookingSchema, type BookingInput } from "@/lib/booking/schema";
-import { isBookableSlot, slotsForDay, bookingDays } from "@/lib/booking/slots";
+import { isBookableSlot } from "@/lib/booking/slots";
 import { db } from "@/lib/db";
-import type { PublicError } from "@/lib/public-errors";
-import { isUniqueViolation } from "@/lib/db-errors";
-import { createLead } from "@/lib/leads/create-lead";
 import { isRateLimited, RATE_LIMITED } from "@/lib/leads/rate-limit";
 
-const NEXT_FREE_SLOT_COUNT = 3;
-
-export type BookingResult =
-  | { ok: true; cancelToken: string }
-  | { ok: false; error: PublicError; fieldErrors?: Record<string, string[]>; nextFreeSlots?: string[] };
-
-async function nextFreeSlots(demoCarId: string, hours: { openMinute: number; closeMinute: number }, after: Date) {
-  const now = new Date();
-  const taken = new Set(
-    (await db.testDriveBooking.findMany({ where: { demoCarId, status: "CONFIRMED" }, select: { slotStart: true } })).map(
-      (booking) => booking.slotStart.getTime(),
-    ),
-  );
-  return bookingDays(now)
-    .flatMap((day) => slotsForDay(day, hours))
-    .filter((slot) => slot > after && slot > now && !taken.has(slot.getTime()))
-    .slice(0, NEXT_FREE_SLOT_COUNT)
-    .map((slot) => slot.toISOString());
-}
+export type { BookingResult };
 
 export async function createBooking(input: BookingInput): Promise<BookingResult> {
   const parsed = bookingSchema.safeParse(input);
@@ -53,54 +33,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
   const session = await auth();
   const buyerId = session?.user.role === "BUYER" ? session.user.id : null;
 
-  try {
-    const created = await db.$transaction(async (tx) => {
-      const { lead } = await createLead(tx, {
-        source: "TEST_DRIVE",
-        buyerName: booking.buyerName,
-        buyerPhone: booking.buyerPhone,
-        language: booking.language,
-        modelId: demoCar.variant.model.id,
-        variantId: demoCar.variant.id,
-        cityId: demoCar.showroom.cityId,
-        showroomId: demoCar.showroom.id,
-        carLabel: `${demoCar.variant.model.name} ${demoCar.variant.name}`,
-      });
-      return tx.testDriveBooking.create({
-        data: {
-          demoCarId: booking.demoCarId,
-          slotStart: booking.slotStart,
-          buyerName: booking.buyerName,
-          buyerPhone: booking.buyerPhone,
-          language: booking.language,
-          consentAt: lead.consentAt,
-          buyerId,
-          leadId: lead.id,
-        },
-        select: { cancelToken: true },
-      });
-    });
-    return { ok: true, cancelToken: created.cancelToken };
-  } catch (error) {
-    // The database's unique rule on (demo car, slot) decides races, not this code.
-    if (!isUniqueViolation(error)) throw error;
-    return {
-      ok: false,
-      error: "slotTaken",
-      nextFreeSlots: await nextFreeSlots(booking.demoCarId, demoCar.showroom, booking.slotStart),
-    };
-  }
+  return confirmBooking(booking, demoCar, buyerId);
 }
 
-export async function cancelBooking(cancelToken: string) {
-  return db.$transaction(async (tx) => {
-    const booking = await tx.testDriveBooking.updateMany({
-      where: { cancelToken, status: "CONFIRMED", slotStart: { gt: new Date() } },
-      data: { status: "CANCELLED" },
-    });
-    if (booking.count === 0) return false;
-    const { leadId } = await tx.testDriveBooking.findUniqueOrThrow({ where: { cancelToken }, select: { leadId: true } });
-    await tx.leadEvent.create({ data: { leadId, type: "NOTE", details: { note: "Buyer cancelled the test drive" } } });
-    return true;
-  });
-}
+export { cancelBooking } from "@/lib/booking/confirm-booking";

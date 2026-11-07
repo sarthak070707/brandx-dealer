@@ -11,7 +11,8 @@ type NewLead = {
   buyerPhone: string;
   language: Language;
   message?: string;
-  modelId: string;
+  // A lead with no model (a trade-in that names no Brand X car) goes to any consultant at the showroom.
+  modelId?: string;
   variantId?: string;
   usedCarId?: string;
   cityId: string;
@@ -29,7 +30,7 @@ export async function createLead(tx: Prisma.TransactionClient, lead: NewLead) {
         role: "CONSULTANT",
         active: true,
         showroomId: lead.showroomId,
-        models: { some: { modelId: lead.modelId } },
+        ...(lead.modelId && { models: { some: { modelId: lead.modelId } } }),
       },
       select: {
         id: true,

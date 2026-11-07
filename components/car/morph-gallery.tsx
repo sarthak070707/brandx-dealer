@@ -92,7 +92,9 @@ export function MorphGallery({ photos, label, onActiveChange, ref }: Props) {
             alt={index === active ? photo.alt : ""}
             aria-hidden={index !== active}
             fill
-            preload={index === 0}
+            // The first photo is what the page is judged on, so it loads first; the others wait.
+            loading={index === 0 ? "eager" : "lazy"}
+            fetchPriority={index === 0 ? "high" : "auto"}
             sizes="(min-width: 1024px) 58vw, 100vw"
             // The outgoing photo stays opaque underneath while the new one fades in on
             // top, so the fallback fade never dips through to the background.

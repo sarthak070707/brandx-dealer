@@ -5,7 +5,7 @@ import type { AbstractIntlMessages } from "next-intl";
 export const CLIENT_NAMESPACES = [
   "Nav", "Language", "Car", "Price", "Colour", "Variant", "Specs", "MobileBar", "Gallery",
   "UsedBrowser", "UsedFilters", "UsedCard", "Booking", "Scheduler", "Enquiry", "Forms", "Consent",
-  "Stop", "SignIn", "Error", "Errors", "Labels", "Content",
+  "Emi", "TradeIn", "Stop", "SignIn", "Error", "Errors", "Labels", "Content",
 ] as const;
 
 export function pickClientMessages(messages: AbstractIntlMessages): AbstractIntlMessages {

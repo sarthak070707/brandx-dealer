@@ -11,7 +11,7 @@ export function SiteFooter() {
     {
       id: "explore",
       title: t("explore"),
-      links: [...NAV_LINKS.map((link) => ({ href: link.href, label: nav(link.key) })), { href: TEST_DRIVE_HREF, label: nav("bookTestDrive") }],
+      links: [...NAV_LINKS.map((link) => ({ href: link.href, label: nav(link.key) })), { href: TEST_DRIVE_HREF, label: nav("bookTestDrive") }, { href: "/trade-in", label: t("tradeIn") }],
     },
     {
       id: "data",

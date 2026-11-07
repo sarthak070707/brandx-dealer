@@ -52,6 +52,7 @@ enum Language {
 enum LeadSource {
   ENQUIRY
   TEST_DRIVE
+  TRADE_IN
 }
 
 enum LeadStatus {

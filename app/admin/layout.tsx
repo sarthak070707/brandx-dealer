@@ -10,9 +10,10 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-// The admin's sections. Used stock joins them next, in the spec's order.
+// The admin's sections, in the spec's order.
 const SECTIONS = [
   { href: "/admin/cars", label: "Cars", matchPrefix: "/admin/cars" },
+  { href: "/admin/used-cars", label: "Used stock", matchPrefix: "/admin/used-cars" },
   { href: "/admin/prices/ex-showroom", label: "Price tables", matchPrefix: "/admin/prices" },
   { href: "/admin/consultants", label: "Consultants" },
 ];
