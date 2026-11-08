@@ -23,9 +23,10 @@ describe("aiOutputSchema", () => {
     expect(aiOutputSchema.safeParse({ ...valid, confidence: "certain" }).success).toBe(false);
   });
 
-  it("wants two or three summary points", () => {
-    expect(aiOutputSchema.safeParse({ ...valid, summary: ["One"] }).success).toBe(false);
-    expect(aiOutputSchema.safeParse({ ...valid, summary: ["a", "b", "c", "d"] }).success).toBe(false);
+  it("wants at least one summary point, and keeps only the first three", () => {
+    expect(aiOutputSchema.safeParse({ ...valid, summary: [] }).success).toBe(false);
+    expect(aiOutputSchema.parse({ ...valid, summary: ["One"] }).summary).toEqual(["One"]);
+    expect(aiOutputSchema.parse({ ...valid, summary: ["a", "b", "c", "d"] }).summary).toEqual(["a", "b", "c"]);
   });
 
   it("refuses a reply over the word limit", () => {

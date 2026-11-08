@@ -1,5 +1,6 @@
 import { aiOutputSchema, type ConfidenceLevel, type Intent } from "@/lib/ai/schema";
 import { guardDraft, type Removal } from "@/lib/ai/guard";
+import { asksAboutPrice } from "@/lib/ai/price-intent";
 import { buildMessages } from "@/lib/ai/prompt";
 import { fillPlaceholders, templateReply, type TemplateKind } from "@/lib/ai/templates";
 import type { AiLeadFacts, ChatMessage, DraftNames } from "@/lib/ai/types";
@@ -40,24 +41,40 @@ function basicSummary(facts: AiLeadFacts) {
 // Nothing to summarise: no message and no test drive. The AI isn't asked, so it can't guess.
 const isThin = (facts: AiLeadFacts) => (facts.message?.trim().length ?? 0) < MIN_MESSAGE_CHARS && !facts.testDrive;
 
-function parseOutput(raw: string) {
+type Parsed = { output: ReturnType<typeof aiOutputSchema.parse> } | { problem: string };
+
+// Either the usable answer, or what was wrong with it in a sentence the model can act on. The problems
+// are the schema's own messages, never anything the buyer wrote.
+function parseOutput(raw: string): Parsed {
+  let json: unknown;
   try {
-    const parsed = aiOutputSchema.safeParse(JSON.parse(raw));
-    return parsed.success ? parsed.data : null;
+    json = JSON.parse(raw);
   } catch {
-    return null;
+    return { problem: "it was not a single valid JSON object" };
   }
+  const parsed = aiOutputSchema.safeParse(json);
+  if (parsed.success) return { output: parsed.data };
+  return { problem: parsed.error.issues.slice(0, 3).map((issue) => `${issue.path.join(".") || "answer"}: ${issue.message}`).join("; ") };
 }
 
+// Two tries within the deadline. After a failed try the model sees its own answer and what was wrong with
+// it, so the second try can fix it; a network error or an unusable answer both end in the template.
 async function askModel(facts: AiLeadFacts, complete: Complete, deadlineMs: number) {
   const signal = AbortSignal.timeout(deadlineMs);
-  const messages = buildMessages(facts);
+  const first = buildMessages(facts);
+  let messages = first;
   for (let attempt = 0; attempt < ATTEMPTS && !signal.aborted; attempt++) {
     try {
-      const output = parseOutput(await complete(messages, signal));
-      if (output) return output;
+      const raw = await complete(messages, signal);
+      const parsed = parseOutput(raw);
+      if ("output" in parsed) return parsed.output;
+      messages = [
+        ...first,
+        { role: "assistant", content: raw },
+        { role: "user", content: `That answer was rejected because ${parsed.problem}. Answer again with the same single JSON object, with that fixed.` },
+      ];
     } catch {
-      // A failed call is treated like an unusable answer: retry once, then fall back.
+      // A failed call is simply tried again, once.
     }
   }
   return null;
@@ -70,7 +87,9 @@ export async function generateAssist(
   deadlineMs = DEADLINE_MS,
 ): Promise<AssistResult> {
   const reply = (kind: TemplateKind) => fillPlaceholders(templateReply(facts.language, kind), names, facts.language);
-  const allowedPaise = facts.prices.map((price) => price.paise);
+  // A price is quoted only when the buyer asked about money; otherwise no amount is allowed at all.
+  const priceAsked = asksAboutPrice(facts.message);
+  const allowedPaise = priceAsked ? facts.prices.map((price) => price.paise) : [];
 
   if (isThin(facts)) {
     return { summary: basicSummary(facts), intent: null, missingInfo: [], confidence: "low", draft: reply("clarifying"), usedTemplate: true, notice: "low_confidence", removed: [] };
@@ -86,7 +105,7 @@ export async function generateAssist(
     return { ...base, draft: reply("clarifying"), usedTemplate: true, notice: "low_confidence", removed: [] };
   }
 
-  const guarded = guardDraft(output.reply_draft, allowedPaise);
+  const guarded = guardDraft(output.reply_draft, allowedPaise, facts.specs, { priceNotAsked: !priceAsked });
   if (guarded.text.length < MIN_USEFUL_DRAFT_CHARS) {
     return { ...base, draft: reply("standard"), usedTemplate: true, notice: null, removed: guarded.removed };
   }

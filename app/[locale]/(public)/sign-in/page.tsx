@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { SignInForm } from "@/app/[locale]/(public)/sign-in/sign-in-form";
+import { DemoLogins } from "@/components/auth/demo-logins";
+import { showDemoLogins } from "@/lib/demo-logins";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/sign-in">): Promise<Metadata> {
   const { locale } = await params;
@@ -29,6 +31,7 @@ export default async function SignInPage({ params, searchParams }: PageProps<"/[
         <Suspense fallback={<div aria-hidden="true" className="h-72 animate-pulse rounded-2xl bg-muted" />}>
           <SignInCard searchParams={searchParams} />
         </Suspense>
+        {showDemoLogins(process.env.SHOW_DEMO_LOGINS) && <DemoLogins />}
       </div>
     </main>
   );

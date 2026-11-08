@@ -1,7 +1,9 @@
 import { useTranslations } from "next-intl";
 import { BrandMark, brandLinkStyle } from "@/components/brand-mark";
+import { LinkedInIcon } from "@/components/linkedin-icon";
 import { NAV_LINKS, SIGN_IN_HREF, TEST_DRIVE_HREF } from "@/components/site-links";
 import { Link } from "@/i18n/navigation";
+import { BUILDER } from "@/lib/builder";
 
 export function SiteFooter() {
   const nav = useTranslations("Nav");
@@ -53,6 +55,20 @@ export function SiteFooter() {
             </ul>
           </nav>
         ))}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 border-t px-4 py-4 text-sm sm:px-8 lg:px-12">
+        <span className="text-muted-foreground">{t("builtBy")}</span>
+        <a
+          href={BUILDER.linkedIn}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t("linkedinLabel", { name: BUILDER.name })}
+          className="inline-flex min-h-11 items-center gap-2 rounded-full border bg-card px-4 transition-colors hover:border-foreground/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+          <LinkedInIcon className="size-4" />
+          {BUILDER.name}
+        </a>
       </div>
 
       <div className="flex flex-col gap-2 border-t px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:justify-between sm:px-8 lg:px-12">

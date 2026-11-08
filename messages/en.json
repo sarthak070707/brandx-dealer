@@ -38,7 +38,9 @@
     "priceNote": "Prices shown are ex-showroom unless marked on-road.",
     "fictionalNote": "Brand X is a fictional brand. Prices and stock are sample data.",
     "tradeIn": "Trade in your car",
-    "service": "Book a service"
+    "service": "Book a service",
+    "builtBy": "Built by",
+    "linkedinLabel": "{name} on LinkedIn"
   },
   "Common": {
     "hours": "Mon to Sat, {open} to {close}"
@@ -449,6 +451,19 @@
     "cancel": "Cancel this booking",
     "bookAnother": "Book another time",
     "home": "Back to the home page"
+  },
+  "DemoLogins": {
+    "title": "Demo logins",
+    "lead": "This is a demo site with sample data. Use these to look around.",
+    "password": "Password, the same for everyone",
+    "admin": "Admin email",
+    "copy": "Copy",
+    "copied": "Copied",
+    "consultantTitle": "To sign in as a consultant",
+    "step1": "Sign in as admin.",
+    "step2": "Open Admin, then Consultants, and copy any consultant's email.",
+    "step3": "Sign out, then sign in with that email and the same password.",
+    "note": "If a consultant's password was reset in the admin, use the temporary password shown then."
   },
   "Labels": {
     "bodyType": {

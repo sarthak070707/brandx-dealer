@@ -44,7 +44,7 @@ export async function NewCars() {
         <h2 id="new-cars-title" className="text-4xl font-display tracking-tight sm:text-5xl">
           {t("newCarsTitle")}
         </h2>
-        <Link href="/cars" className="underline-offset-4 hover:underline">
+        <Link href="/cars" className="-my-2.5 inline-block py-2.5 underline-offset-4 hover:underline">
           {t("seeAllModels", { count: lineup.length })}
         </Link>
       </div>

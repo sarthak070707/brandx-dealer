@@ -13,6 +13,8 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  // The stylesheet is small, so it goes inside the page instead of blocking it as a separate request.
+  experimental: { inlineCss: true },
   partialPrefetching: true,
   turbopack: {
     rules: {

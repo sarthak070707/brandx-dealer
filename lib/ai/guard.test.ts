@@ -109,3 +109,40 @@ describe("guardDraft: discounts and offers", () => {
     expect(guardDraft(draft, ALLOWED).text).toBe(draft);
   });
 });
+
+describe("guardDraft: seat counts", () => {
+  const SEVEN = { seats: 7 };
+
+  it("keeps a seat count that matches the car's own data, in English and in Hindi", () => {
+    for (const sentence of ["The Model V GX is a 7-seater.", "It has seven seats.", "Model V GX 7‑सीटर है।", "यह सात सीटर कार है।", "It seats 7 seats in three rows."]) {
+      expect(guardDraft(sentence, [], SEVEN).removed, sentence).toEqual([]);
+    }
+  });
+
+  it("removes a seat count that is not the car's, or any seat count when no variant is known", () => {
+    const five = guardDraft("Hello. The ZX is a 7-seater. Call me.", [], { seats: 5 });
+    expect(five.text).toBe("Hello. Call me.");
+    expect(five.removed).toEqual([{ kind: "claim", text: "The ZX is a 7-seater.", reason: "it states a seat count that is not the 5 seats in the data" }]);
+
+    const unknown = guardDraft("Model V GX 7-सीटर ऑटोमैटिक है।", []);
+    expect(unknown.removed).toMatchObject([{ kind: "claim", reason: "it states a seat count, which is not in the data" }]);
+  });
+
+  it("keeps a sentence that mentions the buyer's wish and then the car's real seats", () => {
+    expect(guardDraft("You asked for a 7-seater, but the GX is a 5-seater.", [], { seats: 5 }).removed).toEqual([]);
+  });
+
+  it("does not take other numbers near the word for seats as a seat count", () => {
+    for (const sentence of ["The booking is for 12 seats at the event.", "Seat 7 days a week.", "We open 7 days.", "Call 9876543210 about the seat."]) {
+      expect(guardDraft(sentence, [], null).removed, sentence).toEqual([]);
+    }
+  });
+});
+
+describe("guardDraft: a price nobody asked for", () => {
+  it("says so in the reason when no price was asked for, and still removes only the sentences with amounts", () => {
+    const result = guardDraft("Hello. The on-road price is ₹14,39,500. The consultant will confirm delivery.", [], null, { priceNotAsked: true });
+    expect(result.text).toBe("Hello. The consultant will confirm delivery.");
+    expect(result.removed).toEqual([{ kind: "amount", text: "The on-road price is ₹14,39,500.", reason: "it quotes 14,39,500, but the buyer did not ask about price" }]);
+  });
+});

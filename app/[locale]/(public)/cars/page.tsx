@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ModelCard } from "@/components/model-card";
+import { EAGER_CARDS, ModelCard } from "@/components/model-card";
 import { intlTag } from "@/i18n/format";
 import { getCityNames, getModelLineup } from "@/lib/catalogue";
 import { localised } from "@/lib/i18n/content";
@@ -31,9 +31,9 @@ export default async function NewCarsPage({ params }: PageProps<"/[locale]/cars"
         <p className="text-lg text-muted-foreground">{t("lead", { count: lineup.length, cities: cityList })}</p>
       </div>
       <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {byPrice.map((model) => (
+        {byPrice.map((model, index) => (
           <li key={model.slug}>
-            <ModelCard model={model} />
+            <ModelCard model={model} eager={index < EAGER_CARDS} heading="h2" />
           </li>
         ))}
       </ul>

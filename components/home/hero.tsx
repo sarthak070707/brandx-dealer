@@ -7,10 +7,22 @@ import { Link } from "@/i18n/navigation";
 import { getModelLineup, type ModelSummary } from "@/lib/catalogue";
 import { formatRupees } from "@/lib/money";
 
-function CarTile({ model, photo, fromLabel }: { model: ModelSummary; photo: string; fromLabel: string | null }) {
+// How many tiles can be on screen at once at the start: these load first.
+const EAGER_TILES = 2;
+
+function CarTile({ model, photo, fromLabel, eager }: { model: ModelSummary; photo: string; fromLabel: string | null; eager: boolean }) {
   return (
     <figure className="relative h-40 w-60 shrink-0 overflow-hidden rounded-2xl bg-muted sm:h-48 sm:w-72">
-      <Image src={photo} alt={model.name} fill sizes="288px" className="object-cover" />
+      <Image
+        src={photo}
+        alt={model.name}
+        fill
+        sizes="288px"
+        // The first tiles are on screen at once, so they load first; the rest wait until they are needed.
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : "auto"}
+        className="object-cover"
+      />
       <figcaption className="absolute bottom-3 left-3 rounded-lg bg-card/90 px-2.5 py-1 text-sm text-card-foreground">
         {model.name}
         {fromLabel && <span className="text-muted-foreground"> {fromLabel}</span>}
@@ -23,21 +35,22 @@ export async function Hero() {
   const [lineup, t, nav] = await Promise.all([getModelLineup(), getTranslations("Home"), getTranslations("Nav")]);
   const prices = lineup.flatMap((model) => (model.fromPaise === null ? [] : [model.fromPaise]));
 
-  const tilesFor = (models: ModelSummary[]) =>
-    models.flatMap((model) =>
-      model.photos.map((photo) => (
+  const tilesFor = (models: ModelSummary[], eagerCount: number) =>
+    models
+      .flatMap((model) => model.photos.map((photo) => ({ model, photo })))
+      .map(({ model, photo }, index) => (
         <CarTile
           key={photo}
+          eager={index < eagerCount}
           model={model}
           photo={photo}
           fromLabel={model.fromPaise === null ? null : t("tileFrom", { price: formatRupees(model.fromPaise) })}
         />
-      )),
-    );
+      ));
 
   return (
     <section aria-labelledby="hero-title" className="overflow-hidden border-b bg-card">
-      <div className="grid items-center gap-12 px-4 py-16 sm:px-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:px-12 lg:py-24">
+      <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-12 px-4 py-16 sm:px-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:px-12 lg:py-24">
         <div className="flex max-w-xl flex-col gap-6 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-3 motion-safe:duration-700">
           <h1
             id="hero-title"
@@ -59,9 +72,9 @@ export async function Hero() {
         </div>
 
         <div className="-mx-4 flex flex-col gap-4 mask-x-from-90% sm:-mx-8 lg:mx-0">
-          <Marquee>{tilesFor(lineup.filter((model) => model.featured))}</Marquee>
+          <Marquee>{tilesFor(lineup.filter((model) => model.featured), EAGER_TILES)}</Marquee>
           <div className="hidden sm:block">
-            <Marquee reverse>{tilesFor(lineup.filter((model) => !model.featured))}</Marquee>
+            <Marquee reverse>{tilesFor(lineup.filter((model) => !model.featured), 0)}</Marquee>
           </div>
         </div>
       </div>

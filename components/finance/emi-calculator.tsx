@@ -7,7 +7,8 @@ import { emiBreakdown, loanAfterDownPayment } from "@/lib/finance/emi";
 import { formatRupees } from "@/lib/money";
 
 const TENURES = [36, 48, 60, 72, 84];
-const rangeStyle = "w-full cursor-pointer accent-foreground";
+// Tall enough to touch on a phone (the sliding part is drawn smaller), with the extra height taken back so nothing moves.
+const rangeStyle = "-my-2 h-11 w-full cursor-pointer accent-foreground";
 
 // An estimate of the monthly instalment for a price, with the down payment, rate and period the buyer
 // chooses. The starting values are typical, not an offer from any lender.
@@ -60,25 +61,23 @@ export function EmiCalculator({ pricePaise }: { pricePaise: number }) {
           </div>
         </div>
 
-        <dl className="flex flex-col gap-3" aria-live="polite">
-          <div>
+        <dl className="flex flex-col" aria-live="polite">
+          <div className="mb-3">
             <dt className="text-sm text-muted-foreground">{t("monthly")}</dt>
             <dd className="text-4xl font-light tracking-tight tabular-nums">
               {formatRupees(result.emiPaise)} <span className="text-base text-muted-foreground">{t("perMonth")}</span>
             </dd>
           </div>
-          <div className="divide-y border-y">
-            {[
-              [t("loanAmount"), loanPaise],
-              [t("interest"), result.totalInterestPaise],
-              [t("payable"), result.totalPayablePaise],
-            ].map(([label, paise]) => (
-              <div key={label} className="flex justify-between gap-4 py-2">
-                <dt className="text-muted-foreground">{label}</dt>
-                <dd className="tabular-nums">{formatRupees(Number(paise))}</dd>
-              </div>
-            ))}
-          </div>
+          {[
+            [t("loanAmount"), loanPaise],
+            [t("interest"), result.totalInterestPaise],
+            [t("payable"), result.totalPayablePaise],
+          ].map(([label, paise]) => (
+            <div key={label} className="flex justify-between gap-4 border-b py-2 first-of-type:border-t">
+              <dt className="text-muted-foreground">{label}</dt>
+              <dd className="tabular-nums">{formatRupees(Number(paise))}</dd>
+            </div>
+          ))}
         </dl>
       </div>
 

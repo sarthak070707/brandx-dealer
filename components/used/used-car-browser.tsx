@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { FilterPanel, type FilterOptions } from "@/components/used/filter-panel";
+import { EAGER_CARDS } from "@/components/model-card";
 import { UsedCarCard } from "@/components/used/used-car-card";
 import { formatRupees } from "@/lib/money";
 import { activeFilterCount, findUsedCars, NO_FILTERS, type UsedCarFilters, type UsedCarSort } from "@/lib/used-cars/filter";
@@ -113,9 +114,9 @@ export function UsedCarBrowser({ cars, options }: { cars: UsedCar[]; options: Fi
 
         {results.length > 0 ? (
           <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {results.map((car) => (
+            {results.map((car, index) => (
               <li key={car.stockId}>
-                <UsedCarCard car={car} />
+                <UsedCarCard car={car} eager={index < EAGER_CARDS} heading="h2" />
               </li>
             ))}
           </ul>

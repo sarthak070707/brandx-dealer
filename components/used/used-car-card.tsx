@@ -7,7 +7,7 @@ import type { UsedCarCard as UsedCar } from "@/lib/used-cars/queries";
 
 const kmFormat = new Intl.NumberFormat("en-IN");
 
-export function UsedCarCard({ car }: { car: UsedCar }) {
+export function UsedCarCard({ car, eager = false, heading: Heading = "h3" }: { car: UsedCar; eager?: boolean; heading?: "h2" | "h3" }) {
   const t = useTranslations("UsedCard");
   const labels = useTranslations("Labels");
 
@@ -19,6 +19,8 @@ export function UsedCarCard({ car }: { car: UsedCar }) {
             src={car.photo}
             alt=""
             fill
+            loading={eager ? "eager" : "lazy"}
+            fetchPriority={eager ? "high" : "auto"}
             sizes="(min-width: 1280px) 30vw, (min-width: 640px) 50vw, 100vw"
             className="object-cover transition-transform duration-700 group-hover:scale-[1.03] motion-reduce:transition-none"
           />
@@ -29,9 +31,9 @@ export function UsedCarCard({ car }: { car: UsedCar }) {
       </div>
       <div className="flex flex-1 flex-col gap-1 p-5">
         <p className="text-sm text-muted-foreground">{car.stockId}</p>
-        <h3 className="text-xl">
+        <Heading className="text-xl">
           {car.modelName} {car.variantName}
-        </h3>
+        </Heading>
         <p className="text-sm text-muted-foreground">
           {t("details", {
             year: car.year,

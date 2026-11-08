@@ -10,6 +10,8 @@ export type AiLeadFacts = {
   message: string | null;
   model: string | null;
   variant: string | null;
+  // What the lead's variant really is, from the car's own data. The only seats, gearbox and fuel a reply may state.
+  specs: { seats: number; gearbox: string; fuel: string } | null;
   usedCar: { label: string; year: number; km: number } | null;
   testDrive: { when: string; showroom: string } | null;
   // The only amounts a reply may quote, all from the admin tables.
@@ -19,4 +21,4 @@ export type AiLeadFacts = {
 // Filled into the draft on our server, so the model never needs the real values.
 export type DraftNames = { name: string; consultant: string | null; showroom: string };
 
-export type ChatMessage = { role: "system" | "user"; content: string };
+export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };

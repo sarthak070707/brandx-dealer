@@ -22,7 +22,17 @@
 
 # misc
 .DS_Store
+Thumbs.db
+desktop.ini
 *.pem
+
+# editor settings and design source files: local to one computer, not part of the code
+.vscode/
+.idea/
+*.psd
+*.ai
+*.sketch
+*.fig
 
 # debug
 npm-debug.log*

@@ -10,6 +10,7 @@ const facts: AiLeadFacts = {
   message: "What is the on-road price of the ZX automatic? Is it available in white?",
   model: "Model H",
   variant: "ZX",
+  specs: { seats: 5, gearbox: "automatic", fuel: "petrol" },
   usedCar: null,
   testDrive: null,
   prices: [{ label: "on-road price in Lucknow, without accessories", paise: 14_21_500_00 }],
@@ -146,5 +147,70 @@ describe("generateAssist: the discount and price guard", () => {
   it("writes Hindi templates for a Hindi buyer", async () => {
     const result = await generateAssist({ ...facts, language: "HI" }, names, returning("bad", "bad"));
     expect(result.draft).toContain("नमस्ते Asha");
+  });
+
+  it("removes a seat count the car's data doesn't confirm, so a reply can't echo the buyer's 7-seater", async () => {
+    const draft = "Hi {{name}}, the ZX is a 7-seater. The consultant will confirm delivery. {{consultant}}, Brand X {{showroom}}";
+    const result = await generateAssist(facts, names, returning(answer({ reply_draft: draft })));
+    expect(result.draft).not.toContain("7-seater");
+    expect(result.draft).toContain("will confirm delivery");
+    expect(result.removed).toMatchObject([{ kind: "claim" }]);
+  });
+
+  it("keeps a seat count that the variant really has", async () => {
+    const draft = "Hi {{name}}, the ZX is a 5-seater. {{consultant}}, Brand X {{showroom}}";
+    const result = await generateAssist(facts, names, returning(answer({ reply_draft: draft })));
+    expect(result.draft).toContain("5-seater");
+    expect(result.removed).toEqual([]);
+  });
+
+  it("removes a price from the draft when the buyer never asked about money, even a price from the admin tables", async () => {
+    const noPriceAsked = { ...facts, message: "Is the ZX available in white? Can it be delivered to Kanpur?" };
+    const draft = "Hi {{name}}, the on-road price in Lucknow is ₹14,21,500. The consultant will confirm delivery. {{consultant}}, Brand X {{showroom}}";
+    const result = await generateAssist(noPriceAsked, names, returning(answer({ intent: "price_quote", reply_draft: draft })));
+    expect(result.draft).not.toContain("14,21,500");
+    expect(result.draft).toContain("will confirm delivery");
+    expect(result.removed).toMatchObject([{ kind: "amount", reason: expect.stringContaining("did not ask about price") }]);
+  });
+
+  it("keeps an admin-table price when the buyer did ask what it costs", async () => {
+    const result = await generateAssist(facts, names, returning(answer()));
+    expect(result.draft).toContain("14,21,500");
+    expect(result.removed).toEqual([]);
+  });
+
+  describe("when an answer can't be used", () => {
+    const tooLong = answer({ reply_draft: `Hi {{name}}, ${"word ".repeat(90)}{{consultant}}, Brand X {{showroom}}` });
+
+    it("tells the model what was wrong with its first answer, so the second can fix it", async () => {
+      const complete = returning(tooLong, answer());
+      const result = await generateAssist(facts, names, complete);
+
+      expect(result.usedTemplate).toBe(false);
+      const retry = vi.mocked(complete).mock.calls[1][0];
+      expect(retry.map((message) => message.role)).toEqual(["system", "user", "assistant", "user"]);
+      expect(retry[2].content).toBe(tooLong);
+      expect(retry[3].content).toMatch(/rejected because reply_draft: Keep the reply under 80 words/);
+    });
+
+    it("says so when the answer was not JSON at all", async () => {
+      const complete = returning("Sure! Here is a reply.", answer());
+      await generateAssist(facts, names, complete);
+      expect(vi.mocked(complete).mock.calls[1][0][3].content).toMatch(/rejected because it was not a single valid JSON object/);
+    });
+
+    it("still shows the template when the second answer is unusable too", async () => {
+      const result = await generateAssist(facts, names, returning(tooLong, tooLong));
+      expect(result).toMatchObject({ usedTemplate: true, notice: "ai_unavailable" });
+    });
+  });
+
+  it("accepts a one-line summary and cuts a long one to three lines, instead of throwing a good reply away", async () => {
+    const one = await generateAssist(facts, names, returning(answer({ summary: ["Wants the ZX automatic"] })));
+    expect(one).toMatchObject({ usedTemplate: false, summary: ["Wants the ZX automatic"] });
+
+    const many = await generateAssist(facts, names, returning(answer({ summary: ["a", "b", "c", "d", "e"], missing_info: ["1", "2", "3", "4", "5"] })));
+    expect(many.summary).toEqual(["a", "b", "c"]);
+    expect(many.missingInfo).toHaveLength(4);
   });
 });

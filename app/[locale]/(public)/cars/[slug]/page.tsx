@@ -48,7 +48,7 @@ async function CarDetail({ params }: { params: PageProps<"/[locale]/cars/[slug]"
     <>
       <JsonLd data={carJsonLd({ name: car.name, description, photos: car.photos, lowestPaise, variantCount: car.variants.length }, siteUrl())} />
       <nav aria-label={nav("breadcrumb")} className="mb-6 text-sm text-muted-foreground">
-        <Link href="/cars" className="underline-offset-4 hover:underline">
+        <Link href="/cars" className="-mx-2 -my-3.5 inline-block px-2 py-3.5 underline-offset-4 hover:underline">
           {cars("title")}
         </Link>
         <span aria-hidden="true"> / </span>

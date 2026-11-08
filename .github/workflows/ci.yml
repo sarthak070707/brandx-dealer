@@ -1,0 +1,82 @@
+name: CI
+
+# Runs on every push to main and on every pull request. Nothing here deploys anything.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# A newer push to the same branch cancels the run that is still going.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # A throwaway database for the migrations and the tests that need one. It is gone when the job ends.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: brandx
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    # Values that only exist for this run. No real secret is used or needed.
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/brandx
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/brandx
+      NEXTAUTH_SECRET: ci-only-secret-for-this-run
+      NEXTAUTH_URL: http://localhost:3000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # Also generates the Prisma client (the project's postinstall step).
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: |
+          npx next typegen
+          npx tsc --noEmit
+
+      - name: Unit tests
+        run: npm test
+
+      # Known vulnerabilities in the code that runs on the live site (the development tools are not checked).
+      - name: Dependency audit
+        run: npm audit --omit=dev --audit-level=high
+
+      # Builds the database from the migration files, exactly as a deployment does, then adds the sample data.
+      - name: Create the database
+        run: |
+          npx prisma migrate deploy
+          npx prisma db seed
+
+      # Double bookings of a test drive or a service bay, against the real database rules.
+      - name: Database tests
+        run: npm run test:db
+
+      - name: Build
+        run: npm run build

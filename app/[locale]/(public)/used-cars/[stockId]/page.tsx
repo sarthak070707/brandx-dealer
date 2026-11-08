@@ -84,7 +84,7 @@ async function UsedCarDetail({ params }: { params: PageProps<"/[locale]/used-car
     <>
       <JsonLd data={structuredData} />
       <nav aria-label={nav("breadcrumb")} className="mb-6 text-sm text-muted-foreground">
-        <Link href="/used-cars" className="underline-offset-4 hover:underline">
+        <Link href="/used-cars" className="-mx-2 -my-3.5 inline-block px-2 py-3.5 underline-offset-4 hover:underline">
           {t("breadcrumb")}
         </Link>
         <span aria-hidden="true"> / </span>

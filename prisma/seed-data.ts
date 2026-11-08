@@ -393,7 +393,7 @@ export const INSURANCE_GAPS: { city: CityName; modelSlug: string }[] = [
   { city: "Barabanki", modelSlug: "model-v" },
 ];
 
-export const DEMO_PASSWORD = "BrandX-demo-2026";
+export { DEMO_PASSWORD } from "../lib/demo-logins";
 
 export const ADMIN = { name: "Meera Joshi", email: "admin@brandx.example" };
 export const DEMO_BUYER = { name: "Riya Sharma", email: "buyer@brandx.example", phone: "+919000000109" };

@@ -17,9 +17,15 @@ export const INTENT_LABEL: Record<Intent, string> = {
 
 // The shape the model must return (spec), checked on every response before anything is used.
 export const aiOutputSchema = z.object({
-  summary: z.array(z.string().trim().min(1)).min(2).max(3),
+  // More lines than asked for are cut, not rejected; the reply and its limits are what matter.
+  summary: z
+    .array(z.string().trim().min(1))
+    .min(1)
+    .transform((lines) => lines.slice(0, 3)),
   intent: z.enum(INTENTS),
-  missing_info: z.array(z.string().trim().min(1)).max(4),
+  missing_info: z
+    .array(z.string().trim().min(1))
+    .transform((items) => items.slice(0, 4)),
   confidence: z.enum(CONFIDENCES),
   reply_draft: z
     .string()
