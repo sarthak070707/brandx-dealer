@@ -2,7 +2,9 @@
 
 A dealer website for the fictional Brand X: new-car pages with an exact on-road price breakup by city, certified used cars, test-drive and service booking, a lead inbox with automatic assignment, AI help for consultants, and an admin for cars, used stock and prices. It works in English and Hindi, in light and dark.
 
-**Live demo:** _the link is added here once the site is deployed_ &nbsp;|&nbsp; **Code:** [github.com/sarthak070707/brandx-dealer](https://github.com/sarthak070707/brandx-dealer)
+[![CI](https://github.com/sarthak070707/brandx-dealer/actions/workflows/ci.yml/badge.svg)](https://github.com/sarthak070707/brandx-dealer/actions/workflows/ci.yml)
+
+**Live demo:** [brandx-dealer.vercel.app](https://brandx-dealer.vercel.app) &nbsp;|&nbsp; **Code:** [github.com/sarthak070707/brandx-dealer](https://github.com/sarthak070707/brandx-dealer)
 
 <p align="center">
   <img src="docs/screenshots/home.webp" alt="The Brand X home page in dark mode" width="49%">
@@ -18,9 +20,10 @@ A dealer website for the fictional Brand X: new-car pages with an exact on-road 
 
 ## Try it
 
-1. Open the site and choose **Staff sign in** in the footer. The page shows the demo logins: an admin, and the steps to reach a consultant from there.
+1. Open the [live site](https://brandx-dealer.vercel.app) and choose **Staff sign in** in the footer. The page shows the demo logins: an admin, and the steps to reach a consultant from there.
 2. Everything on the site is sample data. Buyers need no account: try booking a test drive, a service visit, a trade-in, or the EMI calculator on any car page.
-3. Switch language with the **EN / हिं** button, and theme with the sun and moon button.
+3. On the **Model C** page, tick both accessory packs and watch the on-road total change.
+4. Switch language with the **EN / हिं** button, and theme with the sun and moon button.
 
 ## What it does
 
@@ -101,6 +104,10 @@ npm run dev                 # http://localhost:3000
 ## Tests and CI
 
 Every push and pull request runs GitHub Actions: lint, type check, unit tests, a dependency vulnerability check, a throwaway Postgres built from the migrations and filled with the sample data, the database tests, and a production build.
+
+## Deployment
+
+The site runs on Vercel (functions in Singapore, next to the Neon database in the same AWS region), with CI on GitHub Actions. The steps, the environment variables and how to reset or roll back are in [deployment.md](deployment.md).
 
 ## Project structure
 
