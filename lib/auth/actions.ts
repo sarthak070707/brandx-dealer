@@ -1,8 +1,8 @@
 "use server";
 
-import { AuthError } from "next-auth";
+import { AuthError, CredentialsSignin } from "next-auth";
 import { z } from "zod";
-import { signIn, signOut } from "@/auth";
+import { signIn, signOut, TOO_MANY_ATTEMPTS } from "@/auth";
 
 // The error is a key into the Errors messages, so the page shows it in the visitor's language.
 export type SignInState = { error: string | null };
@@ -27,6 +27,7 @@ export async function signInWithPassword(_previous: SignInState, formData: FormD
     await signIn("credentials", credentials.data);
     return { error: null };
   } catch (error) {
+    if (error instanceof CredentialsSignin && error.code === TOO_MANY_ATTEMPTS) return { error: "tooManySignIns" };
     if (error instanceof AuthError) return { error: "credentialsWrong" };
     throw error;
   }

@@ -409,3 +409,16 @@ model ServiceBooking {
   // Only confirmed bookings hold a bay, so cancelling frees it for the next customer.
   @@unique([showroomId, slotStart, bay], where: raw("status = 'CONFIRMED'"))
 }
+
+// One wrong sign-in, kept for 15 minutes so the sign-in page can slow down guessing. Only scrambled (HMAC)
+// versions of the email and the visitor's address are stored, never the values themselves.
+model LoginFailure {
+  id        String   @id @default(cuid())
+  emailHash String
+  ipHash    String
+  createdAt DateTime @default(now())
+
+  @@index([ipHash, emailHash, createdAt])
+  @@index([ipHash, createdAt])
+}
+

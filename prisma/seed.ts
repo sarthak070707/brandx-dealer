@@ -56,6 +56,7 @@ async function clearDatabase() {
     db.outboxMessage.deleteMany(),
     db.aiDraft.deleteMany(),
     db.leadEvent.deleteMany(),
+    db.loginFailure.deleteMany(),
     db.testDriveBooking.deleteMany(),
     db.serviceBooking.deleteMany(),
     db.lead.deleteMany(),

@@ -353,7 +353,8 @@
     "tradePrice": "Enter an amount in rupees, or leave it empty",
     "showroom": "Choose a showroom",
     "regNumber": "Enter the registration number, like UP32AB1234",
-    "serviceType": "Choose what your car needs"
+    "serviceType": "Choose what your car needs",
+    "tooManySignIns": "Too many wrong attempts. Please wait 15 minutes and try again."
   },
   "Emi": {
     "title": "Estimate your EMI",
