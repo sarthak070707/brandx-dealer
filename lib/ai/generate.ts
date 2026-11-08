@@ -1,5 +1,7 @@
+import type { Language } from "@/generated/prisma/enums";
 import { aiOutputSchema, type ConfidenceLevel, type Intent } from "@/lib/ai/schema";
 import { guardDraft, type Removal } from "@/lib/ai/guard";
+import { languageProblem } from "@/lib/ai/language";
 import { asksAboutPrice } from "@/lib/ai/price-intent";
 import { buildMessages } from "@/lib/ai/prompt";
 import { fillPlaceholders, templateReply, type TemplateKind } from "@/lib/ai/templates";
@@ -45,7 +47,7 @@ type Parsed = { output: ReturnType<typeof aiOutputSchema.parse> } | { problem: s
 
 // Either the usable answer, or what was wrong with it in a sentence the model can act on. The problems
 // are the schema's own messages, never anything the buyer wrote.
-function parseOutput(raw: string): Parsed {
+function parseOutput(raw: string, language: Language): Parsed {
   let json: unknown;
   try {
     json = JSON.parse(raw);
@@ -53,7 +55,11 @@ function parseOutput(raw: string): Parsed {
     return { problem: "it was not a single valid JSON object" };
   }
   const parsed = aiOutputSchema.safeParse(json);
-  if (parsed.success) return { output: parsed.data };
+  if (parsed.success) {
+    // The language is checked in code, because the model cannot be trusted to keep to it.
+    const wrongLanguage = languageProblem(parsed.data.reply_draft, language);
+    return wrongLanguage ? { problem: `reply_draft: ${wrongLanguage}` } : { output: parsed.data };
+  }
   return { problem: parsed.error.issues.slice(0, 3).map((issue) => `${issue.path.join(".") || "answer"}: ${issue.message}`).join("; ") };
 }
 
@@ -66,7 +72,7 @@ async function askModel(facts: AiLeadFacts, complete: Complete, deadlineMs: numb
   for (let attempt = 0; attempt < ATTEMPTS && !signal.aborted; attempt++) {
     try {
       const raw = await complete(messages, signal);
-      const parsed = parseOutput(raw);
+      const parsed = parseOutput(raw, facts.language);
       if ("output" in parsed) return parsed.output;
       messages = [
         ...first,

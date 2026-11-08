@@ -213,4 +213,36 @@ describe("generateAssist: the discount and price guard", () => {
     expect(many.summary).toEqual(["a", "b", "c"]);
     expect(many.missingInfo).toHaveLength(4);
   });
+
+  describe("the language of the draft", () => {
+    const hindiDraft = answer({ reply_draft: "नमस्ते {{name}} जी! ऑन-रोड कीमत ₹14,21,500 है। {{consultant}}, Brand X {{showroom}}" });
+    const englishDraft = answer({ reply_draft: "Hi {{name}}, the on-road price in Lucknow is ₹14,21,500. {{consultant}}, Brand X {{showroom}}" });
+
+    it("tells the model when it answered an English lead in Hindi, and uses the corrected answer", async () => {
+      const complete = returning(hindiDraft, englishDraft);
+      const result = await generateAssist(facts, names, complete);
+
+      expect(result).toMatchObject({ usedTemplate: false, notice: null });
+      expect(result.draft).toBe("Hi Asha, the on-road price in Lucknow is ₹14,21,500. Rohan Verma, Brand X Gomti Nagar");
+      expect(vi.mocked(complete).mock.calls[1][0].at(-1)?.content).toMatch(/rejected because reply_draft: it was not in English/);
+    });
+
+    it("never shows an English lead a Hindi draft: after two Hindi answers it is the English template", async () => {
+      const result = await generateAssist(facts, names, returning(hindiDraft, hindiDraft));
+      expect(result).toMatchObject({ usedTemplate: true, notice: "ai_unavailable" });
+      expect(result.draft).not.toMatch(/[\u0900-\u097F]/);
+    });
+
+    it("holds a Hindi lead to Hindi in the same way, and keeps the Latin names in a Hindi reply", async () => {
+      const hindiLead = { ...facts, language: "HI" as const };
+      const wrong = await generateAssist(hindiLead, names, returning(englishDraft, englishDraft));
+      expect(wrong.usedTemplate).toBe(true);
+      expect(wrong.draft).toMatch(/[\u0900-\u097F]/);
+
+      const right = await generateAssist(hindiLead, names, returning(hindiDraft));
+      expect(right).toMatchObject({ usedTemplate: false });
+      expect(right.draft).toContain("Brand X");
+    });
+  });
 });
+

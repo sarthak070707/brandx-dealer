@@ -41,7 +41,7 @@ describe("buildMessages", () => {
   });
 
   it("asks for a reply in the buyer's language and sends no personal details", () => {
-    expect(JSON.parse(user.content).buyer_language).toBe("Hindi");
+    expect(JSON.parse(user.content).reply_language).toBe("Hindi");
     expect(Object.keys(JSON.parse(user.content))).not.toEqual(expect.arrayContaining(["name", "phone", "email"]));
   });
 });
@@ -88,7 +88,19 @@ describe("buildMessages: what the model is told", () => {
   });
 
   it("keeps a Hindi reply free of first-person verbs that depend on whether the sender is a man or a woman", () => {
-    expect(system.content).toMatch(/never use a first-person verb that changes with the speaker's gender \(such as करूँगा or करूँगी\)/);
-    expect(system.content).toMatch(/Say "हम" with a plural verb/);
+    expect(system.content).toMatch(/Only when reply_language is Hindi: never use a first-person verb whose ending changes with the speaker's gender/);
+    expect(system.content).toMatch(/Say "hum" in the plural/);
+  });
+
+  it("names the reply language plainly, lets nothing else decide it, and keeps staff text in English", () => {
+    expect(JSON.parse(buildMessages({ ...facts, language: "EN" })[1].content).reply_language).toBe("English");
+    expect(system.content).toMatch(/"English" means English only, with no Hindi words and no Devanagari letters, even if buyer_message is in Hindi/);
+    expect(system.content).toMatch(/reply_language alone decides the language of reply_draft/);
+    expect(system.content).toMatch(/summary and missing_info are always in English/);
+  });
+
+  it("does not put Devanagari example words in front of the model, which pulled English replies into Hindi", () => {
+    expect(system.content).not.toMatch(/[\u0900-\u097F]/);
   });
 });
+
