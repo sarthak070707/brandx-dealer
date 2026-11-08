@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { leadScope, type StaffUser } from "@/lib/leads/access";
 import { describeEvent, referencedUserIds } from "@/lib/leads/events";
 import { carLabelOf } from "@/lib/leads/car-label";
+import { cancelledVisit } from "@/lib/leads/visit-state";
 import type { InboxLead } from "@/lib/leads/inbox-filter";
 
 const CREATED_FROM = { ENQUIRY: "enquiry form", TEST_DRIVE: "test-drive booking", TRADE_IN: "trade-in form", PORTAL: "CSV import", SERVICE: "service booking" } as const;
@@ -28,6 +29,8 @@ export async function getInbox(user: StaffUser) {
         model: { select: { name: true } },
         variant: { select: { name: true } },
         usedCar: { select: { stockId: true, variantName: true } },
+        booking: { select: { status: true } },
+        serviceBooking: { select: { status: true } },
       },
     }),
     db.showroom.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
@@ -49,6 +52,7 @@ export async function getInbox(user: StaffUser) {
     assignedToId: lead.assignedToId,
     consultantName: lead.assignedTo?.name ?? null,
     carLabel: carLabelOf(lead),
+    cancelledVisit: cancelledVisit(lead),
   }));
   // The server's clock at read time, so the browser's timers start from the same moment.
   return { leads: rows, showrooms, consultants, renderedAt: Date.now() };

@@ -25,6 +25,7 @@ function lead(overrides: Partial<InboxLead>): InboxLead {
     assignedToId: "rohan",
     consultantName: "Rohan Verma",
     carLabel: "Model H ZX",
+    cancelledVisit: null,
     ...overrides,
   };
 }

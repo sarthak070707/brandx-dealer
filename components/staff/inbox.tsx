@@ -78,6 +78,7 @@ export function Inbox({ leads, showrooms, consultants, renderedAt }: Props) {
                   <TableCell className="max-md:hidden">{lead.consultantName ?? <Badge variant="warning">Needs assignment</Badge>}</TableCell>
                   <TableCell>
                     <StatusBadge status={lead.status} />
+                    {lead.cancelledVisit && <p className="mt-1 text-xs text-status-due">{lead.cancelledVisit}</p>}
                   </TableCell>
                   <TableCell className="whitespace-nowrap text-muted-foreground max-md:hidden" title={formatDate(lead.createdAt)}>
                     {formatAgo(now.getTime() - lead.createdAt.getTime())}

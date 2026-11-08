@@ -13,6 +13,8 @@ export type InboxLead = {
   assignedToId: string | null;
   consultantName: string | null;
   carLabel: string;
+  // Set when the buyer cancelled their test drive or service visit; the lead itself stays open.
+  cancelledVisit: string | null;
 };
 
 export type CreatedWithin = "today" | "7d" | "30d";
